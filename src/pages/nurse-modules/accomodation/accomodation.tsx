@@ -372,6 +372,10 @@ const RegDetails = () => {
     ? selectedEditRoom.replace("|", " - Bed ")
     : "No bed selected";
 
+  const selectedTransferBedLabel = selectedTransferBed
+    ? selectedTransferBed.replace("|", " - ")
+    : "No vacant bed selected";
+
   const handleOpenEditRoomModal = () => {
     setSelectedEditRoom(null);
     setShowEditRoomModal(true);
@@ -556,7 +560,10 @@ const RegDetails = () => {
         </div>
 
         {isSelected && (
-          <div className="small fw-bold mt-2" style={{ color: "var(--primary, #0f763f)" }}>
+          <div
+            className="small fw-bold mt-2"
+            style={{ color: "var(--primary, #0f763f)" }}
+          >
             Selected
           </div>
         )}
@@ -592,8 +599,22 @@ const RegDetails = () => {
         }}
       >
         <td style={{ width: "40px" }}>
-          {bed.status === "Occupied" && (
+          {isSelected ? (
+            <span
+              className="rounded-circle d-inline-flex align-items-center justify-content-center"
+              style={{
+                width: "24px",
+                height: "24px",
+                backgroundColor: "var(--primary, #0f763f)",
+                color: "#fff",
+              }}
+            >
+              <i className="isax isax-tick-circle" style={{ fontSize: "14px" }}></i>
+            </span>
+          ) : bed.status === "Occupied" ? (
             <i className="isax isax-user text-muted"></i>
+          ) : (
+            <i className="isax isax-hospital text-muted"></i>
           )}
         </td>
 
@@ -629,562 +650,6 @@ const RegDetails = () => {
 
   return (
     <>
-      <style>
-        {`
-          .hide-scrollbar::-webkit-scrollbar {
-            height: 6px;
-            width: 6px;
-          }
-
-          .hide-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-          }
-
-          .hide-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: #cbd5e1 transparent;
-          }
-
-          .text-hover-primary:hover {
-            color: var(--primary, #0f763f) !important;
-          }
-
-          .reg-toolbar-btn:disabled {
-            cursor: not-allowed !important;
-          }
-
-          .acc-main-card {
-            border-top: 4px solid var(--primary, #0f763f);
-          }
-
-          .acc-table-wrap {
-            width: 100%;
-            overflow: visible;
-          }
-
-          .acc-table {
-            table-layout: fixed;
-            width: 100%;
-          }
-
-          .acc-table thead th {
-            background: #eef5f8;
-            color: #6c757d;
-            font-size: 12px;
-            font-weight: 700;
-            border-bottom: 1px solid #dee2e6;
-            white-space: nowrap;
-          }
-
-          .acc-table tbody td {
-            font-size: 13px;
-            font-weight: 600;
-            color: #343a40;
-            vertical-align: middle;
-          }
-
-          .acc-table-text {
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-
-          .acc-active-row {
-            background: rgba(15, 118, 63, 0.08);
-          }
-
-          .acc-inactive-row {
-            background: #f8f9fa;
-          }
-
-          .acc-status-active {
-            color: var(--primary, #0f763f);
-            background: rgba(15, 118, 63, 0.1);
-          }
-
-          .acc-status-inactive {
-            color: #6c757d;
-            background: #e9ecef;
-          }
-
-          .acc-total-los {
-            font-size: 13px;
-            font-weight: 800;
-            color: #212529;
-            text-align: center;
-            padding: 12px;
-            border-top: 1px solid #eef0f2;
-          }
-
-          .acc-window-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 1050;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-          }
-
-          .acc-window {
-            width: 100%;
-            max-width: 980px;
-            height: 680px;
-            max-height: 90vh;
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-          }
-
-          .acc-window-title {
-            background: var(--primary, #0f763f);
-            color: #fff;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-          }
-
-          .acc-window-title h5 {
-            color: #fff;
-          }
-
-          .acc-window-body {
-            height: calc(100% - 64px);
-            display: flex;
-            background: #f8f9fa;
-          }
-
-          .acc-side-panel {
-            width: 230px;
-            background: #ffffff;
-            border-right: 1px solid #dee2e6;
-            flex-shrink: 0;
-            overflow-y: auto;
-          }
-
-          .acc-ward-list {
-            padding: 10px;
-            margin: 0;
-            list-style: none;
-          }
-
-          .acc-ward-list li {
-            padding: 10px 12px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #495057;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-bottom: 4px;
-          }
-
-          .acc-ward-list li:hover,
-          .acc-ward-list li.active {
-            background: var(--primary, #0f763f);
-            color: #fff;
-          }
-
-          .acc-modal-content {
-            flex: 1;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-          }
-
-          .acc-room-container {
-            background: #fff;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            overflow-y: auto;
-            flex: 1;
-          }
-
-          .acc-room-header {
-            background: #eef5f8;
-            border-bottom: 1px solid #dee2e6;
-            padding: 14px 16px;
-          }
-
-          .acc-room-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: #212529;
-            margin-bottom: 4px;
-          }
-
-          .acc-room-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 28px;
-            font-size: 12px;
-            color: #6c757d;
-            font-weight: 600;
-          }
-
-          .acc-room-name-row {
-            background: #f8f9fa;
-            color: #343a40;
-            font-size: 13px;
-            padding: 8px 14px;
-            font-weight: 700;
-            border-bottom: 1px solid #eef0f2;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-          }
-
-          .acc-room-name-row span:last-child {
-            color: var(--primary, #0f763f);
-          }
-
-          .acc-room-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-          }
-
-          .acc-room-table td,
-          .acc-room-table th {
-            padding: 8px 12px;
-            border-bottom: 1px solid #f1f3f5;
-          }
-
-          .acc-room-table tbody tr:hover {
-            background: rgba(15, 118, 63, 0.06);
-          }
-
-          .acc-room-selected {
-            background: rgba(15, 118, 63, 0.12) !important;
-            outline: 2px solid rgba(15, 118, 63, 0.25);
-            outline-offset: -2px;
-          }
-
-          .acc-small-head {
-            font-size: 10px;
-            color: #6c757d;
-            line-height: 1.1;
-            text-align: center;
-          }
-
-          .acc-select-footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding-top: 14px;
-          }
-
-          .acc-room-table-clean {
-            table-layout: fixed;
-            width: 100%;
-          }
-
-          .acc-room-table-clean thead th {
-            background: #eef5f8;
-            color: #6c757d;
-            font-size: 12px;
-            font-weight: 800;
-            border-bottom: 1px solid #dee2e6;
-            white-space: nowrap;
-            text-transform: uppercase;
-          }
-
-          .acc-room-table-clean tbody td {
-            font-size: 13px;
-            color: #343a40;
-            vertical-align: middle;
-            border-bottom: 1px solid #f1f3f5;
-            padding: 10px 12px;
-          }
-
-          .acc-room-table-clean tbody tr:hover {
-            background: rgba(15, 118, 63, 0.06);
-          }
-
-          .acc-bed-vacant {
-            color: var(--primary, #0f763f);
-            background: rgba(15, 118, 63, 0.1);
-          }
-
-          .acc-bed-occupied {
-            color: #6c757d;
-            background: #e9ecef;
-          }
-
-          .acc-bed-card {
-            width: 100%;
-            border: 1px solid #dee2e6;
-            background: #fff;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-          }
-
-          .acc-bed-card:hover {
-            background: rgba(15, 118, 63, 0.04);
-            border-color: rgba(15, 118, 63, 0.3);
-          }
-
-          .acc-bed-card.selected {
-            background: rgba(15, 118, 63, 0.08);
-            border-color: var(--primary, #0f763f);
-            box-shadow: 0 0 0 2px rgba(15, 118, 63, 0.1);
-          }
-
-          .acc-bed-card:disabled {
-            cursor: not-allowed;
-            opacity: 0.85;
-          }
-
-          .acc-mobile-patient {
-            display: block;
-            word-break: break-word;
-          }
-
-          .acc-info-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 1080;
-            background: rgba(0, 0, 0, 0.35);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-          }
-
-          .acc-info-box {
-            width: 320px;
-            max-width: 100%;
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-          }
-
-          .acc-info-title {
-            height: 40px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
-            font-size: 14px;
-            font-weight: 700;
-          }
-
-          .acc-info-icon {
-            width: 42px;
-            height: 42px;
-            background: var(--primary, #0f763f);
-            color: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-          }
-
-          .acc-view-btn {
-            font-size: 11px;
-            font-weight: 800;
-            border-radius: 4px;
-            padding: 5px 9px;
-            color: var(--primary, #0f763f);
-            background: rgba(15, 118, 63, 0.08);
-            border: 1px solid rgba(15, 118, 63, 0.18);
-            white-space: nowrap;
-          }
-
-          .acc-view-btn:hover {
-            background: var(--primary, #0f763f);
-            color: #fff;
-          }
-
-          .acc-responsive-modal {
-            max-width: 540px;
-          }
-
-          @media (max-width: 991.98px) {
-            .acc-main-card {
-              border-top-width: 3px;
-            }
-
-            .acc-window {
-              height: 92vh;
-              max-height: 92vh;
-            }
-
-            .acc-window-body {
-              flex-direction: column;
-            }
-
-            .acc-side-panel {
-              width: 100%;
-              max-height: 175px;
-              border-right: 0;
-              border-bottom: 1px solid #dee2e6;
-            }
-
-            .acc-ward-list {
-              display: grid;
-              grid-template-columns: repeat(2, minmax(0, 1fr));
-              gap: 6px;
-            }
-
-            .acc-ward-list li {
-              margin-bottom: 0;
-              font-size: 12px;
-              text-align: center;
-            }
-
-            .acc-modal-content {
-              padding: 12px;
-            }
-
-            .acc-room-title {
-              font-size: 16px;
-            }
-
-            .acc-room-stats {
-              gap: 8px;
-              flex-direction: column;
-            }
-
-            .acc-select-footer {
-              justify-content: stretch;
-            }
-
-            .acc-select-footer .btn {
-              width: 100%;
-            }
-          }
-
-          @media (max-width: 767.98px) {
-            .acc-table th,
-            .acc-table td {
-              font-size: 12px !important;
-              padding: 9px 6px;
-            }
-
-            .acc-table .acc-col-ward {
-              width: 28%;
-            }
-
-            .acc-table .acc-col-room {
-              width: 18%;
-            }
-
-            .acc-table .acc-col-bed {
-              width: 16%;
-            }
-
-            .acc-table .acc-col-status {
-              width: 22%;
-            }
-
-            .acc-table .acc-col-action {
-              width: 16%;
-            }
-
-            .acc-table .badge {
-              padding: 6px 8px !important;
-              font-size: 10px;
-            }
-
-            .acc-total-los {
-              font-size: 12px;
-            }
-
-            .acc-room-name-row {
-              display: none;
-            }
-
-            .acc-desktop-room-list {
-              display: none !important;
-            }
-
-            .acc-mobile-room-list {
-              display: block !important;
-              padding: 12px;
-            }
-
-            .modal-dialog {
-              margin: 0.5rem auto;
-            }
-
-            .modal-body {
-              max-height: calc(100vh - 180px);
-              overflow-y: auto;
-            }
-          }
-
-          @media (min-width: 768px) {
-            .acc-mobile-room-list {
-              display: none !important;
-            }
-          }
-
-          @media (max-width: 575.98px) {
-            .content.nurse-content {
-              margin-top: -1rem !important;
-            }
-
-            .container-fluid {
-              padding-left: 10px !important;
-              padding-right: 10px !important;
-            }
-
-            .acc-patient-avatar {
-              width: 74px !important;
-              height: 74px !important;
-            }
-
-            .acc-patient-name {
-              font-size: 1.25rem !important;
-            }
-
-            .reg-toolbar-btn {
-              width: 100%;
-            }
-
-            .acc-window-backdrop {
-              padding: 8px;
-            }
-
-            .acc-window-title {
-              padding: 12px;
-            }
-
-            .acc-window-title h5 {
-              font-size: 1rem;
-            }
-
-            .acc-ward-list {
-              grid-template-columns: 1fr;
-            }
-
-            .acc-side-panel {
-              max-height: 145px;
-            }
-
-            .acc-room-header {
-              padding: 12px;
-            }
-
-            .acc-info-box {
-              width: 100%;
-            }
-          }
-        `}
-      </style>
-
       {/* page content */}
       <div
         className="content nurse-content bg-light mt-n4"
@@ -1394,7 +859,7 @@ const RegDetails = () => {
             </div>
 
             <div className="acc-window-body">
-              <div className="acc-side-panel">
+              <div className="acc-side-panel hide-scrollbar">
                 <ul className="acc-ward-list">
                   {transferWards.map((ward) => (
                     <li
@@ -1412,7 +877,7 @@ const RegDetails = () => {
               </div>
 
               <div className="acc-modal-content">
-                <div className="acc-room-container">
+                <div className="acc-room-container hide-scrollbar">
                   {transferRoomGroups[selectedTransferWard]?.length > 0 ? (
                     transferRoomGroups[selectedTransferWard].map((room) => (
                       <div key={room.roomName}>
@@ -1494,6 +959,10 @@ const RegDetails = () => {
                 </div>
 
                 <div className="acc-select-footer">
+                  <div className="acc-transfer-selected-box">
+                    Selected: {selectedTransferBedLabel}
+                  </div>
+
                   <button
                     type="button"
                     className="btn btn-sm text-white fw-bold px-5 py-2"
@@ -1515,110 +984,78 @@ const RegDetails = () => {
 
       {/* edit room modal */}
       {showEditRoomModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex={-1}
-          style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}
-        >
-          <div className="modal-dialog modal-xl modal-dialog-centered px-2 px-md-3">
-            <div
-              className="modal-content border-0 shadow-lg"
-              style={{ borderRadius: "8px", overflow: "hidden" }}
-            >
-              <div
-                className="modal-header border-0 py-3 d-flex align-items-center"
-                style={{ backgroundColor: "#0f763f" }}
-              >
-                <div>
-                  <h3
-                    className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2"
-                    style={{ fontSize: "1.1rem", letterSpacing: "0.5px" }}
-                  >
-                    <i
-                      className="isax isax-edit"
-                      style={{ fontSize: "1.4rem" }}
-                    ></i>
-                    Update Room / Bed
-                  </h3>
-
-                  <div className="small text-white-50 mt-1">
-                    Select the new room and bed assignment for the patient.
-                  </div>
+        <div className="acc-window-backdrop">
+          <div className="acc-window shadow-lg">
+            <div className="acc-window-title">
+              <div>
+                <h5 className="fw-bold mb-0 d-flex align-items-center gap-2">
+                  <i className="isax isax-edit"></i>
+                  Update Room / Bed
+                </h5>
+                <div className="small opacity-75">
+                  Select the new room and bed assignment for the patient.
                 </div>
-
-                <button
-                  type="button"
-                  className="btn-close btn-close-white"
-                  onClick={() => setShowEditRoomModal(false)}
-                />
               </div>
 
-              <div className="modal-body bg-white p-3 p-md-4">
-                <div className="row g-3 mb-3">
-                  <div className="col-md-4">
-                    <DetailItem label="Current Ward" value="Ph Med" />
-                  </div>
+              <button
+                type="button"
+                className="btn-close btn-close-white"
+                onClick={() => setShowEditRoomModal(false)}
+              />
+            </div>
 
-                  <div className="col-md-4">
-                    <DetailItem label="Total Beds" value={editTotalBeds} />
+            <div className="acc-window-body">
+              <div className="acc-side-panel hide-scrollbar">
+                <div className="p-3 border-bottom">
+                  <div className="small text-muted fw-semibold text-uppercase mb-1">
+                    Current Ward
                   </div>
+                  <div className="fw-bold text-dark">Ph Med</div>
+                </div>
 
-                  <div className="col-md-4">
-                    <div className="border rounded-1 bg-light p-3 h-100">
-                      <span
-                        className="text-muted d-block text-uppercase mb-1"
-                        style={{ fontSize: "0.7rem" }}
-                      >
-                        Vacant Beds
-                      </span>
-                      <span
-                        className="fw-bold"
-                        style={{ color: "var(--primary, #0f763f)" }}
-                      >
-                        {editVacantBeds}
-                      </span>
-                    </div>
+                <div className="p-3 border-bottom">
+                  <div className="small text-muted fw-semibold text-uppercase mb-1">
+                    Total Beds
+                  </div>
+                  <div className="fw-bold text-dark">{editTotalBeds}</div>
+                </div>
+
+                <div className="p-3 border-bottom">
+                  <div className="small text-muted fw-semibold text-uppercase mb-1">
+                    Vacant Beds
+                  </div>
+                  <div
+                    className="fw-bold"
+                    style={{ color: "var(--primary, #0f763f)" }}
+                  >
+                    {editVacantBeds}
                   </div>
                 </div>
 
-                <div className="border rounded-1 shadow-sm overflow-hidden">
-                  <div
-                    className="px-3 py-2 border-bottom d-flex flex-column flex-md-row justify-content-between gap-2"
-                    style={{ backgroundColor: "#f8f9fa" }}
-                  >
-                    <div>
-                      <h6 className="fw-bold text-dark mb-0">
-                        Available Room and Bed List
-                      </h6>
-                      <div className="small text-muted">
-                        Click a row or card to select a bed assignment.
-                      </div>
-                    </div>
+                <div className="p-3">
+                  <div className="small text-muted fw-semibold text-uppercase mb-2">
+                    Selected
+                  </div>
 
-                    <div className="d-flex align-items-center gap-2 flex-wrap">
-                      <span className="small text-muted fw-semibold">
-                        Selected:
-                      </span>
-                      <span
-                        className="badge rounded-pill px-3 py-2"
-                        style={{
-                          backgroundColor: selectedEditRoom
-                            ? "rgba(15, 118, 63, 0.1)"
-                            : "#e9ecef",
-                          color: selectedEditRoom
-                            ? "var(--primary, #0f763f)"
-                            : "#6c757d",
-                        }}
-                      >
-                        {selectedEditRoomLabel}
-                      </span>
+                  <div className="acc-transfer-selected-box">
+                    {selectedEditRoomLabel}
+                  </div>
+                </div>
+              </div>
+
+              <div className="acc-modal-content">
+                <div className="acc-room-container hide-scrollbar">
+                  <div className="acc-room-header">
+                    <div className="acc-room-title">Available Room and Bed List</div>
+
+                    <div className="acc-room-stats">
+                      <span>Click a row or card to select a bed assignment.</span>
+                      <span>Total No. of Bed : {editTotalBeds}</span>
+                      <span>Number of Vacant Bed : {editVacantBeds}</span>
                     </div>
                   </div>
 
-                  <div
-                    className="acc-desktop-room-list hide-scrollbar"
-                    style={{ maxHeight: "430px", overflowY: "auto" }}
-                  >
+                  <div className="acc-desktop-room-list">
                     <table className="table table-sm align-middle mb-0 acc-room-table-clean">
                       <thead>
                         <tr>
@@ -1708,10 +1145,7 @@ const RegDetails = () => {
                     </table>
                   </div>
 
-                  <div
-                    className="acc-mobile-room-list"
-                    style={{ maxHeight: "430px", overflowY: "auto" }}
-                  >
+                  <div className="acc-mobile-room-list">
                     {editRoomGroups.map((room) =>
                       room.beds.map((bed) => (
                         <RoomBedMobileCard
@@ -1725,45 +1159,41 @@ const RegDetails = () => {
                     )}
                   </div>
                 </div>
-              </div>
 
-              <div
-                className="modal-footer border-0 d-flex flex-column flex-sm-row justify-content-between gap-2 p-3"
-                style={{ backgroundColor: "#e2e5e9" }}
-              >
-                <div className="small text-muted fw-semibold text-center text-sm-start">
-                  Please review the selected room and bed before saving.
-                </div>
+                <div className="acc-select-footer">
+                  <div className="acc-transfer-selected-box">
+                    Selected: {selectedEditRoomLabel}
+                  </div>
 
-                <div className="d-flex flex-column flex-sm-row gap-2 w-100 w-sm-auto">
-                  <button
-                    type="button"
-                    className="btn btn-light rounded-1 px-4 py-2 fw-medium border-secondary-subtle"
-                    onClick={() => setShowEditRoomModal(false)}
-                  >
-                    Cancel
-                  </button>
+                  <div className="d-flex flex-column flex-sm-row gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-light border fw-bold px-4 py-2"
+                      onClick={() => setShowEditRoomModal(false)}
+                    >
+                      Cancel
+                    </button>
 
-                  <button
-                    type="button"
-                    disabled={!selectedEditRoom}
-                    className={`btn rounded-1 px-4 py-2 fw-medium ${
-                      !selectedEditRoom ? "btn-light text-muted" : "text-white"
-                    }`}
-                    style={{
-                      backgroundColor: selectedEditRoom
-                        ? "var(--primary, #0f763f)"
-                        : "#f8f9fa",
-                      borderColor: selectedEditRoom
-                        ? "var(--primary, #0f763f)"
-                        : "#dee2e6",
-                      cursor: selectedEditRoom ? "pointer" : "not-allowed",
-                    }}
-                    onClick={handleSaveEditRoom}
-                  >
-                    <i className="isax isax-save-2 me-2"></i>
-                    Save Changes
-                  </button>
+                    <button
+                      type="button"
+                      className="btn btn-sm text-white fw-bold px-5 py-2"
+                      style={{
+                        backgroundColor: selectedEditRoom
+                          ? "var(--primary, #0f763f)"
+                          : "#f8f9fa",
+                        borderColor: selectedEditRoom
+                          ? "var(--primary, #0f763f)"
+                          : "#dee2e6",
+                        color: selectedEditRoom ? "#fff" : "#6c757d",
+                        cursor: selectedEditRoom ? "pointer" : "not-allowed",
+                      }}
+                      disabled={!selectedEditRoom}
+                      onClick={handleSaveEditRoom}
+                    >
+                      <i className="isax isax-save-2 me-2"></i>
+                      Save Changes
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

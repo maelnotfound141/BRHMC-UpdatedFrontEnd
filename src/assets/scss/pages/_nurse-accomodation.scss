@@ -1,0 +1,626 @@
+@use "sass:color";
+@use "../base/colors";
+@use "../utils/mixins";
+@use "../utils/variables";
+
+
+  .hide-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+          }
+
+          .hide-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+          }
+
+          .hide-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+          }
+
+          .text-hover-primary:hover {
+            color: var(--primary, #0f763f) !important;
+          }
+
+          .reg-toolbar-btn:disabled {
+            cursor: not-allowed !important;
+          }
+
+          .acc-main-card {
+            border-top: 4px solid var(--primary, #0f763f);
+          }
+
+          .acc-table-wrap {
+            width: 100%;
+            overflow: visible;
+          }
+
+          .acc-table {
+            table-layout: fixed;
+            width: 100%;
+          }
+
+          .acc-table thead th {
+            background: #eef5f8;
+            color: #6c757d;
+            font-size: 12px;
+            font-weight: 700;
+            border-bottom: 1px solid #dee2e6;
+            white-space: nowrap;
+          }
+
+          .acc-table tbody td {
+            font-size: 13px;
+            font-weight: 600;
+            color: #343a40;
+            vertical-align: middle;
+          }
+
+          .acc-table-text {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .acc-active-row {
+            background: rgba(15, 118, 63, 0.08);
+          }
+
+          .acc-inactive-row {
+            background: #f8f9fa;
+          }
+
+          .acc-status-active {
+            color: var(--primary, #0f763f);
+            background: rgba(15, 118, 63, 0.1);
+          }
+
+          .acc-status-inactive {
+            color: #6c757d;
+            background: #e9ecef;
+          }
+
+          .acc-total-los {
+            font-size: 13px;
+            font-weight: 800;
+            color: #212529;
+            text-align: center;
+            padding: 12px;
+            border-top: 1px solid #eef0f2;
+          }
+
+          .acc-window-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+          }
+
+          .acc-window {
+            width: min(1180px, 94vw);
+            height: min(760px, 90vh);
+            max-height: 90dvh;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+          }
+
+          .acc-window-title {
+            background: var(--primary, #0f763f);
+            color: #fff;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-shrink: 0;
+          }
+
+          .acc-window-title h5 {
+            color: #fff;
+          }
+
+          .acc-window-body {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            background: #f8f9fa;
+            overflow: hidden;
+          }
+
+          .acc-side-panel {
+            width: 245px;
+            background: #ffffff;
+            border-right: 1px solid #dee2e6;
+            flex-shrink: 0;
+            overflow-y: auto;
+            min-height: 0;
+          }
+
+          .acc-ward-list {
+            padding: 10px;
+            margin: 0;
+            list-style: none;
+          }
+
+          .acc-ward-list li {
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #495057;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 4px;
+          }
+
+          .acc-ward-list li:hover,
+          .acc-ward-list li.active {
+            background: var(--primary, #0f763f);
+            color: #fff;
+          }
+
+          .acc-modal-content {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 0;
+            overflow: hidden;
+          }
+
+          .acc-room-container {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+          }
+
+          .acc-room-header {
+            background: #eef5f8;
+            border-bottom: 1px solid #dee2e6;
+            padding: 14px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+          }
+
+          .acc-room-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #212529;
+            margin-bottom: 4px;
+          }
+
+          .acc-room-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 600;
+          }
+
+          .acc-room-name-row {
+            background: #f8f9fa;
+            color: #343a40;
+            font-size: 13px;
+            padding: 8px 14px;
+            font-weight: 700;
+            border-bottom: 1px solid #eef0f2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+
+          .acc-room-name-row span:last-child {
+            color: var(--primary, #0f763f);
+          }
+
+          .acc-room-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+          }
+
+          .acc-room-table td,
+          .acc-room-table th {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f3f5;
+          }
+
+          .acc-room-table tbody tr:hover {
+            background: rgba(15, 118, 63, 0.06);
+          }
+
+          .acc-room-selected {
+            background: rgba(15, 118, 63, 0.12) !important;
+            outline: 2px solid rgba(15, 118, 63, 0.25);
+            outline-offset: -2px;
+          }
+
+          .acc-small-head {
+            font-size: 10px;
+            color: #6c757d;
+            line-height: 1.1;
+            text-align: center;
+          }
+
+          .acc-transfer-selected-box {
+            border: 1px solid rgba(15, 118, 63, 0.18);
+            background: rgba(15, 118, 63, 0.06);
+            color: var(--primary, #0f763f);
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 800;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .acc-select-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding-top: 14px;
+            flex-shrink: 0;
+          }
+
+          .acc-room-table-clean {
+            table-layout: fixed;
+            width: 100%;
+          }
+
+          .acc-room-table-clean thead th {
+            background: #eef5f8;
+            color: #6c757d;
+            font-size: 12px;
+            font-weight: 800;
+            border-bottom: 1px solid #dee2e6;
+            white-space: nowrap;
+            text-transform: uppercase;
+          }
+
+          .acc-room-table-clean tbody td {
+            font-size: 13px;
+            color: #343a40;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f3f5;
+            padding: 10px 12px;
+          }
+
+          .acc-room-table-clean tbody tr:hover {
+            background: rgba(15, 118, 63, 0.06);
+          }
+
+          .acc-bed-vacant {
+            color: var(--primary, #0f763f);
+            background: rgba(15, 118, 63, 0.1);
+          }
+
+          .acc-bed-occupied {
+            color: #6c757d;
+            background: #e9ecef;
+          }
+
+          .acc-bed-card {
+            width: 100%;
+            border: 1px solid #dee2e6;
+            background: #fff;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+          }
+
+          .acc-bed-card:hover {
+            background: rgba(15, 118, 63, 0.04);
+            border-color: rgba(15, 118, 63, 0.3);
+          }
+
+          .acc-bed-card.selected {
+            background: rgba(15, 118, 63, 0.08);
+            border-color: var(--primary, #0f763f);
+            box-shadow: 0 0 0 2px rgba(15, 118, 63, 0.1);
+          }
+
+          .acc-bed-card:disabled {
+            cursor: not-allowed;
+            opacity: 0.75;
+          }
+
+          .acc-mobile-patient {
+            display: block;
+            word-break: break-word;
+          }
+
+          .acc-info-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 1080;
+            background: rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+          }
+
+          .acc-info-box {
+            width: 320px;
+            max-width: 100%;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+          }
+
+          .acc-info-title {
+            height: 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            font-size: 14px;
+            font-weight: 700;
+          }
+
+          .acc-info-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--primary, #0f763f);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+          }
+
+          .acc-view-btn {
+            font-size: 11px;
+            font-weight: 800;
+            border-radius: 4px;
+            padding: 5px 9px;
+            color: var(--primary, #0f763f);
+            background: rgba(15, 118, 63, 0.08);
+            border: 1px solid rgba(15, 118, 63, 0.18);
+            white-space: nowrap;
+          }
+
+          .acc-view-btn:hover {
+            background: var(--primary, #0f763f);
+            color: #fff;
+          }
+
+          .acc-responsive-modal {
+            max-width: 540px;
+          }
+
+          .acc-mobile-room-list {
+            display: none !important;
+          }
+
+          @media (max-width: 1199.98px) and (min-width: 768px) {
+            .acc-window-backdrop {
+              padding: 14px;
+            }
+
+            .acc-window {
+              width: 96vw;
+              height: 92dvh;
+              max-height: 92dvh;
+            }
+
+            .acc-side-panel {
+              width: 260px;
+            }
+
+            .acc-room-title {
+              font-size: 18px;
+            }
+
+            .acc-room-stats {
+              gap: 14px;
+            }
+          }
+
+          @media (max-width: 991.98px) {
+            .acc-main-card {
+              border-top-width: 3px;
+            }
+
+            .acc-window {
+              width: 97vw;
+              height: 93dvh;
+              max-height: 93dvh;
+            }
+
+            .acc-window-title {
+              padding: 12px 14px;
+            }
+
+            .acc-window-body {
+              flex-direction: column;
+            }
+
+            .acc-side-panel {
+              width: 100%;
+              max-height: 185px;
+              border-right: 0;
+              border-bottom: 1px solid #dee2e6;
+              flex-shrink: 0;
+            }
+
+            .acc-ward-list {
+              display: grid;
+              grid-template-columns: repeat(3, minmax(0, 1fr));
+              gap: 6px;
+            }
+
+            .acc-ward-list li {
+              margin-bottom: 0;
+              font-size: 12px;
+              text-align: center;
+              padding: 9px 8px;
+            }
+
+            .acc-modal-content {
+              padding: 12px;
+            }
+
+            .acc-room-title {
+              font-size: 16px;
+            }
+
+            .acc-room-stats {
+              gap: 8px;
+              flex-direction: column;
+            }
+
+            .acc-room-name-row {
+              display: none;
+            }
+
+            .acc-desktop-room-list {
+              display: none !important;
+            }
+
+            .acc-mobile-room-list {
+              display: block !important;
+              padding: 12px;
+            }
+
+            .acc-select-footer {
+              align-items: stretch;
+              flex-direction: column;
+            }
+
+            .acc-select-footer .btn {
+              width: 100%;
+            }
+
+            .acc-transfer-selected-box {
+              width: 100%;
+              text-align: center;
+            }
+          }
+
+          @media (max-width: 767.98px) {
+            .acc-table th,
+            .acc-table td {
+              font-size: 12px !important;
+              padding: 9px 6px;
+            }
+
+            .acc-table .acc-col-ward {
+              width: 28%;
+            }
+
+            .acc-table .acc-col-room {
+              width: 18%;
+            }
+
+            .acc-table .acc-col-bed {
+              width: 16%;
+            }
+
+            .acc-table .acc-col-status {
+              width: 22%;
+            }
+
+            .acc-table .acc-col-action {
+              width: 16%;
+            }
+
+            .acc-table .badge {
+              padding: 6px 8px !important;
+              font-size: 10px;
+            }
+
+            .acc-total-los {
+              font-size: 12px;
+            }
+
+            .modal-dialog {
+              margin: 0.5rem auto;
+            }
+
+            .modal-body {
+              max-height: calc(100vh - 180px);
+              overflow-y: auto;
+            }
+          }
+
+          @media (max-width: 575.98px) {
+            .content.nurse-content {
+              margin-top: -1rem !important;
+            }
+
+            .container-fluid {
+              padding-left: 10px !important;
+              padding-right: 10px !important;
+            }
+
+            .acc-patient-avatar {
+              width: 74px !important;
+              height: 74px !important;
+            }
+
+            .acc-patient-name {
+              font-size: 1.25rem !important;
+            }
+
+            .reg-toolbar-btn {
+              width: 100%;
+            }
+
+            .acc-window-backdrop {
+              padding: 8px;
+            }
+
+            .acc-window {
+              width: 100%;
+              height: 94dvh;
+              max-height: 94dvh;
+            }
+
+            .acc-window-title {
+              padding: 12px;
+            }
+
+            .acc-window-title h5 {
+              font-size: 1rem;
+            }
+
+            .acc-ward-list {
+              grid-template-columns: 1fr;
+            }
+
+            .acc-side-panel {
+              max-height: 145px;
+            }
+
+            .acc-room-header {
+              padding: 12px;
+            }
+
+            .acc-info-box {
+              width: 100%;
+            }
+          }
+     
