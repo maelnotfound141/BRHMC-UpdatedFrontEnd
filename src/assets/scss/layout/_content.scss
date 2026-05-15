@@ -16,7 +16,7 @@
 	}
 }
 .top-space {
-	padding-top: 140px;
+	padding-top: 240px;
 }
 .account-page .content {
 	&.top-space {
@@ -215,4 +215,27 @@
 		background-color: variables.$white;
 		border-top: 1px solid variables.$border-color;
 	}
+}
+
+.doctor-dashboard-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+
+.doctor-dashboard-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+}
+
+@media (max-width: 991.98px) {
+  .doctor-dashboard-layout {
+    display: block;
+  }
+
+  .doctor-dashboard-main {
+    width: 100%;
+  }
 }

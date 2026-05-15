@@ -1,23 +1,62 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import ImageWithBasePath from "../image-with-base-path";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { setMobileSidebar } from "@/core/redux/sidebarSlice";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setDoctorMobileSidebar,
+  setNurseMobileSidebar,
+} from "@/core/redux/sidebarSlice";
 import HeaderNav from "../header/headerNav";
 import { all_routes } from "@/routes/all_routes";
-import { Offcanvas } from "bootstrap";
 import ProfileModal from "../profile-modal/ProfileModal";
+import { doctorSidebarData } from "@/core/data/json/doctorSidebarData";
+import { nurseSidebarData } from "@/core/data/json/nurseSidebarData";
 
 const Header = () => {
+  const location = useLocation();
+  const dispatch = useDispatch();
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const dispatch = useDispatch();
+
+  const doctorMobileSidebar = useSelector(
+    (state: any) => state.sidebar.doctorMobileSidebar
+  );
+
+  const nurseMobileSidebar = useSelector(
+    (state: any) => state.sidebar.nurseMobileSidebar
+  );
+
+  const isDoctorRoute = useMemo(() => {
+    return doctorSidebarData.some((item) => {
+      if (location.pathname === item.path) return true;
+      if (location.pathname.startsWith(`${item.path}/`)) return true;
+      if (item.relativeLinks?.includes(location.pathname)) return true;
+      return false;
+    });
+  }, [location.pathname]);
+
+  const isNurseRoute = useMemo(() => {
+    return nurseSidebarData.some((item) => {
+      if (location.pathname === item.path) return true;
+      if (location.pathname.startsWith(`${item.path}/`)) return true;
+      if (item.relativeLinks?.includes(location.pathname)) return true;
+      return false;
+    });
+  }, [location.pathname]);
+
+  const isSidebarOpen = isDoctorRoute
+    ? doctorMobileSidebar
+    : isNurseRoute
+      ? nurseMobileSidebar
+      : false;
 
   // scroll detection
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -28,33 +67,46 @@ const Header = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // offcanvas mobile menu handler
-  const onMobileBtn = (e: React.MouseEvent) => {
+  // only toggles the active module sidebar drawer
+  const onSidebarToggle = (e: React.MouseEvent) => {
     e.preventDefault();
-    const offcanvasEl = document.getElementById("support_item");
-    if (offcanvasEl) {
-      const bsOffcanvas =
-        Offcanvas.getInstance(offcanvasEl) ?? new Offcanvas(offcanvasEl);
-      bsOffcanvas.show();
-    }
-  };
+    e.stopPropagation();
 
-  const onMenuClose = (e: React.MouseEvent) => {
-    e.preventDefault();
-    dispatch(setMobileSidebar(false));
+    if (isDoctorRoute) {
+      dispatch(setDoctorMobileSidebar(!doctorMobileSidebar));
+      return;
+    }
+
+    if (isNurseRoute) {
+      dispatch(setNurseMobileSidebar(!nurseMobileSidebar));
+    }
   };
 
   return (
     <header
-      className={`header header-default inner-header ${isScrolled ? "fixed" : ""}`}
+      className={`header header-default inner-header ${
+        isScrolled ? "fixed" : ""
+      }`}
     >
       <div className="container">
         <nav className="navbar navbar-expand-lg header-nav">
-          {/* mobile button and logo */}
-          <div className="navbar-header">
-            <Link id="mobile_btn" to="#" onClick={onMobileBtn}>
-              <i className="fa-solid fa-bars" />
-            </Link>
+          {/* mobile/tablet module sidebar button and logo */}
+          <div className="navbar-header d-flex align-items-center gap-2">
+            {(isDoctorRoute || isNurseRoute) && (
+              <Link
+                to="#"
+                className="module-mobile-sidebar-btn d-lg-none"
+                onClick={onSidebarToggle}
+                aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+                title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+              >
+                <i
+                  className={`fa-solid ${
+                    isSidebarOpen ? "fa-xmark" : "fa-bars"
+                  }`}
+                />
+              </Link>
+            )}
 
             <Link to={all_routes.doctorDashboard} className="navbar-brand logo">
               <h2 className="logo-name">BRHMC</h2>
@@ -78,22 +130,14 @@ const Header = () => {
                     alt="Logo"
                   />
                 </Link>
-                <Link
-                  id="menu_close"
-                  className="menu-close"
-                  to="#"
-                  onClick={onMenuClose}
-                >
-                  <i className="fas fa-times" />
-                </Link>
               </div>
+
               <HeaderNav />
             </div>
           </div>
 
           {/* right side icons and time */}
           <ul className="nav header-navbar-rht align-items-center">
-            {/* added profile-icon class to bypass the SCSS 'display: none' rule */}
             <li className="nav-item me-2 fw-medium text-dark profile-icon">
               <span className="d-none d-sm-inline">
                 {currentTime.toLocaleString("en-PH", {
@@ -106,28 +150,58 @@ const Header = () => {
                   second: "2-digit",
                 })}
               </span>
-              {/* shorter format for very small phones */}
-              <span className="d-inline d-sm-none" style={{ fontSize: '12px' }}>
+
+              <span className="d-inline d-sm-none" style={{ fontSize: "12px" }}>
                 {currentTime.toLocaleString("en-PH", {
                   hour: "numeric",
                   minute: "2-digit",
                 })}
               </span>
             </li>
+
             <ProfileModal />
-            <li>
-              <Link
-                to="#"
-                className="details-btn"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#support_item"
-              >
-                <i className="fa-solid fa-bars" />
-              </Link>
-            </li>
           </ul>
         </nav>
       </div>
+
+      <style>{`
+        .module-mobile-sidebar-btn {
+          width: 38px;
+          height: 38px;
+          min-width: 38px;
+          border-radius: 50%;
+          background: var(--primary, #0f763f);
+          color: #fff !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          box-shadow: 0 6px 18px rgba(15, 118, 63, 0.25);
+          transition: all 0.2s ease;
+        }
+
+        .module-mobile-sidebar-btn:hover {
+          filter: brightness(0.95);
+          transform: translateY(-1px);
+        }
+
+        .module-mobile-sidebar-btn i {
+          font-size: 16px;
+          line-height: 1;
+        }
+
+        @media (max-width: 575.98px) {
+          .module-mobile-sidebar-btn {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+          }
+
+          .module-mobile-sidebar-btn i {
+            font-size: 14px;
+          }
+        }
+      `}</style>
     </header>
   );
 };
