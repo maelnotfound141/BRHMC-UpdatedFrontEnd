@@ -32,7 +32,11 @@ const sidebarSlice = createSlice({
 
     setDoctorMobileSidebar: (state, { payload }) => {
       state.doctorMobileSidebar = payload;
-      if (payload) state.nurseMobileSidebar = false;
+
+      if (payload) {
+        state.nurseMobileSidebar = false;
+        state.mobileSidebar = false;
+      }
     },
 
     resetDoctorMobileSidebar: (state) => {
@@ -41,7 +45,11 @@ const sidebarSlice = createSlice({
 
     setNurseMobileSidebar: (state, { payload }) => {
       state.nurseMobileSidebar = payload;
-      if (payload) state.doctorMobileSidebar = false;
+
+      if (payload) {
+        state.doctorMobileSidebar = false;
+        state.mobileSidebar = false;
+      }
     },
 
     resetNurseMobileSidebar: (state) => {
