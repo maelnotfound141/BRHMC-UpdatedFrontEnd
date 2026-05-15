@@ -90,24 +90,8 @@ const Header = () => {
     >
       <div className="container">
         <nav className="navbar navbar-expand-lg header-nav">
-          {/* mobile/tablet module sidebar button and logo */}
-          <div className="navbar-header d-flex align-items-center gap-2">
-            {(isDoctorRoute || isNurseRoute) && (
-              <Link
-                to="#"
-                className="module-mobile-sidebar-btn d-lg-none"
-                onClick={onSidebarToggle}
-                aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-                title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-              >
-                <i
-                  className={`fa-solid ${
-                    isSidebarOpen ? "fa-xmark" : "fa-bars"
-                  }`}
-                />
-              </Link>
-            )}
-
+          {/* logo */}
+          <div className="navbar-header d-flex align-items-center">
             <Link to={all_routes.doctorDashboard} className="navbar-brand logo">
               <h2 className="logo-name">BRHMC</h2>
               <ImageWithBasePath
@@ -136,9 +120,9 @@ const Header = () => {
             </div>
           </div>
 
-          {/* right side icons and time */}
+          {/* right side time, profile, and sidebar toggle */}
           <ul className="nav header-navbar-rht align-items-center">
-            <li className="nav-item me-2 fw-medium text-dark profile-icon">
+            <li className="nav-item fw-medium text-dark profile-icon header-time-item">
               <span className="d-none d-sm-inline">
                 {currentTime.toLocaleString("en-PH", {
                   weekday: "short",
@@ -160,48 +144,27 @@ const Header = () => {
             </li>
 
             <ProfileModal />
+
+            {(isDoctorRoute || isNurseRoute) && (
+              <li className="nav-item module-sidebar-toggle-item d-lg-none">
+                <Link
+                  to="#"
+                  className="module-mobile-sidebar-btn"
+                  onClick={onSidebarToggle}
+                  aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+                  title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+                >
+                  <i
+                    className={`fa-solid ${
+                      isSidebarOpen ? "fa-xmark" : "fa-bars"
+                    }`}
+                  />
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
-
-      <style>{`
-        .module-mobile-sidebar-btn {
-          width: 38px;
-          height: 38px;
-          min-width: 38px;
-          border-radius: 50%;
-          background: var(--primary, #0f763f);
-          color: #fff !important;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-decoration: none;
-          box-shadow: 0 6px 18px rgba(15, 118, 63, 0.25);
-          transition: all 0.2s ease;
-        }
-
-        .module-mobile-sidebar-btn:hover {
-          filter: brightness(0.95);
-          transform: translateY(-1px);
-        }
-
-        .module-mobile-sidebar-btn i {
-          font-size: 16px;
-          line-height: 1;
-        }
-
-        @media (max-width: 575.98px) {
-          .module-mobile-sidebar-btn {
-            width: 34px;
-            height: 34px;
-            min-width: 34px;
-          }
-
-          .module-mobile-sidebar-btn i {
-            font-size: 14px;
-          }
-        }
-      `}</style>
     </header>
   );
 };

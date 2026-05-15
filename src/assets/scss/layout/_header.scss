@@ -27,23 +27,33 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     padding: 0;
 
     @include mixins.respond-below(lg) {
       height: 60px;
       padding: 0;
+      gap: 10px;
     }
 
     .navbar-header {
       display: inline-flex;
       align-items: center;
+      gap: 10px;
+      min-width: 0;
 
       @include mixins.respond-below(lg) {
         align-items: center;
-        justify-content: space-between;
-        flex-direction: row-reverse;
-        width: 100%;
+        justify-content: flex-start;
+        flex-direction: row;
+        width: auto;
+        flex: 1 1 auto;
+        min-width: 0;
+        padding-right: 135px;
+      }
+
+      @include mixins.respond-below(sm) {
+        padding-right: 120px;
       }
 
       #mobile_btn {
@@ -71,39 +81,51 @@
         }
       }
 
-		.logo {
-		display: inline-flex;           
-		align-items: center;            
-		gap: 12px; 
-		margin-right: 0;
-		width: auto;
-		max-width: 250px; 
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        margin-right: 0;
+        width: auto;
+        max-width: 250px;
+        min-width: 0;
 
-		@include mixins.respond-below(sm) {
-			width: 100%;
-			max-width: 100%;
-			justify-content: start;
-		}
+        @include mixins.respond-below(lg) {
+          max-width: 210px;
+          overflow: hidden;
+        }
 
-		img {
-			order: 1; 
-			height: 50px; 
-			width: auto;  
-			
-			@include mixins.respond-below(sm) {
-			height: 35px; 
-			}
-		}
+        @include mixins.respond-below(sm) {
+          max-width: 170px;
+          justify-content: flex-start;
+          gap: 8px;
+        }
 
-		.logo-name {
-			order: 2; 
-			font-size: 1.8rem; 
-			font-weight: bold;
-			color: variables.$primary;
-			margin: 0;
-			line-height: 1;
-		}
-		}
+        img {
+          order: 1;
+          height: 50px;
+          width: auto;
+          flex-shrink: 0;
+
+          @include mixins.respond-below(sm) {
+            height: 35px;
+          }
+        }
+
+        .logo-name {
+          order: 2;
+          font-size: 1.8rem;
+          font-weight: bold;
+          color: variables.$primary;
+          margin: 0;
+          line-height: 1;
+          white-space: nowrap;
+
+          @include mixins.respond-below(sm) {
+            font-size: 1.5rem;
+          }
+        }
+      }
     }
 
     .header-menu {
@@ -153,6 +175,7 @@
 
         .menu-close {
           font-size: typography.$font__size__18;
+
           @include mixins.respond-below(lg) {
             width: 32px;
             height: 32px;
@@ -161,6 +184,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
+
             &:hover {
               background: variables.$primary;
               border: 1px solid variables.$primary;
@@ -171,7 +195,7 @@
       }
     }
 
-    // Main Navigation Styles (desktop & mobile)
+    // Main Navigation Styles
     .main-nav {
       list-style: none;
       display: flex;
@@ -194,6 +218,7 @@
           display: block;
           font-size: variables.$font-size-16;
           font-weight: variables.$font-weight-medium;
+
           @include mixins.respond-below(lg) {
             display: flex;
             align-items: center;
@@ -207,6 +232,7 @@
 
         &.login-link {
           display: none;
+
           @include mixins.respond-below(sm) {
             display: block;
           }
@@ -217,12 +243,15 @@
         @include mixins.respond-below(xl) {
           margin-right: 20px;
         }
+
         @include mixins.respond-below(custom2000) {
           margin-right: 25px;
         }
+
         @include mixins.respond-below(custom1399) {
           margin-right: 13px;
         }
+
         @include mixins.respond-below(lg) {
           border-bottom: 1px solid variables.$gray-200;
           margin: 0;
@@ -233,6 +262,7 @@
             line-height: 85px;
             padding: 0 !important;
           }
+
           @include mixins.respond-below(lg) {
             line-height: 1.5;
             font-size: variables.$font-size-14;
@@ -249,26 +279,33 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
+      gap: 12px;
+      flex-shrink: 0;
 
       @include mixins.respond-below(lg) {
         position: absolute;
         top: 10px;
         right: 15px;
         margin: 0;
+        gap: 10px;
+        z-index: 5;
+      }
+
+      @include mixins.respond-below(sm) {
+        right: 10px;
+        gap: 8px;
       }
 
       li {
-        padding-right: 20px;
+        padding-right: 0 !important;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         position: relative;
-        &:last-child {
-          padding-right: 0px !important;
-        }
+        margin: 0 !important;
 
-        // Hide the duplicate off-canvas button on mobile, keep profile icon
-        &:not(.profile-icon) {
+        // Hide duplicate old header buttons on mobile, but keep time, profile, and sidebar toggle.
+        &:not(.profile-icon):not(.module-sidebar-toggle-item) {
           @include mixins.respond-below(lg) {
             display: none;
           }
@@ -307,17 +344,52 @@
 
         &.profile-icon {
           display: inline-flex;
+          white-space: nowrap;
+        }
 
-          @include mixins.respond-below(lg) {
-            padding-right: 15px;
-          }
-
-          @include mixins.respond-below(md) {
-            padding-right: 10px;
-          }
-
+        &.header-time-item {
           @include mixins.respond-below(sm) {
-            padding-right: 5px;
+            font-size: 12px;
+          }
+        }
+
+        &.module-sidebar-toggle-item {
+          display: inline-flex;
+        }
+      }
+
+      .module-mobile-sidebar-btn,
+      .doctor-mobile-sidebar-btn {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        border-radius: 50%;
+        background: variables.$primary;
+        color: variables.$white !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 6px 18px rgba(15, 118, 63, 0.25);
+        transition: all 0.2s ease;
+
+        &:hover {
+          filter: brightness(0.95);
+          transform: translateY(-1px);
+        }
+
+        i {
+          font-size: 15px;
+          line-height: 1;
+        }
+
+        @include mixins.respond-below(md) {
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+
+          i {
+            font-size: 14px;
           }
         }
       }
@@ -327,6 +399,7 @@
   // Specific Modifiers
   &.inner-header {
     border-bottom: 1px solid variables.$border-color;
+
     .header-nav .header-navbar-rht li .details-btn {
       @include mixins.respond-below(xl) {
         width: 36px;
@@ -348,6 +421,7 @@
   &.header-default {
     .header-nav .main-nav .has-submenu.active > a {
       position: relative;
+
       &::before {
         content: "";
         background: variables.$primary-gradient;
@@ -357,11 +431,13 @@
         left: -1px;
         bottom: -4px;
         border-radius: 30px;
+
         @include mixins.respond-below(lg) {
           content: unset;
         }
       }
     }
+
     .has-submenu .sub-menu-one {
       top: 50px !important;
     }
@@ -397,14 +473,14 @@ html.menu-opened body {
   }
 }
 
-// Offcanvas Support (if used)
+// Offcanvas Support
 .offcanvas {
   &.show {
     z-index: 9999;
   }
 }
 
-// Additional utility for theme toggle (if needed)
+// Additional utility for theme toggle
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -416,6 +492,7 @@ html.menu-opened body {
   font-size: 20px;
   border: 1px solid variables.$gray-200;
   transition: all 0.3s;
+
   &:hover {
     background: variables.$primary;
     color: variables.$white;
@@ -428,6 +505,7 @@ html.menu-opened body {
     opacity: 0;
     transform: translate3d(0, -100%, 0);
   }
+
   to {
     opacity: 1;
     transform: none;
