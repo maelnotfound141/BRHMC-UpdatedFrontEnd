@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
-import ImageWithBasePath from "@/components/image-with-base-path";
 import { useLocation } from "react-router";
 
 // --- Types ---
@@ -15,25 +14,20 @@ interface DiagnosisRecord {
   isPrimary: string;
 }
 
-// --- mck data temporary options value based sa vid ---
+// --- Mock Data ---
 const MOCK_PHYSICIANS = [
   "-- --. -",
   "Abagatnan Alodie Joy. -",
   "Abitria Jowanna. A",
   "Aboga Louise.",
   "Acosta John Patrick. L",
-  "Ador Michelle. M",
-  "Adviento Jerelyn. B",
-  "Agcaoili Charmane Claire. T",
-  "Agripa Virgie Nonette. S",
-  "Aguila Edsel. B",
 ];
 
-const DIAGNOSIS_TYPES = ["","Final"];
+const DIAGNOSIS_TYPES = ["Admitting", "Final"];
 const PHYSICIAN_TYPES = ["", "Attending Physician"];
 const YES_NO = ["Yes", "No"];
 
-// get currentdate and tirme
+// --- Helpers ---
 const getCurrentDateTimeLocal = () => {
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -43,34 +37,46 @@ const getCurrentDateTimeLocal = () => {
 const DiagnosisModule = () => {
   const location = useLocation();
 
+  // --- Mock Patient ---
   const [mockPatientProfile] = useState({
     hospitalNumber: "000000000777288",
     lastName: "DO",
     firstName: "REA",
     middleName: "MON",
     address: "111 Estanza, Legazpi City, Albay",
-    birthdate: "01/01/2000",
-    age: "26 Yrs. Old",
-    civilStatus: "Married",
-    gender: "Male",
-    employmentStatus: "Employed",
-    nationality: "Filipino",
-    religion: "Catholic",
-    seniorCitizenNo: "",
-    mssNo: "",
-    isPersonnel: "No",
   });
 
-  // --- State Management ---
+  // --- States ---
   const [records, setRecords] = useState<DiagnosisRecord[]>([]);
-  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-  
+  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(
+    null
+  );
+
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>(
+    {}
+  );
+
   const [showModal, setShowModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Form State
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // --- Responsive State ---
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 992);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // --- Form ---
   const [formData, setFormData] = useState({
     dateTime: getCurrentDateTimeLocal(),
     typeOfDiag: "Admitting",
@@ -81,36 +87,32 @@ const DiagnosisModule = () => {
     isPrimary: "No",
   });
 
-  // sa pagination state
+  // --- Pagination ---
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     if (location.state?.selectedPatientId) {
-      setTimeout(() => {}, 1500);
+      setTimeout(() => {}, 1000);
     }
   }, [location.state]);
 
   const isRowSelected = selectedRecordId !== null;
-  const isFormValid = formData.diagnosisText.trim().length > 0;
+  const hasRecords = records.length > 0;
+
+  const isFormValid = useMemo(() => {
+    return formData.diagnosisText.trim().length > 0;
+  }, [formData]);
 
   const totalPages = Math.max(1, Math.ceil(records.length / pageSize));
+
   const paginatedRecords = records.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) setCurrentPage(newPage);
-  };
-
-  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(Number(e.target.value));
-    setCurrentPage(1); 
-  };
-
   // --- Handlers ---
-  const handleAdd = () => {
+  const resetForm = () => {
     setFormData({
       dateTime: getCurrentDateTimeLocal(),
       typeOfDiag: "Admitting",
@@ -120,43 +122,49 @@ const DiagnosisModule = () => {
       icdCode: "",
       isPrimary: "No",
     });
+  };
+
+  const handleAdd = () => {
+    resetForm();
     setIsEditing(false);
     setShowModal(true);
   };
 
   const handleEdit = () => {
     if (!selectedRecordId) return;
-    const recordToEdit = records.find((r) => r.id === selectedRecordId);
-    if (recordToEdit) {
-      setFormData({
-        dateTime: recordToEdit.dateTime,
-        typeOfDiag: recordToEdit.typeOfDiag,
-        physician: recordToEdit.physician,
-        typeOfPhysician: recordToEdit.typeOfPhysician,
-        diagnosisText: recordToEdit.diagnosisText,
-        icdCode: recordToEdit.icdCode,
-        isPrimary: recordToEdit.isPrimary,
-      });
-      setIsEditing(true);
-      setShowModal(true);
-    }
+
+    const selected = records.find((r) => r.id === selectedRecordId);
+
+    if (!selected) return;
+
+    setFormData({
+      dateTime: selected.dateTime,
+      typeOfDiag: selected.typeOfDiag,
+      physician: selected.physician,
+      typeOfPhysician: selected.typeOfPhysician,
+      diagnosisText: selected.diagnosisText,
+      icdCode: selected.icdCode,
+      isPrimary: selected.isPrimary,
+    });
+
+    setIsEditing(true);
+    setShowModal(true);
   };
 
   const handleDeleteClick = () => {
     if (!selectedRecordId) return;
+
     setShowDeleteModal(true);
   };
 
   const confirmDelete = () => {
-    if (selectedRecordId) {
-      setRecords((prev) => {
-        const updated = prev.filter((r) => r.id !== selectedRecordId);
-        const newTotalPages = Math.max(1, Math.ceil(updated.length / pageSize));
-        if (currentPage > newTotalPages) setCurrentPage(newTotalPages);
-        return updated;
-      });
-      setSelectedRecordId(null);
-    }
+    if (!selectedRecordId) return;
+
+    setRecords((prev) =>
+      prev.filter((record) => record.id !== selectedRecordId)
+    );
+
+    setSelectedRecordId(null);
     setShowDeleteModal(false);
   };
 
@@ -165,460 +173,771 @@ const DiagnosisModule = () => {
 
     if (isEditing && selectedRecordId) {
       setRecords((prev) =>
-        prev.map((r) => (r.id === selectedRecordId ? { ...r, ...formData } : r))
+        prev.map((record) =>
+          record.id === selectedRecordId
+            ? { ...record, ...formData }
+            : record
+        )
       );
     } else {
       const newRecord: DiagnosisRecord = {
         id: Date.now().toString(),
         ...formData,
       };
-      setRecords((prev) => [...prev, newRecord]);
-      setCurrentPage(1); 
-    }
-  };
 
-  const handleSaveAndClose = () => {
-    if (!isFormValid) return;
-    saveRecord();
+      setRecords((prev) => [newRecord, ...prev]);
+    }
+
     setShowModal(false);
   };
 
-  const toggleRowExpand = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation(); // Prevents clicking the button from selecting the row
-    setExpandedRows(prev => ({ ...prev, [id]: !prev[id] }));
+  const toggleRowExpand = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: string
+  ) => {
+    e.stopPropagation();
+
+    setExpandedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
 
-  // sa automatic dropdown value kapag final
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const val = e.target.value;
+
     setFormData((prev) => {
-      const updates = { ...prev, typeOfDiag: val };
+      const updated = {
+        ...prev,
+        typeOfDiag: val,
+      };
+
       if (val === "Final") {
-        updates.typeOfPhysician = "Attending Physician";
-        updates.physician = "-- --. -";
+        updated.typeOfPhysician = "Attending Physician";
+        updated.physician = "-- --. -";
       }
-      return updates;
+
+      return updated;
     });
   };
 
-  // pag determine dropdown options based sa Type of Diagnosis
-  const currentPhysicianTypes = formData.typeOfDiag === "Final" ? ["Attending Physician"] : PHYSICIAN_TYPES;
+  const currentPhysicianTypes =
+    formData.typeOfDiag === "Final"
+      ? ["Attending Physician"]
+      : PHYSICIAN_TYPES;
 
   return (
     <>
       <style>
         {`
-          .hide-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
-          .hide-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-          .hide-scrollbar { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
-          .text-hover-primary:hover { color: var(--primary, #0f763f) !important; }
-          
-          /* Updated Row Highlight Design */
-          .table-hover tbody tr { cursor: pointer; transition: all 0.2s ease-in-out; }
-          .selected-row > td { 
-            background-color: #e6f4ea !important; 
-            color: #0b592f !important; 
-          }
-          .selected-row > td:first-child { 
-            border-left: 4px solid var(--primary, #0f763f) !important; 
-          }
-          .selected-row .text-muted {
-            color: #0f763f !important; 
+          body {
+            background: #f5f7fa;
+            color: #1f2937;
           }
 
-          /* Modal Inline Forms */
-          .form-control-compact { padding: 4px 8px; font-size: 0.85rem; height: 32px; border: 1px solid #ced4da; border-radius: 2px; }
-          .form-select-compact { padding: 4px 24px 4px 8px; font-size: 0.85rem; height: 32px; border: 1px solid #ced4da; border-radius: 2px; }
-
-          /* Wider modal for Tablets */
-          @media (min-width: 768px) and (max-width: 1199px) {
-            .tablet-wide-modal { max-width: 95% !important; width: 95% !important; }
+          .selected-row > td {
+            background-color: #e6f4ea !important;
+            transition: background-color 0.2s ease;
           }
 
-          /* Responsive Breakpoints */
+          .selected-row > td:first-child {
+            border-left: 4px solid #0f763f !important;
+          }
+
+          .toolbar-btn {
+            border-radius: 10px;
+            font-weight: 600;
+            min-width: 120px;
+            min-height: 42px;
+            transition: all 0.2s ease;
+          }
+
+          .toolbar-btn:hover {
+            transform: translateY(-1px);
+          }
+
+          .diagnosis-add-btn {
+            background: linear-gradient(135deg, #0f763f, #198754);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            padding: 10px 18px;
+            min-height: 42px;
+            box-shadow: 0 4px 12px rgba(15,118,63,0.25);
+            transition: all 0.25s ease;
+          }
+
+          .diagnosis-add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(15,118,63,0.35);
+            background: linear-gradient(135deg, #0b5d31, #157347);
+            color: white;
+          }
+
+          .empty-state-container {
+            min-height: 360px;
+          }
+
+          .mobile-empty-add-btn {
+            width: 100%;
+            max-width: 240px;
+            border-radius: 12px;
+            font-weight: 600;
+            min-height: 44px;
+            background: linear-gradient(135deg, #0f763f, #198754);
+            border: none;
+            box-shadow: 0 6px 16px rgba(15,118,63,0.2);
+            color: #ffffff;
+          }
+
+          .card {
+            border-radius: 16px !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06) !important;
+            border: 1px solid #e5e7eb !important;
+            background: #ffffff;
+          }
+
+          .table {
+            margin-bottom: 0;
+          }
+
+          .table thead {
+            background: #f8fafc;
+          }
+
+          .table thead th {
+            color: #374151;
+            font-weight: 700;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f8fafc !important;
+          }
+
+          .table tbody td {
+            border-color: #eef2f7;
+            vertical-align: middle;
+            color: #1f2937;
+          }
+
+          .table-hover tbody tr:hover {
+            background-color: #f0fdf4;
+            transition: background-color 0.2s ease;
+          }
+
+          .table tbody tr {
+            transition: all 0.2s ease;
+          }
+
+          .modal-content {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+          }
+
+          .modal-header {
+            background: linear-gradient(135deg, #333b45, #1f2937) !important;
+            border-bottom: none;
+            padding: 1rem 1.5rem;
+          }
+
+          .modal-title {
+            font-weight: 700;
+          }
+
+          .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #eef2f7;
+          }
+
+          .form-control,
+          .form-select {
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            min-height: 46px;
+            padding: 0.7rem 0.9rem;
+            transition: all 0.2s ease;
+          }
+
+          textarea.form-control {
+            min-height: 140px;
+          }
+
+          .form-control:focus,
+          .form-select:focus {
+            border-color: #0f763f;
+            box-shadow: 0 0 0 4px rgba(15,118,63,0.15);
+          }
+
+          .btn-outline-primary,
+          .btn-outline-danger,
+          .btn-outline-secondary,
+          .btn-light,
+          .btn-danger,
+          .btn-success {
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+          }
+
+          .badge {
+            border-radius: 999px !important;
+            padding: 0.55rem 0.9rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            background: #e6f4ea !important;
+            color: #0f763f !important;
+            border: 1px solid rgba(15,118,63,0.15) !important;
+          }
+
+          .patient-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #e6f4ea;
+            border: 2px solid rgba(15,118,63,0.15);
+            box-shadow: 0 6px 18px rgba(15,118,63,0.12);
+          }
+
+          .patient-name {
+            color: #1f2937;
+            letter-spacing: 0.3px;
+            margin-bottom: 0.35rem;
+          }
+
+          .patient-address {
+            color: #6b7280;
+            line-height: 1.6;
+          }
+
           @media (max-width: 575.98px) {
-            .modal-footer-actions { flex-direction: column-reverse; width: 100%; }
-            .modal-footer-actions button { width: 100%; margin-top: 8px; }
-            .pagination-controls { flex-direction: column; gap: 12px; }
+            .toolbar-mobile-stack {
+              width: 100%;
+            }
+
+            .toolbar-mobile-stack button {
+              flex: 1;
+            }
+
+            .card {
+              padding: 1rem !important;
+            }
           }
         `}
       </style>
 
-      
-
-      <div className="content doctor-content bg-light mt-n4 d-flex flex-column" style={{ minHeight: "100vh" }}>
+      <div
+        className="content doctor-content bg-light mt-n4 d-flex flex-column"
+        style={{ minHeight: "100vh" }}
+      >
         <div className="container-fluid px-3 px-lg-5 pt-0 flex-grow-1 d-flex flex-column">
           <div className="row flex-grow-1">
             <DoctorSidebar />
 
             <div className="col-lg-8 col-xl-9 mt-4 mt-lg-0 d-flex flex-column">
-              <div className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column flex-grow-1" style={{ borderRadius: "12px", borderTop: "4px solid var(--primary, #0f763f)" }}>
-                
-                {/* Patient Profile Header */}
-                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
-                  <div className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0" style={{ width: "90px", height: "90px", border: "2px solid var(--primary, #0f763f)" }}>
-                    <i className="isax isax-user fs-1 text-primary" style={{ color: "var(--primary, #0f763f)" }} />
+              <div
+                className="card border-0 shadow-sm p-3 p-md-4 mb-4 flex-grow-1"
+                style={{
+                  borderRadius: "16px",
+                  borderTop: "4px solid #0f763f",
+                  background: "#ffffff",
+                }}
+              >
+                {/* Header */}
+                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom">
+                  <div className="rounded-circle d-flex align-items-center justify-content-center patient-avatar">
+                    <i className="isax isax-user fs-1 text-success"></i>
                   </div>
+
                   <div>
-                    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">ID: {mockPatientProfile.hospitalNumber}</div>
-                    <h3 className="fw-bold mb-1 text-dark fs-3 fs-md-2">
-                      {mockPatientProfile.lastName}, {mockPatientProfile.firstName} {mockPatientProfile.middleName}
+                    <div className="badge mb-2">
+                      ID: {mockPatientProfile.hospitalNumber}
+                    </div>
+
+                    <h3 className="fw-bold patient-name">
+                      {mockPatientProfile.lastName},{" "}
+                      {mockPatientProfile.firstName}{" "}
+                      {mockPatientProfile.middleName}
                     </h3>
-                    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                      <i className="isax isax-location text-danger" />
+
+                    <div className="small patient-address">
                       {mockPatientProfile.address}
                     </div>
                   </div>
                 </div>
 
-            
-                <div className="d-flex flex-column flex-grow-1 mb-4">
-                  
-                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
-                    <h5 className="fw-bold text-dark mb-0 text-center text-md-start text-uppercase">Diagnosis</h5>
-            
-                    <div className="d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto" style={{ gap: "6px" }}>
-                      <button 
-                        onClick={handleAdd} 
-                        className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0"
-                        style={{ borderRadius: "4px", cursor: "pointer" }}
+                {/* Toolbar */}
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                  <h5 className="fw-bold text-uppercase mb-0">
+                    Diagnosis
+                  </h5>
+
+                  {(!isMobile || hasRecords) && (
+                    <div className="d-flex gap-2 toolbar-mobile-stack">
+                      {/* Add */}
+                      <button
+                        onClick={handleAdd}
+                        className="btn btn-sm diagnosis-add-btn toolbar-btn"
                       >
-                        <i className="isax isax-add-square"></i> <span>Add</span>
-                      </button>
-                      
-                      <button 
-                        onClick={handleEdit} 
-                        disabled={!isRowSelected}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                          !isRowSelected ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold'
-                        }`}
-                        style={{ borderRadius: "4px", cursor: !isRowSelected ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-edit"></i> <span>Edit</span>
+                        <i className="isax isax-add-square me-1"></i>
+                        Add Diagnosis
                       </button>
 
-                      <button 
-                        onClick={handleDeleteClick} 
+                      {/* Edit */}
+                      <button
                         disabled={!isRowSelected}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                          !isRowSelected ? 'bg-light text-muted opacity-50' : 'bg-white text-danger fw-bold'
+                        onClick={handleEdit}
+                        className={`btn btn-sm border shadow-sm toolbar-btn ${
+                          !isRowSelected
+                            ? "btn-light opacity-50"
+                            : "btn-outline-primary"
                         }`}
-                        style={{ borderRadius: "4px", cursor: !isRowSelected ? "not-allowed" : "pointer" }}
                       >
-                        <i className="isax isax-trash"></i> <span>Del</span>
+                        <i className="isax isax-edit me-1"></i>
+                        Edit
+                      </button>
+
+                      {/* Delete */}
+                      <button
+                        disabled={!isRowSelected}
+                        onClick={handleDeleteClick}
+                        className={`btn btn-sm border shadow-sm toolbar-btn ${
+                          !isRowSelected
+                            ? "btn-light opacity-50"
+                            : "btn-outline-danger"
+                        }`}
+                      >
+                        <i className="isax isax-trash me-1"></i>
+                        Delete
                       </button>
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  <div className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden" style={{ minHeight: "450px" }}>
-                    <div className="table-responsive flex-grow-1 bg-white p-0">
-                      <table className="table table-hover align-middle mb-0 w-100" style={{ fontSize: "0.85rem" }}>
-                        <thead style={{ backgroundColor: "#f8f9fa" }}>
+                {/* Table */}
+                <div
+                  className="border rounded shadow-sm bg-white overflow-hidden flex-grow-1"
+                  style={{
+                    borderRadius: "16px",
+                    border: "1px solid #e5e7eb",
+                  }}
+                >
+                  <div className="table-responsive">
+                    <table className="table table-hover align-middle mb-0">
+                      <thead className="bg-light">
+                        <tr>
+                          <th className="px-4 py-3">Type</th>
+                          <th className="px-4 py-3">Diagnosis</th>
+
+                          <th className="px-4 py-3 d-none d-lg-table-cell">
+                            ICD
+                          </th>
+
+                          <th className="px-4 py-3 d-none d-lg-table-cell">
+                            Physician
+                          </th>
+
+                          <th className="px-4 py-3 text-center d-lg-none">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {!hasRecords ? (
                           <tr>
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold" style={{ width: "20%" }}>Type of Diag</th>
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold d-none d-lg-table-cell" style={{ width: "10%" }}>Primary</th>
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold" style={{ width: "40%" }}>Diagnosis</th>
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold d-none d-lg-table-cell" style={{ width: "15%" }}>ICD Code</th>
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold d-none d-lg-table-cell" style={{ width: "15%" }}>Physician</th>
-                            {/* action column na visible lang sa smaller screens */}
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold text-center d-table-cell d-lg-none" style={{ width: "15%" }}>Actions</th>
+                            <td colSpan={5} className="border-0">
+                              <div className="empty-state-container d-flex flex-column align-items-center justify-content-center text-center p-4">
+                                <i
+                                  className="isax isax-document-text text-muted opacity-50 mb-3"
+                                  style={{ fontSize: "4rem" }}
+                                ></i>
+
+                                <h5 className="fw-bold">
+                                  No diagnosis records found
+                                </h5>
+
+                                <p className="text-muted mb-4">
+                                  Start by adding a diagnosis record.
+                                </p>
+
+                                {isMobile && (
+                                  <button
+                                    onClick={handleAdd}
+                                    className="btn mobile-empty-add-btn shadow-sm"
+                                  >
+                                    <i className="isax isax-add-square me-2"></i>
+                                    Add Diagnosis
+                                  </button>
+                                )}
+                              </div>
+                            </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {paginatedRecords.length === 0 ? (
-                            <tr>
-                              <td colSpan={6} className="text-center text-muted py-5 border-0">
-                                <i className="isax isax-document-text fs-1 mb-3 opacity-50 d-block" style={{ fontSize: '3rem' }}></i>
-                                <h6 className="fw-bold mb-1">No diagnosis records found.</h6>
-                                <p className="small mb-0">Click <strong className="text-dark">Add</strong> in the toolbar above to begin.</p>
-                              </td>
-                            </tr>
-                          ) : (
-                            paginatedRecords.map((record) => (
-                              <React.Fragment key={record.id}>
-                                <tr 
-                                  onClick={() => setSelectedRecordId(record.id)}
-                                  className={selectedRecordId === record.id ? "selected-row" : ""}
-                                >
-                                  <td className="py-3 px-4 fw-medium text-dark border-start-0 align-top">{record.typeOfDiag}</td>
-                                  
-                                  {/* Hidden sa small screens */}
-                                  <td className="py-3 px-4 align-top d-none d-lg-table-cell">{record.isPrimary}</td>
-                                  
-                                  <td className="py-3 px-4 text-wrap text-break align-top" style={{ maxWidth: "350px" }}>{record.diagnosisText}</td>
-                                  
-                                  {/* Hidden sa small screens */}
-                                  <td className="py-3 px-4 align-top d-none d-lg-table-cell">{record.icdCode}</td>
-                                  <td className="py-3 px-4 text-muted align-top d-none d-lg-table-cell">{record.physician !== "-- --. -" ? record.physician : "--, --"}</td>
-                                  
-                                  {/* Mobile/Tablet seemre btn */}
-                                  <td className="text-center align-middle py-3 px-2 d-table-cell d-lg-none">
-                                    <button 
-                                      className="btn btn-sm btn-outline-secondary px-3 rounded-1 text-nowrap"
-                                      onClick={(e) => toggleRowExpand(e, record.id)}
-                                    >
-                                      {expandedRows[record.id] ? "Hide" : "See More"}
-                                    </button>
+                        ) : (
+                          paginatedRecords.map((record) => (
+                            <React.Fragment key={record.id}>
+                              <tr
+                                onClick={() =>
+                                  setSelectedRecordId(record.id)
+                                }
+                                className={
+                                  selectedRecordId === record.id
+                                    ? "selected-row"
+                                    : ""
+                                }
+                                style={{ cursor: "pointer" }}
+                              >
+                                <td className="px-4 py-3">
+                                  {record.typeOfDiag}
+                                </td>
+
+                                <td className="px-4 py-3 text-break">
+                                  {record.diagnosisText}
+                                </td>
+
+                                <td className="px-4 py-3 d-none d-lg-table-cell">
+                                  {record.icdCode || "—"}
+                                </td>
+
+                                <td className="px-4 py-3 d-none d-lg-table-cell">
+                                  {record.physician}
+                                </td>
+
+                                <td className="text-center d-lg-none">
+                                  <button
+                                    className="btn btn-sm btn-outline-secondary"
+                                    onClick={(e) =>
+                                      toggleRowExpand(e, record.id)
+                                    }
+                                  >
+                                    {expandedRows[record.id]
+                                      ? "Hide"
+                                      : "See More"}
+                                  </button>
+                                </td>
+                              </tr>
+
+                              {expandedRows[record.id] && (
+                                <tr className="d-lg-none bg-light">
+                                  <td colSpan={5}>
+                                    <div className="p-3">
+                                      <div className="mb-2">
+                                        <strong>Primary:</strong>{" "}
+                                        {record.isPrimary}
+                                      </div>
+
+                                      <div className="mb-2">
+                                        <strong>ICD:</strong>{" "}
+                                        {record.icdCode || "—"}
+                                      </div>
+
+                                      <div>
+                                        <strong>Physician:</strong>{" "}
+                                        {record.physician}
+                                      </div>
+                                    </div>
                                   </td>
                                 </tr>
-
-                                {/* Expanded Rows sa Mobile/Tablet */}
-                                {expandedRows[record.id] && (
-                                  <tr className="d-lg-none bg-light">
-                                    <td colSpan={3} className="px-4 py-3 border-bottom">
-                                      <div className="d-flex flex-column gap-2 rounded-2 border p-3 bg-white shadow-sm">
-                                        <div className="d-flex justify-content-between border-bottom pb-2">
-                                          <span className="text-muted small fw-bold text-uppercase">Primary Diagnosis</span>
-                                          <span className="fw-medium text-dark">{record.isPrimary}</span>
-                                        </div>
-                                        <div className="d-flex justify-content-between border-bottom pb-2">
-                                          <span className="text-muted small fw-bold text-uppercase">ICD Code</span>
-                                          <span className="fw-medium text-dark">{record.icdCode || "—"}</span>
-                                        </div>
-                                        <div className="d-flex flex-column pt-1">
-                                          <span className="text-muted small fw-bold text-uppercase mb-1">Physician / Type</span>
-                                          <span className="fw-medium text-dark">{record.physician !== "-- --. -" ? record.physician : "--, --"}</span>
-                                          <span className="small text-muted">{record.typeOfPhysician || "—"}</span>
-                                        </div>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                )}
-                              </React.Fragment>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {/* Pagination Controls */}
-                    {records.length > 0 && (
-                      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center p-3 border-top bg-light gap-2 pagination-controls">
-                        
-                        <div className="d-flex align-items-center gap-2">
-                          <span className="text-muted small fw-medium">Show</span>
-                          <select 
-                            className="form-select form-select-sm shadow-none" 
-                            style={{ width: "75px", borderColor: "#ced4da" }}
-                            value={pageSize}
-                            onChange={handlePageSizeChange}
-                          >
-                            <option value={10}>10</option>
-                            <option value={25}>25</option>
-                            <option value={50}>50</option>
-                            <option value={100}>100</option>
-                          </select>
-                          <span className="text-muted small fw-medium">entries</span>
-                        </div>
-
-                        <span className="text-muted small fw-medium text-center">
-                          Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, records.length)} of {records.length} entries
-                        </span>
-                        
-                        <div className="d-flex gap-1">
-                          <button 
-                            className="btn btn-sm btn-outline-secondary px-3" 
-                            onClick={() => handlePageChange(currentPage - 1)} 
-                            disabled={currentPage === 1}
-                          >
-                            Prev
-                          </button>
-                          <span className="btn btn-sm btn-light disabled px-3 text-dark fw-bold border">
-                            {currentPage} / {totalPages}
-                          </span>
-                          <button 
-                            className="btn btn-sm btn-outline-secondary px-3" 
-                            onClick={() => handlePageChange(currentPage + 1)} 
-                            disabled={currentPage === totalPages}
-                          >
-                            Next
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                              )}
+                            </React.Fragment>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
                   </div>
+
+                  {/* Pagination */}
+                  {hasRecords && (
+                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top bg-light gap-3">
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="small text-muted">Show</span>
+
+                        <select
+                          className="form-select form-select-sm"
+                          style={{ width: "80px" }}
+                          value={pageSize}
+                          onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                            setCurrentPage(1);
+                          }}
+                        >
+                          <option value={10}>10</option>
+                          <option value={25}>25</option>
+                          <option value={50}>50</option>
+                        </select>
+
+                        <span className="small text-muted">
+                          entries
+                        </span>
+                      </div>
+
+                      <div className="small text-muted">
+                        Showing{" "}
+                        {(currentPage - 1) * pageSize + 1} to{" "}
+                        {Math.min(
+                          currentPage * pageSize,
+                          records.length
+                        )}{" "}
+                        of {records.length}
+                      </div>
+
+                      <div className="d-flex gap-2">
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          disabled={currentPage === 1}
+                          onClick={() =>
+                            setCurrentPage((prev) => prev - 1)
+                          }
+                        >
+                          Prev
+                        </button>
+
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          disabled={currentPage === totalPages}
+                          onClick={() =>
+                            setCurrentPage((prev) => prev + 1)
+                          }
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="mt-2 text-muted fw-bold" style={{ fontSize: "0.85rem" }}>
-                  Total Number of Record/s: <span className="text-dark">{records.length}</span>
+                {/* Footer Count */}
+                <div className="mt-3 fw-bold text-muted small">
+                  Total Records:{" "}
+                  <span className="text-dark">{records.length}</span>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* add .edit form modal */}
+      {/* Add/Edit Modal */}
       {showModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}>
-          <div className="modal-dialog modal-xl tablet-wide-modal modal-dialog-centered px-2 px-sm-3">
-            <div className="modal-content border-0 shadow-lg" style={{ borderRadius: "8px", overflow: "hidden" }}>
-              
-              <div className="modal-header border-0 py-3 d-flex align-items-center" style={{ backgroundColor: "#333b45" }}>
-                <h4 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2" style={{ fontSize: "1.1rem", letterSpacing: "0.5px" }}>
-                  <i className="isax isax-add-square" style={{ fontSize: "1.5rem" }}></i>
+        <div
+          className="modal fade show d-block"
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 1060,
+          }}
+        >
+          <div className="modal-dialog modal-xl modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header">
+                <h5 className="modal-title text-white">
                   {isEditing ? "EDIT" : "ADD"} DIAGNOSIS
-                </h4>
-                <button type="button" className="btn-close btn-close-white shadow-none" onClick={() => setShowModal(false)}></button>
+                </h5>
+
+                <button
+                  className="btn-close btn-close-white"
+                  onClick={() => setShowModal(false)}
+                ></button>
               </div>
 
-              <div className="modal-body p-4 bg-white">
-                
-                <div className="row g-3 mb-3">
-                  <div className="col-12 col-md-3">
-                    <label className="text-muted small fw-bold mb-1">Date/Time <span className="text-danger">*</span></label>
-                    <input 
-                      type="datetime-local" 
-                      className="form-control form-control-compact shadow-none" 
-                      style={{ borderColor: "var(--primary, #0f763f)" }}
+              <div className="modal-body p-4">
+                <div className="row g-3">
+                  <div className="col-md-3">
+                    <label className="small fw-bold mb-1">
+                      Date/Time
+                    </label>
+
+                    <input
+                      type="datetime-local"
+                      className="form-control"
                       value={formData.dateTime}
-                      onChange={(e) => setFormData({...formData, dateTime: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          dateTime: e.target.value,
+                        })
+                      }
                     />
                   </div>
-                  <div className="col-12 col-md-2">
-                    <label className="text-muted small fw-bold mb-1">Type of Diagnosis <span className="text-danger">*</span></label>
-                    <select 
-                      className="form-select form-select-compact shadow-none"
-                      style={{ borderColor: "var(--primary, #0f763f)" }}
+
+                  <div className="col-md-3">
+                    <label className="small fw-bold mb-1">
+                      Type of Diagnosis
+                    </label>
+
+                    <select
+                      className="form-select"
                       value={formData.typeOfDiag}
                       onChange={handleTypeChange}
                     >
-                      {DIAGNOSIS_TYPES.map(type => <option key={type} value={type}>{type}</option>)}
+                      {DIAGNOSIS_TYPES.map((type) => (
+                        <option key={type}>{type}</option>
+                      ))}
                     </select>
                   </div>
-                  <div className="col-12 col-md-4">
-                    <label className="text-muted small fw-bold mb-1">Physician</label>
-                    <select 
-                      className="form-select form-select-compact shadow-none"
-                      style={{ borderColor: "var(--primary, #0f763f)" }}
+
+                  <div className="col-md-3">
+                    <label className="small fw-bold mb-1">
+                      Physician
+                    </label>
+
+                    <select
+                      className="form-select"
                       value={formData.physician}
-                      onChange={(e) => setFormData({...formData, physician: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          physician: e.target.value,
+                        })
+                      }
                     >
-                      {MOCK_PHYSICIANS.map(phys => <option key={phys} value={phys}>{phys}</option>)}
+                      {MOCK_PHYSICIANS.map((physician) => (
+                        <option key={physician}>
+                          {physician}
+                        </option>
+                      ))}
                     </select>
                   </div>
-                  <div className="col-12 col-md-3">
-                    <label className="text-muted small fw-bold mb-1">Type of Physician</label>
-                    <select 
-                      className="form-select form-select-compact shadow-none"
-                      style={{ 
-                        borderColor: "var(--primary, #0f763f)", 
-                        backgroundColor: formData.typeOfDiag === "Final" ? "#e9ecef" : "#ffffff" 
-                      }}
+
+                  <div className="col-md-3">
+                    <label className="small fw-bold mb-1">
+                      Type of Physician
+                    </label>
+
+                    <select
+                      className="form-select"
                       value={formData.typeOfPhysician}
-                      onChange={(e) => setFormData({...formData, typeOfPhysician: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          typeOfPhysician: e.target.value,
+                        })
+                      }
                     >
-                      {currentPhysicianTypes.map(ptype => <option key={ptype} value={ptype}>{ptype}</option>)}
+                      {currentPhysicianTypes.map((type) => (
+                        <option key={type}>{type}</option>
+                      ))}
                     </select>
                   </div>
-                </div>
 
-                <div className="mb-3">
-                  <label className="text-muted small fw-bold mb-1">Diagnosis <span className="text-danger">*</span></label>
-                  <textarea 
-                    className={`form-control rounded-1 shadow-none ${!isFormValid && formData.diagnosisText.length === 0 ? 'is-invalid' : ''}`} 
-                    rows={8}
-                    style={{ borderColor: "var(--primary, #0f763f)", resize: "none", fontSize: "0.9rem" }}
-                    value={formData.diagnosisText}
-                    onChange={(e) => setFormData({...formData, diagnosisText: e.target.value})}
-                  ></textarea>
-                </div>
+                  <div className="col-12">
+                    <label className="small fw-bold mb-1">
+                      Diagnosis
+                    </label>
 
-                <div className="row g-3">
-                  <div className="col-12 col-md-4">
-                    <label className="text-muted small fw-bold mb-1">ICD Code</label>
-                    <input 
-                      type="text" 
-                      className="form-control form-control-compact shadow-none" 
-                      style={{ borderColor: "var(--primary, #0f763f)" }}
-                      value={formData.icdCode}
-                      onChange={(e) => setFormData({...formData, icdCode: e.target.value})}
+                    <textarea
+                      rows={6}
+                      className="form-control"
+                      value={formData.diagnosisText}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          diagnosisText: e.target.value,
+                        })
+                      }
                     />
                   </div>
-                  <div className="col-12 col-md-3">
-                    <label className="text-muted small fw-bold mb-1">Primary Diagnosis</label>
-                    <select 
-                      className="form-select form-select-compact shadow-none"
-                      style={{ borderColor: "var(--primary, #0f763f)", maxWidth: "100px" }}
+
+                  <div className="col-md-4">
+                    <label className="small fw-bold mb-1">
+                      ICD Code
+                    </label>
+
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={formData.icdCode}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          icdCode: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="col-md-3">
+                    <label className="small fw-bold mb-1">
+                      Primary Diagnosis
+                    </label>
+
+                    <select
+                      className="form-select"
                       value={formData.isPrimary}
-                      onChange={(e) => setFormData({...formData, isPrimary: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          isPrimary: e.target.value,
+                        })
+                      }
                     >
-                      {YES_NO.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      {YES_NO.map((opt) => (
+                        <option key={opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
-
               </div>
 
-              <div className="modal-footer border-0 p-3 justify-content-end" style={{ backgroundColor: "#e2e5e9" }}>
-                <div className="d-flex modal-footer-actions gap-2 w-100 justify-content-sm-end">
-                  <button 
-                    type="button" 
-                    className="btn bg-secondary text-white rounded-1 px-5 py-2 fw-medium shadow-sm" 
-                    onClick={saveRecord}
-                    disabled={!isFormValid}
-                    style={{ opacity: !isFormValid ? 0.6 : 1, cursor: !isFormValid ? "not-allowed" : "pointer" }}
-                  >
-                    Save
-                  </button>
-                  <button 
-                    type="button" 
-                    className="btn rounded-1 px-4 py-2 fw-medium shadow-sm text-white" 
-                    style={{ 
-                      backgroundColor: "var(--primary, #0f763f)",
-                      opacity: !isFormValid ? 0.6 : 1,
-                      cursor: !isFormValid ? "not-allowed" : "pointer"
-                    }} 
-                    onClick={handleSaveAndClose}
-                    disabled={!isFormValid}
-                  >
-                    Save and Close
-                  </button>
-                </div>
+              <div className="modal-footer bg-light">
+                <button
+                  className="btn btn-success px-4"
+                  disabled={!isFormValid}
+                  onClick={saveRecord}
+                >
+                  Save and Close
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* dletre confirmation modal */}
+      {/* Delete Modal */}
       {showDeleteModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1060 }}>
-          <div className="modal-dialog modal-sm modal-dialog-centered px-3">
-            <div className="modal-content border-0 shadow-lg" style={{ borderRadius: '8px', overflow: 'hidden' }}>
-              
-              <div className="modal-header border-0 py-3 d-flex align-items-center" style={{ backgroundColor: '#333b45' }}>
-                <h3 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2" style={{ fontSize: '1.1rem', letterSpacing: '0.5px' }}>
-                  <i className="isax isax-warning-2" style={{ fontSize: '1.5rem' }}></i>
+        <div
+          className="modal fade show d-block"
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 1060,
+          }}
+        >
+          <div className="modal-dialog modal-sm modal-dialog-centered">
+            <div className="modal-content border-0 shadow">
+              <div className="modal-header">
+                <h5 className="modal-title text-white">
                   Confirm Delete
-                </h3>
+                </h5>
               </div>
-              
-              <div className="modal-body p-4 bg-white text-center">
-                <i className="isax isax-trash text-danger mb-3 d-block" style={{ fontSize: '2.5rem' }}></i>
-                <p className="mb-0 text-dark fw-medium" style={{ fontSize: '1.05rem' }}>
-                  Are you sure you want to delete this <strong className="text-danger">Diagnosis Record</strong>?
+
+              <div className="modal-body text-center py-4">
+                <i
+                  className="isax isax-trash text-danger mb-3"
+                  style={{ fontSize: "3rem" }}
+                ></i>
+
+                <p>
+                  Are you sure you want to delete this record?
                 </p>
               </div>
-              
-              <div className="modal-footer border-0 d-flex flex-column flex-sm-row justify-content-center gap-2 p-3" style={{ backgroundColor: '#e2e5e9' }}>
-                <button 
-                  type="button" 
-                  className="btn btn-light rounded-1 px-4 py-2 fw-medium border-secondary-subtle w-100" 
+
+              <div className="modal-footer">
+                <button
+                  className="btn btn-light"
                   onClick={() => setShowDeleteModal(false)}
                 >
                   Cancel
                 </button>
-                <button 
-                  type="button" 
-                  className="btn btn-danger rounded-1 px-4 py-2 fw-medium w-100" 
+
+                <button
+                  className="btn btn-danger"
                   onClick={confirmDelete}
                 >
                   Delete
                 </button>
               </div>
-
             </div>
           </div>
         </div>
