@@ -3,13 +3,6 @@ import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useLocation } from "react-router";
 
-// --- Types ---
-interface DispositionData {
-  typeOfDisposition: string;
-  typeOfCondition: string;
-  dateOfDischarge: string;
-}
-
 interface InstructionData {
   diet: Record<string, { checked: boolean; details: string }>;
   activity: Record<string, { checked: boolean; details: string }>;
@@ -28,6 +21,15 @@ interface InstructionData {
     remark: string;
   }>;
 }
+
+const EMPTY_DRUG_ROW = {
+  name: "",
+  morning: "",
+  noon: "",
+  afternoon: "",
+  night: "",
+  remark: "",
+};
 
 const EMPTY_INSTRUCTION: InstructionData = {
   diet: {
@@ -51,17 +53,9 @@ const EMPTY_INSTRUCTION: InstructionData = {
   contactSmart: "",
   drugs: Array(10)
     .fill(null)
-    .map(() => ({
-      name: "",
-      morning: "",
-      noon: "",
-      afternoon: "",
-      night: "",
-      remark: "",
-    })),
+    .map(() => ({ ...EMPTY_DRUG_ROW })),
 };
 
-// mock data sa bulong
 const MOCK_PHARMACY_DRUGS = [
   "0.9% Sodium Chloride (Collapsible), 1.00 Liter bag",
   "0.9% Sodium Chloride (Collapsible), 1.00 Liter bag, Euro Med",
@@ -83,7 +77,7 @@ const MOCK_PHARMACY_DRUGS = [
   "Aciclovir, 400.00 mg tablet(s)",
   "Aciclovir, 800.00 mg TABLET",
   "Acyclovir, 200.00 mg/5ml suspension",
-  "Adenosine, 3.00 mg/ml 2ml Ampule"
+  "Adenosine, 3.00 mg/ml 2ml Ampule",
 ];
 
 const DispositionModule = () => {
@@ -107,30 +101,17 @@ const DispositionModule = () => {
     isPersonnel: "No",
   });
 
-  // main state
-  const [activeTab, setActiveTab] = useState<"disposition" | "instruction" | null>(null);
-
-  // Modal states
-  const [showDisposeModal, setShowDisposeModal] = useState(false);
   const [showInstructionModal, setShowInstructionModal] = useState(false);
   const [showValidationModal, setShowValidationModal] = useState(false);
+  const [showRequiredHighlight, setShowRequiredHighlight] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
-  
-  // phrmacy modal states
+
   const [showPharmacyModal, setShowPharmacyModal] = useState(false);
   const [activeDrugRowIdx, setActiveDrugRowIdx] = useState<number | null>(null);
   const [pharmacySearchQuery, setPharmacySearchQuery] = useState("");
 
-  // Data states
-  const [dispositionData, setDispositionData] = useState<DispositionData | null>(null);
   const [instructionData, setInstructionData] = useState<InstructionData[]>([]);
   const [editingInstructionIdx, setEditingInstructionIdx] = useState<number | null>(null);
-
-  const [dispForm, setDispForm] = useState<DispositionData>({
-    typeOfDisposition: "Discharge",
-    typeOfCondition: "",
-    dateOfDischarge: "",
-  });
 
   const [instActiveTab, setInstActiveTab] = useState<"instruction" | "drugs">("instruction");
   const [instForm, setInstForm] = useState<InstructionData>(
@@ -143,22 +124,18 @@ const DispositionModule = () => {
     }
   }, [location.state]);
 
-  const handleSaveDisposition = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    setDispositionData(dispForm);
-    setShowDisposeModal(false);
-  };
-
   const handleSaveInstruction = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
-    // Manual validation to prevent silent failures if on the "Drugs" tab
     if (!instForm.patientSign || !instForm.patientSignDate) {
       setInstActiveTab("instruction");
+      setShowRequiredHighlight(true);
       setValidationMessage("Please fill out the required Patient/Rep Sign fields in the Instruction tab.");
       setShowValidationModal(true);
       return;
     }
+
+    setShowRequiredHighlight(false);
 
     if (editingInstructionIdx !== null) {
       const updated = [...instructionData];
@@ -166,11 +143,9 @@ const DispositionModule = () => {
       setInstructionData(updated);
       setEditingInstructionIdx(null);
     } else {
-      setInstructionData([
-        ...instructionData,
-        JSON.parse(JSON.stringify(instForm)),
-      ]);
+      setInstructionData([...instructionData, JSON.parse(JSON.stringify(instForm))]);
     }
+
     setShowInstructionModal(false);
   };
 
@@ -178,6 +153,7 @@ const DispositionModule = () => {
     setInstForm(JSON.parse(JSON.stringify(EMPTY_INSTRUCTION)));
     setEditingInstructionIdx(null);
     setInstActiveTab("instruction");
+    setShowRequiredHighlight(false);
     setShowInstructionModal(true);
   };
 
@@ -186,18 +162,11 @@ const DispositionModule = () => {
       setInstForm(JSON.parse(JSON.stringify(instructionData[0])));
       setEditingInstructionIdx(0);
       setInstActiveTab("instruction");
+      setShowRequiredHighlight(false);
       setShowInstructionModal(true);
     }
   };
 
-  const handleOpenEditDisposition = () => {
-    if (dispositionData) {
-      setDispForm({ ...dispositionData });
-      setShowDisposeModal(true);
-    }
-  };
-
-  // phrmcy modal handlers ---
   const openPharmacyList = (rowIndex: number) => {
     setActiveDrugRowIdx(rowIndex);
     setPharmacySearchQuery("");
@@ -208,6 +177,7 @@ const DispositionModule = () => {
     if (activeDrugRowIdx !== null) {
       updateDrugRow(activeDrugRowIdx, "name", drugName);
     }
+
     setShowPharmacyModal(false);
     setActiveDrugRowIdx(null);
   };
@@ -216,8 +186,11 @@ const DispositionModule = () => {
     drug.toLowerCase().includes(pharmacySearchQuery.toLowerCase())
   );
 
-  // pag update form
-  const handleDietChange = (key: string, field: "checked" | "details", value: any) => {
+  const handleDietChange = (
+    key: string,
+    field: "checked" | "details",
+    value: boolean | string
+  ) => {
     setInstForm((prev) => ({
       ...prev,
       diet: {
@@ -227,7 +200,11 @@ const DispositionModule = () => {
     }));
   };
 
-  const handleActivityChange = (key: string, field: "checked" | "details", value: any) => {
+  const handleActivityChange = (
+    key: string,
+    field: "checked" | "details",
+    value: boolean | string
+  ) => {
     setInstForm((prev) => ({
       ...prev,
       activity: {
@@ -237,20 +214,35 @@ const DispositionModule = () => {
     }));
   };
 
-  const updateDrugRow = (index: number, field: keyof InstructionData["drugs"][0], value: string) => {
+  const updateDrugRow = (
+    index: number,
+    field: keyof InstructionData["drugs"][0],
+    value: string
+  ) => {
     const newDrugs = [...instForm.drugs];
     newDrugs[index] = { ...newDrugs[index], [field]: value };
     setInstForm({ ...instForm, drugs: newDrugs });
   };
 
-  const setDispCurrentDate = () => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    setDispForm({ ...dispForm, dateOfDischarge: now.toISOString().slice(0, 16) });
+  const addDrugRow = () => {
+    setInstForm((prev) => ({
+      ...prev,
+      drugs: [...prev.drugs, { ...EMPTY_DRUG_ROW }],
+    }));
+  };
+
+  const removeDrugRow = (index: number) => {
+    if (instForm.drugs.length <= 1) return;
+
+    setInstForm((prev) => ({
+      ...prev,
+      drugs: prev.drugs.filter((_, idx) => idx !== index),
+    }));
   };
 
   const formatDateTime = (dt: string) => {
     if (!dt) return "—";
+
     try {
       return new Date(dt).toLocaleString("en-US", {
         month: "2-digit",
@@ -266,95 +258,137 @@ const DispositionModule = () => {
 
   const viewedInstruction = instructionData.length > 0 ? instructionData[0] : null;
 
+  const patientSignMissing = showRequiredHighlight && !instForm.patientSign;
+  const patientSignDateMissing = showRequiredHighlight && !instForm.patientSignDate;
+
   return (
     <>
       <style>
         {`
-          .text-hover-primary:hover { color: var(--primary, #0f763f) !important; }
-          .modal-table th, .modal-table td { vertical-align: middle; }
-
-          /* Form Controls */
-          .form-control-compact { padding: 2px 6px; font-size: 0.85rem; height: 28px; border: 1px solid #ced4da; border-radius: 2px; }
-          .form-select-compact { padding: 2px 24px 2px 6px; font-size: 0.85rem; height: 28px; border: 1px solid #ced4da; border-radius: 2px; }
-
-          /* Custom Tabs styling for the left sidebar */
-          .custom-side-tab { transition: all 0.2s ease; border-left: 3px solid transparent; white-space: nowrap; }
-          .custom-side-tab.active { background-color: #e9ecef; border-left-color: transparent; font-weight: 700; color: #333 !important; }
-          .custom-side-tab:hover:not(.active) { background-color: #f1f3f5; }
-
-          /* Responsive Internal Sidebar Tabs - Slimmer Fixes */
-          .inner-tab-container { 
-            display: flex; 
-            flex-direction: row; 
-            overflow-x: auto; 
-            border-bottom: 1px solid #dee2e6; 
-          }
-          .inner-tab-container .custom-side-tab { 
-            border-left: none; 
-            border-bottom: 3px solid transparent; 
-            text-align: center; 
-          }
-          .inner-tab-container .custom-side-tab.active { 
-            border-left-color: transparent; 
-            border-bottom-color: var(--primary, #0f763f); 
+          .text-hover-primary:hover {
+            color: var(--primary, #0f763f) !important;
           }
 
-          /* Sub-tabs for modals */
-          .modal-sub-tabs { flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; }
-          .modal-sub-tabs .nav-link { border-radius: 0; color: #6c757d; font-weight: 600; padding: 0.75rem 1.5rem; }
-          .modal-sub-tabs .nav-link.active { color: #212529; border-bottom: 2px solid var(--primary, #0f763f); background: transparent; }
+          .modal-table th,
+          .modal-table td {
+            vertical-align: middle;
+          }
 
-          /* Instruction detail view */
-          .inst-label { min-width: 140px; font-weight: 700; color: #212529; font-size: 0.875rem; }
-          .inst-value-green { color: var(--primary, #0f763f); font-weight: 600; }
-          .inst-checkbox { width: 14px; height: 14px; accent-color: var(--primary, #0f763f); flex-shrink: 0; }
+          .modal-sub-tabs {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            white-space: nowrap;
+          }
 
-          /* Pharmacy Hover effect */
-          .pharmacy-item:hover { background-color: #b5e4d3; color: #000; cursor: pointer; }
+          .modal-sub-tabs .nav-link {
+            border-radius: 0;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+          }
 
-          /* Table inputs minimum width */
-          .min-w-drug { min-width: 400px; width: 45%; }
-          .min-w-freq { min-width: 50px; width: 8%; }
-          .min-w-rem { min-width: 150px; width: 23%; }
+          .modal-sub-tabs .nav-link.active {
+            color: #212529;
+            border-bottom: 2px solid var(--primary, #0f763f);
+            background: transparent;
+          }
 
-          /* Responsive adjustments */
+          .inst-label {
+            min-width: 140px;
+            font-weight: 700;
+            color: #212529;
+            font-size: 0.95rem;
+          }
+
+          .inst-value-green {
+            color: var(--primary, #0f763f);
+            font-weight: 600;
+          }
+
+          .inst-checkbox {
+            width: 15px;
+            height: 15px;
+            accent-color: var(--primary, #0f763f);
+            flex-shrink: 0;
+          }
+
+          .pharmacy-item:hover {
+            background-color: #b5e4d3;
+            color: #000;
+            cursor: pointer;
+          }
+
+          .min-w-drug {
+            min-width: 400px;
+            width: 45%;
+          }
+
+          .min-w-freq {
+            min-width: 50px;
+            width: 8%;
+          }
+
+          .min-w-rem {
+            min-width: 150px;
+            width: 23%;
+          }
+
+          .min-w-action {
+            min-width: 70px;
+            width: 70px;
+          }
+
+          .instruction-main-panel {
+            min-height: 450px;
+          }
+
+          .instruction-action-btn {
+            min-height: 38px;
+            font-size: 0.9rem;
+          }
+
+          .required-field-highlight {
+            border-color: #dc3545 !important;
+            background-color: #fff5f5 !important;
+            box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.18) !important;
+          }
+
+          .required-field-label {
+            color: #dc3545 !important;
+          }
+
           @media (max-width: 575.98px) {
-            .modal-footer-actions { flex-direction: column-reverse; width: 100%; }
-            .modal-footer-actions button { width: 100%; margin-top: 8px; }
-            .inst-label { min-width: 100px; margin-bottom: 0.5rem; }
-            .d-flex.mb-3 { flex-direction: column; }
-          }
+            .modal-footer-actions {
+              flex-direction: column-reverse;
+              width: 100%;
+            }
 
-          @media (min-width: 768px) {
-            .inner-tab-container { 
-              flex-direction: column; 
-              overflow-x: visible; 
-              border-bottom: none; 
-              border-right: 1px solid #dee2e6; 
-              min-width: 180px; 
-              height: 100%; 
+            .modal-footer-actions button {
+              width: 100%;
+              margin-top: 8px;
             }
-            .inner-tab-container .custom-side-tab { 
-              border-bottom: none; 
-              border-left: 3px solid transparent; 
-              text-align: left; 
+
+            .inst-label {
+              min-width: 100px;
+              margin-bottom: 0.5rem;
             }
-            .inner-tab-container .custom-side-tab.active { 
-              border-bottom-color: transparent; 
-              border-left-color: var(--primary, #0f763f); 
+
+            .d-flex.mb-3 {
+              flex-direction: column;
             }
           }
         `}
       </style>
 
-  
-
-      <div className="content doctor-content bg-light mt-n4 d-flex flex-column" style={{ minHeight: "100vh" }}>
+      <div
+        className="content doctor-content bg-light mt-n4 d-flex flex-column"
+        style={{ minHeight: "100vh" }}
+      >
         <div className="container-fluid px-3 px-lg-5 pt-0 flex-grow-1 d-flex flex-column">
-         <div className="doctor-dashboard-layout">
-                  <DoctorSidebar />
+          <div className="doctor-dashboard-layout">
+            <DoctorSidebar />
 
-                 <div className="doctor-dashboard-main">
+            <div className="doctor-dashboard-main">
               <div
                 className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column flex-grow-1"
                 style={{
@@ -362,21 +396,31 @@ const DispositionModule = () => {
                   borderTop: "4px solid var(--primary, #0f763f)",
                 }}
               >
-                {/* Patient Profile Header */}
                 <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
                   <div
                     className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
-                    style={{ width: "90px", height: "90px", border: "2px solid var(--primary, #0f763f)" }}
+                    style={{
+                      width: "90px",
+                      height: "90px",
+                      border: "2px solid var(--primary, #0f763f)",
+                    }}
                   >
-                    <i className="isax isax-user fs-1 text-primary" style={{ color: "var(--primary, #0f763f)" }} />
+                    <i
+                      className="isax isax-user fs-1 text-primary"
+                      style={{ color: "var(--primary, #0f763f)" }}
+                    />
                   </div>
+
                   <div>
                     <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
                       ID: {mockPatientProfile.hospitalNumber}
                     </div>
+
                     <h3 className="fw-bold mb-1 text-dark fs-3 fs-md-2">
-                      {mockPatientProfile.lastName}, {mockPatientProfile.firstName} {mockPatientProfile.middleName}
+                      {mockPatientProfile.lastName}, {mockPatientProfile.firstName}{" "}
+                      {mockPatientProfile.middleName}
                     </h3>
+
                     <div className="text-muted small d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-start gap-2">
                       <div className="d-flex align-items-center gap-1">
                         <i className="isax isax-location text-danger" />
@@ -386,279 +430,273 @@ const DispositionModule = () => {
                   </div>
                 </div>
 
-          
-
-                {/* Toolbar */}
                 <div className="d-flex flex-row flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                  <h5 className="fw-bold text-dark mb-0 text-uppercase text-nowrap" style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}>
+                  <h5
+                    className="fw-bold text-dark mb-0 text-uppercase text-nowrap"
+                    style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}
+                  >
                     Discharge Instructions
                   </h5>
 
                   <div className="d-flex flex-nowrap justify-content-end gap-2 ms-auto">
                     <button
-                      onClick={() => {
-                        if (activeTab === "disposition") setShowDisposeModal(true);
-                        if (activeTab === "instruction") handleOpenAddInstruction();
-                      }}
-                      disabled={!activeTab}
-                      className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-1 px-3 py-2 text-nowrap fw-bold ${
-                        !activeTab ? "bg-light text-muted opacity-50" : "bg-white text-dark text-hover-primary"
-                      }`}
-                      style={{ borderRadius: "4px", cursor: activeTab ? "pointer" : "not-allowed" }}
+                      type="button"
+                      onClick={handleOpenAddInstruction}
+                      className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary instruction-action-btn"
+                      style={{ borderRadius: "4px", cursor: "pointer" }}
                     >
                       <i className="isax isax-add"></i>
-                      {activeTab === "disposition" ? "Dispose" : activeTab === "instruction" ? "Add Instr" : "Add"}
+                      <span>Add Instr</span>
                     </button>
 
                     <button
-                      className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-1 px-3 py-2 text-nowrap fw-bold ${
-                        (activeTab === "instruction" && instructionData.length === 0) ||
-                        (activeTab === "disposition" && !dispositionData) ||
-                        !activeTab
+                      type="button"
+                      disabled={instructionData.length === 0}
+                      onClick={handleOpenEditInstruction}
+                      className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold instruction-action-btn ${
+                        instructionData.length === 0
                           ? "bg-light text-muted opacity-50"
                           : "bg-white text-dark text-hover-primary"
                       }`}
                       style={{
                         borderRadius: "4px",
-                        cursor:
-                          (activeTab === "instruction" && instructionData.length > 0) ||
-                          (activeTab === "disposition" && dispositionData)
-                            ? "pointer"
-                            : "not-allowed",
-                      }}
-                      disabled={
-                        !activeTab ||
-                        (activeTab === "instruction" && instructionData.length === 0) ||
-                        (activeTab === "disposition" && !dispositionData)
-                      }
-                      onClick={() => {
-                        if (activeTab === "instruction") handleOpenEditInstruction();
-                        if (activeTab === "disposition") handleOpenEditDisposition();
+                        cursor: instructionData.length === 0 ? "not-allowed" : "pointer",
                       }}
                     >
-                      <i className="isax isax-edit-2"></i> Edit {activeTab === "disposition" ? "Disp" : ""}
+                      <i className="isax isax-edit-2"></i>
+                      <span>Edit</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Main Content Layout */}
-                <div
-                  className="d-flex flex-column flex-md-row flex-grow-1 overflow-hidden border rounded"
-                  style={{ minHeight: "450px", backgroundColor: "#e2e5e9" }}
-                >
-                  {/* Sidebar / Topbar Tabs */}
-                  <div className="bg-light inner-tab-container">
-                    <button
-                      className={`btn px-3 py-2 border-0 rounded-0 custom-side-tab ${
-                        activeTab === "disposition" ? "active" : ""
-                      }`}
-                      onClick={() => setActiveTab("disposition")}
-                      style={{ fontSize: "0.85rem" }}
-                    >
-                      Disposition
-                    </button>
-                    <button
-                      className={`btn px-3 py-2 border-0 rounded-0 custom-side-tab ${
-                        activeTab === "instruction" ? "active" : ""
-                      }`}
-                      onClick={() => setActiveTab("instruction")}
-                      style={{ fontSize: "0.85rem" }}
-                    >
-                      Discharge Instruction
-                    </button>
-                  </div>
-
-                  {/* rght content area */}
-                  <div className="flex-grow-1 bg-white d-flex flex-column overflow-hidden overflow-y-auto w-100">
-                    {!activeTab && (
-                      <div className="text-center text-muted py-5 d-flex flex-column align-items-center justify-content-center h-100">
-                        <i className="isax isax-mouse-circle mb-3 opacity-50" style={{ fontSize: "3rem" }}></i>
-                        <h6 className="fw-bold mb-1">Select a category</h6>
-                        <p className="small mb-0">Please select a tab from the menu to view records.</p>
+                <div className="border rounded bg-white instruction-main-panel overflow-hidden overflow-y-auto">
+                  {!viewedInstruction ? (
+                    <div className="text-center text-muted py-5 px-3 d-flex flex-column align-items-center justify-content-center h-100">
+                      <i
+                        className="isax isax-folder-open mb-3 opacity-50"
+                        style={{ fontSize: "3rem" }}
+                      ></i>
+                      <h5 className="fw-bold mb-2 text-dark">
+                        No discharge instructions recorded.
+                      </h5>
+                      <p className="mb-0" style={{ fontSize: "0.95rem" }}>
+                        Click <strong className="text-dark">Add Instr</strong> in the toolbar above.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="p-3 p-md-4" style={{ fontSize: "0.95rem", lineHeight: "1.9" }}>
+                      <div className="d-flex mb-3 flex-column flex-sm-row">
+                        <div className="inst-label me-sm-4">Diet</div>
+                        <div>
+                          {Object.entries(viewedInstruction.diet).map(([key, val]) => (
+                            <div key={key} className="d-flex align-items-center gap-2 mb-1">
+                              <input
+                                type="checkbox"
+                                className="inst-checkbox"
+                                checked={val.checked}
+                                readOnly
+                              />
+                              <span className={val.checked ? "text-dark" : "text-muted"}>
+                                {key}
+                              </span>
+                              {val.checked && val.details && (
+                                <span className="fw-bold text-dark ms-3">
+                                  {val.details.toUpperCase()}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    )}
 
-                    {/* dispo tab*/}
-                    {activeTab === "disposition" && (
-                      <div className="p-4 bg-white h-100">
-                        {!dispositionData ? (
-                          <div className="text-center text-muted py-5 d-flex flex-column align-items-center justify-content-center h-100">
-                            <i className="isax isax-folder-open mb-3 opacity-50 d-block" style={{ fontSize: "3rem" }}></i>
-                            <h6 className="fw-bold mb-1">No disposition set.</h6>
-                            <p className="small mb-0">Click <strong className="text-dark">Dispose</strong> in the toolbar above to set one.</p>
-                          </div>
-                        ) : (
-                          <div className="container-fluid px-0" style={{ maxWidth: "850px" }}>
-                            <h6 className="fw-bold text-dark border-bottom pb-2 mb-3" style={{ fontSize: "0.95rem" }}>
-                              Disposition and Condition
-                            </h6>
-                            <div className="row g-4 mb-5" style={{ maxWidth: "600px" }}>
-                              <div className="col-12 col-md-6">
-                                <div className="text-dark small mb-1">Type of Disposition</div>
-                                <div className="border px-3 py-1 bg-white" style={{ borderColor: "#888", color: "#1976d2", minHeight: "32px", fontSize: "0.9rem" }}>
-                                  {dispositionData.typeOfDisposition}
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-6">
-                                <div className="text-dark small mb-1">Type of Condition</div>
-                                <div className="border px-3 py-1 bg-white" style={{ borderColor: "#888", color: "#1976d2", minHeight: "32px", fontSize: "0.9rem" }}>
-                                  {dispositionData.typeOfCondition || "\u00A0"}
-                                </div>
-                              </div>
+                      <div className="d-flex mb-3 flex-column flex-sm-row">
+                        <div className="inst-label me-sm-4">Activity</div>
+                        <div>
+                          {Object.entries(viewedInstruction.activity).map(([key, val]) => (
+                            <div key={key} className="d-flex align-items-center gap-2 mb-1">
+                              <input
+                                type="checkbox"
+                                className="inst-checkbox"
+                                checked={val.checked}
+                                readOnly
+                              />
+                              <span className={val.checked ? "text-dark" : "text-muted"}>
+                                {key}
+                              </span>
+                              {val.checked && val.details && (
+                                <span className="fw-bold text-dark ms-3">
+                                  {val.details.toUpperCase()}
+                                </span>
+                              )}
                             </div>
-                            <h6 className="fw-bold text-dark border-bottom pb-2 mb-3 mt-4" style={{ fontSize: "0.95rem" }}>
-                              Date of Discharge (for Nurse on Duty)
-                            </h6>
-                            <div className="row g-4">
-                              <div className="col-12 col-md-5 col-lg-4">
-                                <div className="border px-3 py-2 bg-white text-center fw-medium text-dark" style={{ borderColor: "#888", fontSize: "0.9rem" }}>
-                                  {dispositionData.dateOfDischarge ? formatDateTime(dispositionData.dateOfDischarge) : "00-00-0000 00:00 AM"}
-                                </div>
-                              </div>
-                              <div className="col-12 col-md-7 col-lg-8">
-                                <p className="text-dark small mb-3 lh-base">
-                                  Date of discharge is intended to be entered by Nurse using Nurse Module when patient is ready to leave the hospital. This field is made available here for reference, editing and CF4 compliance purpose.
-                                </p>
-                                <p className="text-dark small mb-0 lh-base">
-                                  Setting Date and Time of Discharge will render this record inactive and secured. Other module will no longer be able to make alteration to it.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                          ))}
+                        </div>
                       </div>
-                    )}
 
-                    {/* discharge intruct tab, doc view */}
-                    {activeTab === "instruction" && (
-                      <>
-                        {!viewedInstruction ? (
-                          <div className="text-center text-muted py-5 d-flex flex-column align-items-center justify-content-center h-100">
-                            <i className="isax isax-folder-open mb-3 opacity-50" style={{ fontSize: "3rem" }}></i>
-                            <h6 className="fw-bold mb-1">No discharge instructions recorded.</h6>
-                            <p className="small mb-0">Click <strong className="text-dark">Add Instr</strong> in the toolbar above.</p>
+                      {(() => {
+                        const filled = viewedInstruction.drugs.filter((d) => d.name.trim() !== "");
+
+                        if (filled.length === 0) return null;
+
+                        return (
+                          <div className="mb-3">
+                            <div className="fw-bold text-dark border-bottom pb-1 mb-2">
+                              Medicines
+                            </div>
+
+                            <div className="table-responsive">
+                              <table
+                                className="table table-sm mb-0"
+                                style={{ fontSize: "0.9rem", minWidth: "600px" }}
+                              >
+                                <thead>
+                                  <tr>
+                                    <th
+                                      rowSpan={2}
+                                      className="border py-1 px-2 text-dark fw-semibold bg-light"
+                                      style={{ width: "40%" }}
+                                    >
+                                      Drug Description
+                                    </th>
+                                    <th
+                                      colSpan={4}
+                                      className="border py-1 px-2 text-dark fw-semibold text-center bg-light"
+                                    >
+                                      AM
+                                    </th>
+                                    <th
+                                      rowSpan={2}
+                                      className="border py-1 px-2 text-dark fw-semibold bg-light"
+                                    >
+                                      Remarks
+                                    </th>
+                                  </tr>
+                                  <tr>
+                                    <th className="border py-1 px-2 text-dark fw-semibold text-center bg-light">
+                                      AM
+                                    </th>
+                                    <th className="border py-1 px-2 text-dark fw-semibold text-center bg-light">
+                                      Noon
+                                    </th>
+                                    <th className="border py-1 px-2 text-dark fw-semibold text-center bg-light">
+                                      PM
+                                    </th>
+                                    <th className="border py-1 px-2 text-dark fw-semibold text-center bg-light">
+                                      Night
+                                    </th>
+                                  </tr>
+                                </thead>
+
+                                <tbody>
+                                  {filled.map((drug, idx) => (
+                                    <tr key={idx}>
+                                      <td className="border py-1 px-2 text-wrap">{drug.name}</td>
+                                      <td className="border py-1 px-2 text-center">
+                                        {drug.morning || ""}
+                                      </td>
+                                      <td className="border py-1 px-2 text-center">
+                                        {drug.noon || ""}
+                                      </td>
+                                      <td className="border py-1 px-2 text-center">
+                                        {drug.afternoon || ""}
+                                      </td>
+                                      <td className="border py-1 px-2 text-center">
+                                        {drug.night || ""}
+                                      </td>
+                                      <td className="border py-1 px-2">{drug.remark || ""}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
-                        ) : (
-                          <div className="p-3 p-md-4" style={{ fontSize: "0.875rem", lineHeight: "1.9" }}>
-                            
-                            {/* sa diet */}
-                            <div className="d-flex mb-3 flex-column flex-sm-row">
-                              <div className="inst-label me-sm-4">Diet</div>
-                              <div>
-                                {Object.entries(viewedInstruction.diet).map(([key, val]) => (
-                                  <div key={key} className="d-flex align-items-center gap-2 mb-1">
-                                    <input type="checkbox" className="inst-checkbox" checked={val.checked} readOnly />
-                                    <span className={val.checked ? "text-dark" : "text-muted"}>{key}</span>
-                                    {val.checked && val.details && <span className="fw-bold text-dark ms-3">{val.details.toUpperCase()}</span>}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                            
-                            {/* sa acts */}
-                            <div className="d-flex mb-3 flex-column flex-sm-row">
-                              <div className="inst-label me-sm-4">Activity</div>
-                              <div>
-                                {Object.entries(viewedInstruction.activity).map(([key, val]) => (
-                                  <div key={key} className="d-flex align-items-center gap-2 mb-1">
-                                    <input type="checkbox" className="inst-checkbox" checked={val.checked} readOnly />
-                                    <span className={val.checked ? "text-dark" : "text-muted"}>{key}</span>
-                                    {val.checked && val.details && <span className="fw-bold text-dark ms-3">{val.details.toUpperCase()}</span>}
-                                  </div>
-                                ))}
-                              </div>
+                        );
+                      })()}
+
+                      <div className="d-flex align-items-start border-top pt-3 mb-3 flex-column flex-sm-row">
+                        <div className="inst-label me-sm-3">Special Instruction</div>
+                        <span className="inst-value-green">
+                          {viewedInstruction.specialInstruction || "—"}
+                        </span>
+                      </div>
+
+                      <div className="d-flex align-items-center border-top pt-3 mb-3 flex-column flex-sm-row align-items-sm-center">
+                        <div className="inst-label me-sm-3 w-100 w-sm-auto mb-2 mb-sm-0">
+                          OPD Checkup
+                        </div>
+                        <span className="inst-value-green w-100 w-sm-auto">
+                          {viewedInstruction.opdCheckUp
+                            ? formatDateTime(viewedInstruction.opdCheckUp)
+                            : "—"}
+                        </span>
+                      </div>
+
+                      <div className="border-top pt-3 mb-3">
+                        <div className="fw-bold text-dark mb-3">Signatories</div>
+
+                        <div className="d-flex flex-column flex-sm-row justify-content-between flex-wrap gap-4">
+                          <div style={{ minWidth: "180px" }}>
+                            <div
+                              className="text-dark fw-semibold mb-2"
+                              style={{ minHeight: "1.4rem", fontSize: "0.95rem" }}
+                            >
+                              &nbsp;
                             </div>
 
-                            {/* sa medecines */}
-                            {(() => {
-                              const filled = viewedInstruction.drugs.filter((d) => d.name.trim() !== "");
-                              if (filled.length === 0) return null;
-                              return (
-                                <div className="mb-3">
-                                  <div className="fw-bold text-dark border-bottom pb-1 mb-2">Medicines</div>
-                                  <div className="table-responsive">
-                                    <table className="table table-sm mb-0" style={{ fontSize: "0.82rem", minWidth: "600px" }}>
-                                      <thead>
-                                        <tr>
-                                          <th rowSpan={2} className="border py-1 px-2 text-dark fw-semibold bg-light" style={{ width: "40%" }}>Drug Description</th>
-                                          <th colSpan={4} className="border py-1 px-2 text-dark fw-semibold text-center bg-light">AM</th>
-                                          <th rowSpan={2} className="border py-1 px-2 text-dark fw-semibold bg-light">Remarks</th>
-                                        </tr>
-                                        <tr>
-                                          <th className="border py-1 px-2 text-dark fw-semibold text-center bg-light" style={{ width: "9%" }}>AM</th>
-                                          <th className="border py-1 px-2 text-dark fw-semibold text-center bg-light" style={{ width: "9%" }}>Noon</th>
-                                          <th className="border py-1 px-2 text-dark fw-semibold text-center bg-light" style={{ width: "9%" }}>PM</th>
-                                          <th className="border py-1 px-2 text-dark fw-semibold text-center bg-light" style={{ width: "9%" }}>Night</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {filled.map((drug, idx) => (
-                                          <tr key={idx}>
-                                            <td className="border py-1 px-2 text-wrap">{drug.name}</td>
-                                            <td className="border py-1 px-2 text-center">{drug.morning || ""}</td>
-                                            <td className="border py-1 px-2 text-center">{drug.noon || ""}</td>
-                                            <td className="border py-1 px-2 text-center">{drug.afternoon || ""}</td>
-                                            <td className="border py-1 px-2 text-center">{drug.night || ""}</td>
-                                            <td className="border py-1 px-2">{drug.remark || ""}</td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
+                            <div className="border-top pt-1">
+                              <div className="text-dark small" style={{ fontSize: "0.95rem" }}>
+                                Attending / Resident-In-Charge
+                              </div>
+                              <div className="text-muted" style={{ fontSize: "0.95rem" }}>
+                                01-01-1900
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-2 mt-sm-0" style={{ minWidth: "180px" }}>
+                            <div
+                              className="inst-value-green fw-semibold mb-2"
+                              style={{ fontSize: "0.95rem" }}
+                            >
+                              {viewedInstruction.patientSign || "—"}
+                            </div>
+
+                            <div className="border-top pt-1">
+                              <div className="text-dark" style={{ fontSize: "0.95rem" }}>
+                                Patient/Representative
+                              </div>
+
+                              {viewedInstruction.patientSignDate && (
+                                <div className="text-muted" style={{ fontSize: "0.95rem" }}>
+                                  {formatDateTime(viewedInstruction.patientSignDate)}
                                 </div>
-                              );
-                            })()}
-                            
-                            <div className="d-flex align-items-start border-top pt-3 mb-3 flex-column flex-sm-row">
-                              <div className="inst-label me-sm-3">Special Instruction</div>
-                              <span className="inst-value-green">{viewedInstruction.specialInstruction || "—"}</span>
+                              )}
                             </div>
-                            
-                            <div className="d-flex align-items-center border-top pt-3 mb-3 flex-column flex-sm-row align-items-sm-center">
-                              <div className="inst-label me-sm-3 w-100 w-sm-auto mb-2 mb-sm-0">OPD Checkup</div>
-                              <span className="inst-value-green w-100 w-sm-auto">{viewedInstruction.opdCheckUp ? formatDateTime(viewedInstruction.opdCheckUp) : "—"}</span>
-                            </div>
-                        
-<div className="border-top pt-3 mb-3">
-  <div className="fw-bold text-dark mb-3">Signatories</div>
-  <div className="d-flex flex-column flex-sm-row justify-content-between flex-wrap gap-4">
-
-
-<div style={{ minWidth: "180px" }}>
-  <div className="text-dark fw-semibold mb-2" style={{ minHeight: "1.4rem", fontSize: "0.875rem" }}>&nbsp;</div>
-  <div className="border-top pt-1">
-    <div className="text-dark small" style={{ fontSize: "0.875rem" }}>Attending / Resident-In-Charge</div>
-    <div className="text-muted" style={{ fontSize: "0.875rem" }}>01-01-1900</div>
-  </div>
-</div>
-
-
-<div className="mt-2 mt-sm-0" style={{ minWidth: "180px" }}>  {/* ← removed text-sm-end */}
-  <div className="inst-value-green fw-semibold mb-2" style={{ fontSize: "0.875rem" }}>{viewedInstruction.patientSign || "—"}</div>
-  <div className="border-top pt-1">
-    <div className="text-dark" style={{ fontSize: "0.875rem" }}>Patient/Representative</div>
-    {viewedInstruction.patientSignDate && (
-      <div className="text-muted" style={{ fontSize: "0.875rem" }}>{formatDateTime(viewedInstruction.patientSignDate)}</div>
-    )}
-  </div>
-</div>
-
-  </div>
-</div>
-                        
-                            <div className="d-flex align-items-start border-top pt-3 flex-column flex-sm-row">
-                              <div className="inst-label me-sm-3">Contact Number</div>
-                              <div className="d-flex gap-5 flex-wrap">
-                                <div><div className="text-dark">{viewedInstruction.contactGlobe || "0000-000-0000"}</div><div className="text-muted small">Globe</div></div>
-                                <div><div className="text-dark">{viewedInstruction.contactSmart || "—"}</div><div className="text-muted small">Smart/Sun</div></div>
-                              </div>
-                            </div>
-
                           </div>
-                        )}
-                      </>
-                    )}
-                  </div>
+                        </div>
+                      </div>
+
+                      <div className="d-flex align-items-start border-top pt-3 flex-column flex-sm-row">
+                        <div className="inst-label me-sm-3">Contact Number</div>
+
+                        <div className="d-flex gap-5 flex-wrap">
+                          <div>
+                            <div className="text-dark">
+                              {viewedInstruction.contactGlobe || "0000-000-0000"}
+                            </div>
+                            <div className="text-muted small">Globe</div>
+                          </div>
+
+                          <div>
+                            <div className="text-dark">
+                              {viewedInstruction.contactSmart || "—"}
+                            </div>
+                            <div className="text-muted small">Smart/Sun</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -666,296 +704,566 @@ const DispositionModule = () => {
         </div>
       </div>
 
-
-      {showDisposeModal && (
-        <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}>
-          <div className="modal-dialog modal-lg modal-fullscreen-md-down modal-dialog-centered px-0 px-md-2">
-            <div className="modal-content shadow-lg border-0 rounded-1 overflow-hidden bg-white h-100">
-              <div className="modal-header border-0 py-3 d-flex align-items-center" style={{ backgroundColor: "#333b45" }}>
-                <h5 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2" style={{ fontSize: "1.1rem" }}>
-                  <i className="isax isax-edit-2" style={{ fontSize: "1.5rem" }}></i> SET DISPOSITION
-                </h5>
-                <button type="button" className="btn-close btn-close-white shadow-none" onClick={() => setShowDisposeModal(false)}></button>
-              </div>
-              <form onSubmit={handleSaveDisposition} className="d-flex flex-column h-100 mb-0">
-                <div className="modal-body p-3 p-md-4 bg-light">
-                  <div className="card border-0 shadow-sm mb-0">
-                    <div className="card-body p-3 p-md-4">
-                      <h6 className="fw-bold text-dark border-bottom pb-2 mb-3">Disposition and Condition</h6>
-                      <div className="row g-3 mb-4">
-                        <div className="col-12 col-md-6">
-                          <label className="form-label text-muted small fw-bold">
-                            Type of Disposition <span className="text-danger">*</span>
-                          </label>
-                          <select required className="form-select shadow-none" style={{ borderColor: "var(--primary, #0f763f)" }} value={dispForm.typeOfDisposition} onChange={(e) => setDispForm({ ...dispForm, typeOfDisposition: e.target.value })}>
-                            <option value="">Select Disposition...</option>
-                            <option>Absconded</option><option>Died</option><option>Discharge</option><option>Discharge Against Medl. Advise</option><option>Transferred</option>
-                          </select>
-                        </div>
-                        <div className="col-12 col-md-6">
-                          <label className="form-label text-muted small fw-bold">
-                            Type of Condition <span className="text-danger">*</span>
-                          </label>
-                          <select required className="form-select shadow-none" style={{ borderColor: "var(--primary, #0f763f)" }} value={dispForm.typeOfCondition} onChange={(e) => setDispForm({ ...dispForm, typeOfCondition: e.target.value })}>
-                            <option value="">Select Condition...</option>
-                            <option>Expired</option><option>Improved</option><option>Recovered</option><option>Unimproved</option>
-                          </select>
-                        </div>
-                      </div>
-                      <h6 className="fw-bold text-dark border-bottom pb-2 mb-3 mt-4">Date of Discharge (for Nurse on Duty)</h6>
-                      <div className="row g-4">
-                        <div className="col-12 col-md-5">
-                          <label className="form-label text-muted small fw-bold d-none">Date <span className="text-danger">*</span></label>
-                          <input required type="datetime-local" className="form-control shadow-none mb-2" style={{ borderColor: "var(--primary, #0f763f)" }} value={dispForm.dateOfDischarge} onChange={(e) => setDispForm({ ...dispForm, dateOfDischarge: e.target.value })} />
-                          <button type="button" className="btn btn-outline-secondary w-100 fw-medium" onClick={setDispCurrentDate}>Set Current Date</button>
-                        </div>
-                        <div className="col-12 col-md-7">
-                          <p className="text-muted small mb-2">Date of discharge is intended to be entered by Nurse using the Nurse Module when patient is ready to leave the hospital.</p>
-                          <p className="text-muted small mb-0">Setting the Date and Time of Discharge will render this record inactive and inaccessible in other module.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="modal-footer border-0 p-3 justify-content-end mt-auto" style={{ backgroundColor: "#e2e5e9" }}>
-                  <div className="d-flex modal-footer-actions gap-2 w-100 justify-content-sm-end">
-                    <button type="submit" className="btn rounded-1 px-5 py-2 fw-medium shadow-sm text-white" style={{ backgroundColor: "var(--primary, #0f763f)", cursor: "pointer" }}>SAVE</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
       {showInstructionModal && (
-        <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}>
+        <div
+          className="modal fade show d-block"
+          tabIndex={-1}
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}
+        >
           <div className="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-centered px-0 px-md-2">
             <div className="modal-content shadow-lg border-0 rounded-1 overflow-hidden bg-white h-100">
-              <div className="modal-header border-0 py-3 d-flex align-items-center" style={{ backgroundColor: "#333b45" }}>
-                <h5 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2 text-truncate" style={{ fontSize: "1.1rem" }}>
+              <div
+                className="modal-header border-0 py-3 d-flex align-items-center"
+                style={{ backgroundColor: "#333b45" }}
+              >
+                <h5
+                  className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2 text-truncate"
+                  style={{ fontSize: "1.1rem" }}
+                >
                   <i className="isax isax-document-text" style={{ fontSize: "1.5rem" }}></i>
                   {editingInstructionIdx !== null ? "EDIT INSTRUCTION" : "NEW INSTRUCTION"}
                 </h5>
-                <button type="button" className="btn-close btn-close-white shadow-none flex-shrink-0" onClick={() => { setShowInstructionModal(false); setEditingInstructionIdx(null); }}></button>
+
+                <button
+                  type="button"
+                  className="btn-close btn-close-white shadow-none flex-shrink-0"
+                  onClick={() => {
+                    setShowInstructionModal(false);
+                    setEditingInstructionIdx(null);
+                    setShowRequiredHighlight(false);
+                  }}
+                ></button>
               </div>
 
               <ul className="nav nav-tabs modal-sub-tabs bg-light px-3 pt-2 border-bottom-0">
                 <li className="nav-item">
-                  <button className={`nav-link border-top-0 border-start-0 border-end-0 ${instActiveTab === "instruction" ? "active" : ""}`} onClick={() => setInstActiveTab("instruction")}>
+                  <button
+                    type="button"
+                    className={`nav-link border-top-0 border-start-0 border-end-0 ${
+                      instActiveTab === "instruction" ? "active" : ""
+                    }`}
+                    onClick={() => setInstActiveTab("instruction")}
+                  >
                     Instruction
                   </button>
                 </li>
+
                 <li className="nav-item">
-                  <button className={`nav-link border-top-0 border-start-0 border-end-0 ${instActiveTab === "drugs" ? "active" : ""}`} onClick={() => setInstActiveTab("drugs")}>
+                  <button
+                    type="button"
+                    className={`nav-link border-top-0 border-start-0 border-end-0 ${
+                      instActiveTab === "drugs" ? "active" : ""
+                    }`}
+                    onClick={() => setInstActiveTab("drugs")}
+                  >
                     Drugs and Medicine
                   </button>
                 </li>
               </ul>
 
-              <form onSubmit={handleSaveInstruction} className="d-flex flex-column mb-0 flex-grow-1 overflow-hidden">
-                <div className="modal-body p-0 bg-white flex-grow-1" style={{ minHeight: "50vh", overflowY: "auto" }}>
+              <form
+                onSubmit={handleSaveInstruction}
+                className="d-flex flex-column mb-0 flex-grow-1 overflow-hidden"
+              >
+                <div
+                  className="modal-body p-0 bg-white flex-grow-1"
+                  style={{ minHeight: "50vh", overflowY: "auto" }}
+                >
                   {instActiveTab === "instruction" && (
                     <div className="p-3 p-md-4 container-fluid">
                       <div className="row mb-4">
-                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">Diet</div>
+                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">
+                          Diet
+                        </div>
+
                         <div className="col-12 col-md-9 col-lg-10">
                           {Object.keys(instForm.diet).map((dietKey) => (
-                          <div key={dietKey} className="d-flex align-items-center mb-2">
-                            <div className="form-check" style={{ width: "160px", flexShrink: 0 }}>
-                              <input
-                                className="form-check-input shadow-none"
-                                type="checkbox"
-                                id={`diet-${dietKey}`}
-                                style={{ borderColor: "var(--primary, #0f763f)" }}
-                                checked={instForm.diet[dietKey].checked}
-                                onChange={(e) => handleDietChange(dietKey, "checked", e.target.checked)}
-                              />
-                              <label className="form-check-label text-dark" htmlFor={`diet-${dietKey}`}>{dietKey}</label>
+                            <div key={dietKey} className="d-flex align-items-center mb-2">
+                              <div className="form-check" style={{ width: "160px", flexShrink: 0 }}>
+                                <input
+                                  className="form-check-input shadow-none"
+                                  type="checkbox"
+                                  id={`diet-${dietKey}`}
+                                  style={{ borderColor: "var(--primary, #0f763f)" }}
+                                  checked={instForm.diet[dietKey].checked}
+                                  onChange={(e) =>
+                                    handleDietChange(dietKey, "checked", e.target.checked)
+                                  }
+                                />
+
+                                <label className="form-check-label text-dark" htmlFor={`diet-${dietKey}`}>
+                                  {dietKey}
+                                </label>
+                              </div>
+
+                              {instForm.diet[dietKey].checked && (
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm shadow-none flex-grow-1 text-uppercase"
+                                  style={{ borderColor: "var(--primary, #0f763f)" }}
+                                  value={instForm.diet[dietKey].details}
+                                  onChange={(e) =>
+                                    handleDietChange(
+                                      dietKey,
+                                      "details",
+                                      e.target.value.toUpperCase()
+                                    )
+                                  }
+                                  autoFocus
+                                />
+                              )}
                             </div>
-                            {instForm.diet[dietKey].checked && (
-                              <input
-                                type="text"
-                                className="form-control form-control-sm shadow-none flex-grow-1 text-uppercase"
-                                style={{ borderColor: "var(--primary, #0f763f)" }}
-                                value={instForm.diet[dietKey].details}
-                                onChange={(e) => handleDietChange(dietKey, "details", e.target.value.toUpperCase())}
-                                autoFocus
-                              />
-                            )}
-                          </div>
-                        ))}
+                          ))}
                         </div>
                       </div>
+
                       <div className="row mb-4">
-                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">Activity</div>
+                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">
+                          Activity
+                        </div>
+
                         <div className="col-12 col-md-9 col-lg-10">
-                         {Object.keys(instForm.activity).map((actKey) => (
-                          <div key={actKey} className="d-flex align-items-center mb-2">
-                            <div className="form-check" style={{ width: "160px", flexShrink: 0 }}>
-                              <input
-                                className="form-check-input shadow-none"
-                                type="checkbox"
-                                id={`act-${actKey}`}
-                                style={{ borderColor: "var(--primary, #0f763f)" }}
-                                checked={instForm.activity[actKey].checked}
-                                onChange={(e) => handleActivityChange(actKey, "checked", e.target.checked)}
-                              />
-                              <label className="form-check-label text-dark" htmlFor={`act-${actKey}`}>{actKey}</label>
+                          {Object.keys(instForm.activity).map((actKey) => (
+                            <div key={actKey} className="d-flex align-items-center mb-2">
+                              <div className="form-check" style={{ width: "160px", flexShrink: 0 }}>
+                                <input
+                                  className="form-check-input shadow-none"
+                                  type="checkbox"
+                                  id={`act-${actKey}`}
+                                  style={{ borderColor: "var(--primary, #0f763f)" }}
+                                  checked={instForm.activity[actKey].checked}
+                                  onChange={(e) =>
+                                    handleActivityChange(actKey, "checked", e.target.checked)
+                                  }
+                                />
+
+                                <label className="form-check-label text-dark" htmlFor={`act-${actKey}`}>
+                                  {actKey}
+                                </label>
+                              </div>
+
+                              {instForm.activity[actKey].checked && (
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm shadow-none flex-grow-1 text-uppercase"
+                                  style={{ borderColor: "var(--primary, #0f763f)" }}
+                                  value={instForm.activity[actKey].details}
+                                  onChange={(e) =>
+                                    handleActivityChange(
+                                      actKey,
+                                      "details",
+                                      e.target.value.toUpperCase()
+                                    )
+                                  }
+                                />
+                              )}
                             </div>
-                            {instForm.activity[actKey].checked && (
-                              <input
-                                type="text"
-                                className="form-control form-control-sm shadow-none flex-grow-1 text-uppercase"
-                                style={{ borderColor: "var(--primary, #0f763f)" }}
-                                value={instForm.activity[actKey].details}
-                                onChange={(e) => handleActivityChange(actKey, "details", e.target.value.toUpperCase())}
-                              />
-                            )}
-                          </div>
-                        ))}
+                          ))}
                         </div>
                       </div>
+
                       <div className="row mb-4">
-                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">Special Instruction</div>
-                        <div className="col-12 col-md-9 col-lg-10"><textarea className="form-control shadow-none text-uppercase" rows={3} style={{ borderColor: "var(--primary, #0f763f)" }} value={instForm.specialInstruction} onChange={(e) => setInstForm({ ...instForm, specialInstruction: e.target.value.toUpperCase() })}></textarea></div>
+                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">
+                          Special Instruction
+                        </div>
+
+                        <div className="col-12 col-md-9 col-lg-10">
+                          <textarea
+                            className="form-control shadow-none text-uppercase"
+                            rows={3}
+                            style={{ borderColor: "var(--primary, #0f763f)" }}
+                            value={instForm.specialInstruction}
+                            onChange={(e) =>
+                              setInstForm({
+                                ...instForm,
+                                specialInstruction: e.target.value.toUpperCase(),
+                              })
+                            }
+                          ></textarea>
+                        </div>
                       </div>
+
                       <div className="row mb-4 align-items-center">
-                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mb-2 mb-md-0">OPD Check Up</div>
-                        <div className="col-12 col-md-6 col-lg-4"><input type="datetime-local" className="form-control form-control-sm shadow-none" style={{ borderColor: "var(--primary, #0f763f)" }} value={instForm.opdCheckUp} onChange={(e) => setInstForm({ ...instForm, opdCheckUp: e.target.value })} /></div>
+                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mb-2 mb-md-0">
+                          OPD Check Up
+                        </div>
+
+                        <div className="col-12 col-md-6 col-lg-4">
+                          <input
+                            type="datetime-local"
+                            className="form-control form-control-sm shadow-none"
+                            style={{ borderColor: "var(--primary, #0f763f)" }}
+                            value={instForm.opdCheckUp}
+                            onChange={(e) =>
+                              setInstForm({ ...instForm, opdCheckUp: e.target.value })
+                            }
+                          />
+                        </div>
                       </div>
-                      
-                
+
                       <div className="row mb-4">
-                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">Patient/Rep Sign</div>
+                        <div
+                          className={`col-12 col-md-3 col-lg-2 fw-bold text-md-end mt-1 mb-2 mb-md-0 ${
+                            patientSignMissing || patientSignDateMissing
+                              ? "required-field-label"
+                              : "text-dark"
+                          }`}
+                        >
+                          Patient/Rep Sign <span className="text-danger">*</span>
+                        </div>
+
                         <div className="col-12 col-md-9 col-lg-10">
                           <div className="d-flex flex-column gap-2" style={{ maxWidth: "350px" }}>
                             <div className="position-relative">
-                              <input 
-                                required 
-                                type="text" 
-                                className="form-control form-control-sm shadow-none text-uppercase" 
-                                style={{ borderColor: "#ced4da", paddingRight: "40px" }} 
-                                value={instForm.patientSign} 
-                                onChange={(e) => setInstForm({ ...instForm, patientSign: e.target.value.toUpperCase() })} 
+                              <input
+                                required
+                                type="text"
+                                className={`form-control form-control-sm shadow-none text-uppercase ${
+                                  patientSignMissing ? "required-field-highlight" : ""
+                                }`}
+                                style={{
+                                  borderColor: patientSignMissing ? "#dc3545" : "#ced4da",
+                                  paddingRight: "40px",
+                                }}
+                                value={instForm.patientSign}
+                                onChange={(e) => {
+                                  const value = e.target.value.toUpperCase();
+
+                                  setInstForm({
+                                    ...instForm,
+                                    patientSign: value,
+                                  });
+
+                                  if (value && instForm.patientSignDate) {
+                                    setShowRequiredHighlight(false);
+                                  }
+                                }}
                               />
+
+                              {patientSignMissing && (
+                                <div className="text-danger small fw-semibold mt-1">
+                                  Patient/Rep Sign is required.
+                                </div>
+                              )}
+
                               <button
                                 type="button"
                                 className="btn position-absolute top-50 end-0 translate-middle-y border-0 p-0 px-2 text-muted"
                                 onClick={() => {
                                   const { firstName, middleName, lastName } = mockPatientProfile;
                                   const mi = middleName ? `${middleName.charAt(0)}.` : "";
-                                  setInstForm({ ...instForm, patientSign: `${firstName} ${mi} ${lastName}`.trim().toUpperCase() });
+                                  const fullName = `${firstName} ${mi} ${lastName}`.trim().toUpperCase();
+
+                                  setInstForm({
+                                    ...instForm,
+                                    patientSign: fullName,
+                                  });
+
+                                  if (instForm.patientSignDate) {
+                                    setShowRequiredHighlight(false);
+                                  }
                                 }}
                                 title="Auto-fill patient name"
                                 style={{ zIndex: 5 }}
                               >
-                                <i className="isax isax-user text-secondary" style={{ fontSize: "22px" }}></i>
+                                <i
+                                  className="isax isax-user text-secondary"
+                                  style={{ fontSize: "22px" }}
+                                ></i>
                               </button>
                             </div>
+
                             <div>
-                              <input 
-                                required 
-                                type="datetime-local" 
-                                className="form-control form-control-sm shadow-none" 
-                                style={{ borderColor: "#ced4da" }} 
-                                value={instForm.patientSignDate} 
-                                onChange={(e) => setInstForm({ ...instForm, patientSignDate: e.target.value })} 
+                              <input
+                                required
+                                type="datetime-local"
+                                className={`form-control form-control-sm shadow-none ${
+                                  patientSignDateMissing ? "required-field-highlight" : ""
+                                }`}
+                                style={{
+                                  borderColor: patientSignDateMissing ? "#dc3545" : "#ced4da",
+                                }}
+                                value={instForm.patientSignDate}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+
+                                  setInstForm({
+                                    ...instForm,
+                                    patientSignDate: value,
+                                  });
+
+                                  if (instForm.patientSign && value) {
+                                    setShowRequiredHighlight(false);
+                                  }
+                                }}
                               />
+
+                              {patientSignDateMissing && (
+                                <div className="text-danger small fw-semibold mt-1">
+                                  Patient/Rep Sign Date is required.
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
                       </div>
-                      
-                 
+
                       <div className="row mb-2">
-                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">Contact Number</div>
+                        <div className="col-12 col-md-3 col-lg-2 fw-bold text-dark text-md-end mt-1 mb-2 mb-md-0">
+                          Contact Number
+                        </div>
+
                         <div className="col-12 col-md-9 col-lg-10">
                           <div className="row g-3">
                             <div className="col-12 col-sm-6">
                               <label className="form-label text-muted small fw-bold">Globe</label>
-                              <input 
-                                type="number" 
-                                className="form-control form-control-sm shadow-none text-uppercase" 
-                                style={{ borderColor: "var(--primary, #0f763f)" }} 
-                                placeholder="0000-000-0000" 
-                                value={instForm.contactGlobe} 
-                                onChange={(e) => setInstForm({ ...instForm, contactGlobe: e.target.value.toUpperCase() })} 
+
+                              <input
+                                type="number"
+                                className="form-control form-control-sm shadow-none text-uppercase"
+                                style={{ borderColor: "var(--primary, #0f763f)" }}
+                                placeholder="0000-000-0000"
+                                value={instForm.contactGlobe}
+                                onChange={(e) =>
+                                  setInstForm({
+                                    ...instForm,
+                                    contactGlobe: e.target.value.toUpperCase(),
+                                  })
+                                }
                               />
                             </div>
+
                             <div className="col-12 col-sm-6">
                               <label className="form-label text-muted small fw-bold">Smart/Sun</label>
-                              <input 
-                                type="number" 
-                                className="form-control form-control-sm shadow-none text-uppercase" 
-                                style={{ borderColor: "var(--primary, #0f763f)" }} 
-                                placeholder="0000-000-0000" 
-                                value={instForm.contactSmart} 
-                                onChange={(e) => setInstForm({ ...instForm, contactSmart: e.target.value.toUpperCase() })} 
+
+                              <input
+                                type="number"
+                                className="form-control form-control-sm shadow-none text-uppercase"
+                                style={{ borderColor: "var(--primary, #0f763f)" }}
+                                placeholder="0000-000-0000"
+                                value={instForm.contactSmart}
+                                onChange={(e) =>
+                                  setInstForm({
+                                    ...instForm,
+                                    contactSmart: e.target.value.toUpperCase(),
+                                  })
+                                }
                               />
                             </div>
                           </div>
                         </div>
                       </div>
-
                     </div>
                   )}
 
                   {instActiveTab === "drugs" && (
-                    <div className="table-responsive h-100">
-                      <table className="table modal-table bg-white mb-0 w-100 border-0" style={{ tableLayout: "auto", minWidth: "800px" }}>
-                        <thead style={{ backgroundColor: "#f8f9fa", position: "sticky", top: 0, zIndex: 1 }}>
-                          <tr>
-                            <th className="border py-2 px-2 text-dark fw-semibold text-center min-w-drug" rowSpan={2} style={{ fontSize: "0.82rem" }}>Drugs | Medicine</th>
-                            <th className="border py-2 px-2 text-dark fw-semibold text-center" colSpan={4} style={{ fontSize: "0.82rem" }}>Frequency</th>
-                            <th className="border py-2 px-2 text-dark fw-semibold text-center min-w-rem" rowSpan={2} style={{ fontSize: "0.82rem" }}>Remark</th>
-                          </tr>
-                          <tr>
-                            <th className="border py-1 px-1 text-dark fw-semibold text-center min-w-freq" style={{ fontSize: "0.78rem" }}>Morning</th>
-                            <th className="border py-1 px-1 text-dark fw-semibold text-center min-w-freq" style={{ fontSize: "0.78rem" }}>Noon</th>
-                            <th className="border py-1 px-1 text-dark fw-semibold text-center min-w-freq" style={{ fontSize: "0.78rem" }}>Afternoon</th>
-                            <th className="border py-1 px-1 text-dark fw-semibold text-center min-w-freq" style={{ fontSize: "0.78rem" }}>Night</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {instForm.drugs.map((drug, idx) => (
-                            <tr key={idx} style={{ height: "32px" }}>
-                              <td className="p-0 border align-middle min-w-drug">
-                                <div className="d-flex h-100 align-items-stretch">
+                    <div className="h-100 d-flex flex-column">
+                      <div className="d-flex justify-content-end align-items-center p-2 border-bottom bg-light">
+                        <button
+                          type="button"
+                          className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary"
+                          style={{ borderRadius: "4px", cursor: "pointer" }}
+                          onClick={addDrugRow}
+                        >
+                          <i className="isax isax-add"></i>
+                          <span>Add Medicine</span>
+                        </button>
+                      </div>
+
+                      <div className="table-responsive flex-grow-1">
+                        <table
+                          className="table modal-table bg-white mb-0 w-100 border-0"
+                          style={{ tableLayout: "auto", minWidth: "880px" }}
+                        >
+                          <thead
+                            style={{
+                              backgroundColor: "#f8f9fa",
+                              position: "sticky",
+                              top: 0,
+                              zIndex: 1,
+                            }}
+                          >
+                            <tr>
+                              <th
+                                className="border py-2 px-2 text-dark fw-semibold text-center min-w-drug"
+                                rowSpan={2}
+                                style={{ fontSize: "0.82rem" }}
+                              >
+                                Drugs | Medicine
+                              </th>
+
+                              <th
+                                className="border py-2 px-2 text-dark fw-semibold text-center"
+                                colSpan={4}
+                                style={{ fontSize: "0.82rem" }}
+                              >
+                                Frequency
+                              </th>
+
+                              <th
+                                className="border py-2 px-2 text-dark fw-semibold text-center min-w-rem"
+                                rowSpan={2}
+                                style={{ fontSize: "0.82rem" }}
+                              >
+                                Remark
+                              </th>
+
+                              <th
+                                className="border py-2 px-2 text-dark fw-semibold text-center min-w-action"
+                                rowSpan={2}
+                                style={{ fontSize: "0.82rem" }}
+                              >
+                                Action
+                              </th>
+                            </tr>
+
+                            <tr>
+                              <th className="border py-1 px-1 text-dark fw-semibold text-center min-w-freq">
+                                Morning
+                              </th>
+                              <th className="border py-1 px-1 text-dark fw-semibold text-center min-w-freq">
+                                Noon
+                              </th>
+                              <th className="border py-1 px-1 text-dark fw-semibold text-center min-w-freq">
+                                Afternoon
+                              </th>
+                              <th className="border py-1 px-1 text-dark fw-semibold text-center min-w-freq">
+                                Night
+                              </th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {instForm.drugs.map((drug, idx) => (
+                              <tr key={idx} style={{ height: "32px" }}>
+                                <td className="p-0 border align-middle min-w-drug">
+                                  <div className="d-flex h-100 align-items-stretch">
+                                    <input
+                                      type="text"
+                                      className="form-control border-0 rounded-0 shadow-none px-2 py-1 flex-grow-1 bg-white text-dark text-truncate"
+                                      style={{
+                                        fontSize: "0.82rem",
+                                        height: "32px",
+                                        cursor: "pointer",
+                                      }}
+                                      value={drug.name}
+                                      placeholder="Click icon to select..."
+                                      readOnly
+                                      onClick={() => openPharmacyList(idx)}
+                                    />
+
+                                    <button
+                                      type="button"
+                                      className="btn border-0 border-start bg-white text-muted px-2 flex-shrink-0 d-flex align-items-center justify-content-center rounded-0 text-hover-primary"
+                                      style={{
+                                        fontSize: "0.75rem",
+                                        minWidth: "32px",
+                                        height: "32px",
+                                      }}
+                                      onClick={() => openPharmacyList(idx)}
+                                    >
+                                      &#8801;
+                                    </button>
+                                  </div>
+                                </td>
+
+                                <td className="p-0 border align-middle min-w-freq">
                                   <input
                                     type="text"
-                                    className="form-control border-0 rounded-0 shadow-none px-2 py-1 flex-grow-1 bg-white text-dark text-truncate"
-                                    style={{ fontSize: "0.82rem", height: "32px", cursor: "pointer" }}
-                                    value={drug.name}
-                                    placeholder="Click icon to select..."
-                                    readOnly
-                                    onClick={() => openPharmacyList(idx)}
+                                    className="form-control border-0 rounded-0 shadow-none text-center py-1 w-100 text-uppercase"
+                                    style={{ fontSize: "0.82rem", height: "32px" }}
+                                    value={drug.morning}
+                                    onChange={(e) =>
+                                      updateDrugRow(idx, "morning", e.target.value.toUpperCase())
+                                    }
                                   />
+                                </td>
+
+                                <td className="p-0 border align-middle min-w-freq">
+                                  <input
+                                    type="text"
+                                    className="form-control border-0 rounded-0 shadow-none text-center py-1 w-100 text-uppercase"
+                                    style={{ fontSize: "0.82rem", height: "32px" }}
+                                    value={drug.noon}
+                                    onChange={(e) =>
+                                      updateDrugRow(idx, "noon", e.target.value.toUpperCase())
+                                    }
+                                  />
+                                </td>
+
+                                <td className="p-0 border align-middle min-w-freq">
+                                  <input
+                                    type="text"
+                                    className="form-control border-0 rounded-0 shadow-none text-center py-1 w-100 text-uppercase"
+                                    style={{ fontSize: "0.82rem", height: "32px" }}
+                                    value={drug.afternoon}
+                                    onChange={(e) =>
+                                      updateDrugRow(idx, "afternoon", e.target.value.toUpperCase())
+                                    }
+                                  />
+                                </td>
+
+                                <td className="p-0 border align-middle min-w-freq">
+                                  <input
+                                    type="text"
+                                    className="form-control border-0 rounded-0 shadow-none text-center py-1 w-100 text-uppercase"
+                                    style={{ fontSize: "0.82rem", height: "32px" }}
+                                    value={drug.night}
+                                    onChange={(e) =>
+                                      updateDrugRow(idx, "night", e.target.value.toUpperCase())
+                                    }
+                                  />
+                                </td>
+
+                                <td className="p-0 border align-middle min-w-rem">
+                                  <input
+                                    type="text"
+                                    className="form-control border-0 rounded-0 shadow-none py-1 px-2 w-100 text-uppercase"
+                                    style={{ fontSize: "0.82rem", height: "32px" }}
+                                    value={drug.remark}
+                                    onChange={(e) =>
+                                      updateDrugRow(idx, "remark", e.target.value.toUpperCase())
+                                    }
+                                  />
+                                </td>
+
+                                <td className="p-0 border align-middle text-center min-w-action">
                                   <button
                                     type="button"
-                                    className="btn border-0 border-start bg-white text-muted px-2 flex-shrink-0 d-flex align-items-center justify-content-center rounded-0 text-hover-primary"
-                                    style={{ fontSize: "0.75rem", minWidth: "32px", height: "32px" }}
-                                    onClick={() => openPharmacyList(idx)}
+                                    className="btn btn-sm text-danger border-0"
+                                    disabled={instForm.drugs.length <= 1}
+                                    onClick={() => removeDrugRow(idx)}
+                                    title="Remove medicine row"
+                                    style={{
+                                      opacity: instForm.drugs.length <= 1 ? 0.4 : 1,
+                                      cursor:
+                                        instForm.drugs.length <= 1 ? "not-allowed" : "pointer",
+                                    }}
                                   >
-                                    &#8801;
+                                    <i className="isax isax-trash"></i>
                                   </button>
-                                </div>
-                              </td>
-                              <td className="p-0 border align-middle min-w-freq"><input type="text" className="form-control border-0 rounded-0 shadow-none text-center py-1 w-100 text-uppercase" style={{ fontSize: "0.82rem", height: "32px" }} value={drug.morning} onChange={(e) => updateDrugRow(idx, "morning", e.target.value.toUpperCase())} /></td>
-                              <td className="p-0 border align-middle min-w-freq"><input type="text" className="form-control border-0 rounded-0 shadow-none text-center py-1 w-100 text-uppercase" style={{ fontSize: "0.82rem", height: "32px" }} value={drug.noon} onChange={(e) => updateDrugRow(idx, "noon", e.target.value.toUpperCase())} /></td>
-                              <td className="p-0 border align-middle min-w-freq"><input type="text" className="form-control border-0 rounded-0 shadow-none text-center py-1 w-100 text-uppercase" style={{ fontSize: "0.82rem", height: "32px" }} value={drug.afternoon} onChange={(e) => updateDrugRow(idx, "afternoon", e.target.value.toUpperCase())} /></td>
-                              <td className="p-0 border align-middle min-w-freq"><input type="text" className="form-control border-0 rounded-0 shadow-none text-center py-1 w-100 text-uppercase" style={{ fontSize: "0.82rem", height: "32px" }} value={drug.night} onChange={(e) => updateDrugRow(idx, "night", e.target.value.toUpperCase())} /></td>
-                              <td className="p-0 border align-middle min-w-rem"><input type="text" className="form-control border-0 rounded-0 shadow-none py-1 px-2 w-100 text-uppercase" style={{ fontSize: "0.82rem", height: "32px" }} value={drug.remark} onChange={(e) => updateDrugRow(idx, "remark", e.target.value.toUpperCase())} /></td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </div>
-                <div className="modal-footer border-0 p-3 justify-content-end mt-auto flex-shrink-0" style={{ backgroundColor: "#e2e5e9" }}>
+
+                <div
+                  className="modal-footer border-0 p-3 justify-content-end mt-auto flex-shrink-0"
+                  style={{ backgroundColor: "#e2e5e9" }}
+                >
                   <div className="d-flex modal-footer-actions gap-2 w-100 justify-content-sm-end">
-                    <button type="submit" className="btn rounded-1 px-5 py-2 fw-medium shadow-sm text-white" style={{ backgroundColor: "var(--primary, #0f763f)" }}>SAVE</button>
+                    <button
+                      type="submit"
+                      className="btn rounded-1 px-5 py-2 fw-medium shadow-sm text-white"
+                      style={{ backgroundColor: "var(--primary, #0f763f)" }}
+                    >
+                      SAVE
+                    </button>
                   </div>
                 </div>
               </form>
@@ -965,38 +1273,56 @@ const DispositionModule = () => {
       )}
 
       {showPharmacyModal && (
-        <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1070 }}>
+        <div
+          className="modal fade show d-block"
+          tabIndex={-1}
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1070 }}
+        >
           <div className="modal-dialog modal-dialog-centered modal-md px-2">
             <div className="modal-content shadow-lg border-0 rounded-1 overflow-hidden bg-white">
-              
-              {/* Header */}
-              <div className="modal-header border-0 py-2 d-flex align-items-center" style={{ backgroundColor: "#f0f0f0" }}>
-                <h6 className="modal-title fw-bold text-dark m-0 d-flex align-items-center gap-2" style={{ fontSize: "0.9rem" }}>
-                  <ImageWithBasePath src="assets/img/icons/pharmacy-icon.png" alt="" style={{ width: "16px", height: "16px" }} className="fallback-icon" /> 
+              <div
+                className="modal-header border-0 py-2 d-flex align-items-center"
+                style={{ backgroundColor: "#f0f0f0" }}
+              >
+                <h6
+                  className="modal-title fw-bold text-dark m-0 d-flex align-items-center gap-2"
+                  style={{ fontSize: "0.9rem" }}
+                >
+                  <ImageWithBasePath
+                    src="assets/img/icons/pharmacy-icon.png"
+                    alt=""
+                    style={{ width: "16px", height: "16px" }}
+                    className="fallback-icon"
+                  />
                   Pharmacy Drugs List
                 </h6>
-                <button type="button" className="btn-close shadow-none" style={{ fontSize: "0.7rem" }} onClick={() => setShowPharmacyModal(false)}></button>
+
+                <button
+                  type="button"
+                  className="btn-close shadow-none"
+                  style={{ fontSize: "0.7rem" }}
+                  onClick={() => setShowPharmacyModal(false)}
+                ></button>
               </div>
 
-              {/* Search Bar Area */}
               <div className="p-2 border-bottom bg-white d-flex align-items-center gap-2">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="form-control form-control-sm shadow-none border-secondary flex-grow-1"
                   autoFocus
                   value={pharmacySearchQuery}
                   onChange={(e) => setPharmacySearchQuery(e.target.value)}
                 />
+
                 <span className="text-dark small fw-medium text-nowrap">Find Item</span>
               </div>
 
-              {/* List Area */}
               <div className="modal-body p-0" style={{ maxHeight: "400px", overflowY: "auto" }}>
                 {filteredPharmacyDrugs.length > 0 ? (
                   <ul className="list-group list-group-flush">
                     {filteredPharmacyDrugs.map((drug, index) => (
-                      <li 
-                        key={index} 
+                      <li
+                        key={index}
                         className="list-group-item list-group-item-action border-bottom-0 py-2 px-3 pharmacy-item text-dark"
                         style={{ fontSize: "0.85rem" }}
                         onClick={() => selectPharmacyDrug(drug)}
@@ -1011,30 +1337,54 @@ const DispositionModule = () => {
                   </div>
                 )}
               </div>
-
             </div>
           </div>
         </div>
       )}
 
-      {/* =========================================
-          MODAL: VALIDATION ALERT
-      ========================================= */}
       {showValidationModal && (
-        <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1080 }}>
+        <div
+          className="modal fade show d-block"
+          tabIndex={-1}
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1080 }}
+        >
           <div className="modal-dialog modal-dialog-centered modal-sm px-2">
             <div className="modal-content shadow-lg border-0 rounded-1 overflow-hidden bg-white">
-              <div className="modal-header border-0 py-2 d-flex align-items-center" style={{ backgroundColor: "#dc3545" }}>
-                <h6 className="modal-title fw-bold text-white m-0 d-flex align-items-center gap-2" style={{ fontSize: "0.95rem" }}>
+              <div
+                className="modal-header border-0 py-2 d-flex align-items-center"
+                style={{ backgroundColor: "#dc3545" }}
+              >
+                <h6
+                  className="modal-title fw-bold text-white m-0 d-flex align-items-center gap-2"
+                  style={{ fontSize: "0.95rem" }}
+                >
                   <i className="isax isax-warning-2"></i> Validation Error
                 </h6>
-                <button type="button" className="btn-close btn-close-white shadow-none" style={{ fontSize: "0.7rem" }} onClick={() => setShowValidationModal(false)}></button>
+
+                <button
+                  type="button"
+                  className="btn-close btn-close-white shadow-none"
+                  style={{ fontSize: "0.7rem" }}
+                  onClick={() => setShowValidationModal(false)}
+                ></button>
               </div>
+
               <div className="modal-body p-4 text-center">
-                <p className="mb-0 text-dark fw-medium" style={{ fontSize: "0.9rem" }}>{validationMessage}</p>
+                <p className="mb-0 text-dark fw-medium" style={{ fontSize: "0.9rem" }}>
+                  {validationMessage}
+                </p>
               </div>
-              <div className="modal-footer border-0 p-2 justify-content-center" style={{ backgroundColor: "#f8f9fa" }}>
-                <button type="button" className="btn btn-sm px-4 fw-bold text-white shadow-sm" style={{ backgroundColor: "#dc3545", borderRadius: "4px" }} onClick={() => setShowValidationModal(false)}>
+
+              <div
+                className="modal-footer border-0 p-2 justify-content-center"
+                style={{ backgroundColor: "#f8f9fa" }}
+              >
+                <button
+                  type="button"
+                  className="btn btn-sm px-4 fw-bold text-white shadow-sm"
+                  style={{ backgroundColor: "#dc3545", borderRadius: "4px" }}
+                  onClick={() => setShowValidationModal(false)}
+                >
                   OK
                 </button>
               </div>
@@ -1042,7 +1392,6 @@ const DispositionModule = () => {
           </div>
         </div>
       )}
-
     </>
   );
 };
