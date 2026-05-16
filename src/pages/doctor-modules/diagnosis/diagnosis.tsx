@@ -277,21 +277,17 @@ const DiagnosisModule = () => {
             color: white;
           }
 
-          .empty-state-container {
-            min-height: 360px;
-          }
+         .text-hover-primary:hover {
+  color: var(--primary, #0f763f) !important;
+}
 
-          .mobile-empty-add-btn {
-            width: 100%;
-            max-width: 240px;
-            border-radius: 12px;
-            font-weight: 600;
-            min-height: 44px;
-            background: linear-gradient(135deg, #0f763f, #198754);
-            border: none;
-            box-shadow: 0 6px 16px rgba(15,118,63,0.2);
-            color: #ffffff;
-          }
+.diagnosis-main-panel {
+  min-height: 460px;
+}
+
+.diagnosis-empty-icon {
+  font-size: 3.25rem;
+}
 
           .card {
             border-radius: 16px !important;
@@ -402,6 +398,20 @@ const DiagnosisModule = () => {
             box-shadow: 0 6px 18px rgba(15,118,63,0.12);
           }
 
+
+          .custom-empty-state {
+  min-height: 350px;
+}
+
+@media (max-width: 767px) {
+  .physician-mobile-empty {
+    min-height: 420px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    background: #fff;
+  }
+}
+
           .patient-name {
             color: #1f2937;
             letter-spacing: 0.3px;
@@ -434,10 +444,10 @@ const DiagnosisModule = () => {
         style={{ minHeight: "100vh" }}
       >
         <div className="container-fluid px-3 px-lg-5 pt-0 flex-grow-1 d-flex flex-column">
-         <div className="doctor-dashboard-layout">
-                  <DoctorSidebar />
+          <div className="row flex-grow-1">
+            <DoctorSidebar />
 
-                 <div className="doctor-dashboard-main">
+            <div className="col-lg-8 col-xl-9 mt-4 mt-lg-0 d-flex flex-column">
               <div
                 className="card border-0 shadow-sm p-3 p-md-4 mb-4 flex-grow-1"
                 style={{
@@ -479,235 +489,267 @@ const DiagnosisModule = () => {
                     <div className="d-flex gap-2 toolbar-mobile-stack">
                       {/* Add */}
                       <button
-                        onClick={handleAdd}
-                        className="btn btn-sm diagnosis-add-btn toolbar-btn"
-                      >
-                        <i className="isax isax-add-square me-1"></i>
-                        Add Diagnosis
-                      </button>
+  type="button"
+  onClick={handleAdd}
+  className="btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white"
+  style={{
+    borderRadius: "4px",
+    cursor: "pointer",
+    backgroundColor: "#0f763f",
+    borderColor: "#0f763f",
+  }}
+>
+  <i className="isax isax-add-square"></i>
+  <span>Add Diagnosis</span>
+</button>
 
                       {/* Edit */}
                       <button
-                        disabled={!isRowSelected}
-                        onClick={handleEdit}
-                        className={`btn btn-sm border shadow-sm toolbar-btn ${
-                          !isRowSelected
-                            ? "btn-light opacity-50"
-                            : "btn-outline-primary"
-                        }`}
-                      >
-                        <i className="isax isax-edit me-1"></i>
-                        Edit
-                      </button>
+  type="button"
+  disabled={!isRowSelected}
+  onClick={handleEdit}
+  className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold ${
+    isRowSelected
+      ? "bg-white text-dark text-hover-primary"
+      : "bg-light text-muted opacity-50"
+  }`}
+  style={{
+    borderRadius: "4px",
+    cursor: isRowSelected ? "pointer" : "not-allowed",
+  }}
+>
+  <i className="isax isax-edit"></i>
+  <span>Edit</span>
+</button>
 
                       {/* Delete */}
                       <button
-                        disabled={!isRowSelected}
-                        onClick={handleDeleteClick}
-                        className={`btn btn-sm border shadow-sm toolbar-btn ${
-                          !isRowSelected
-                            ? "btn-light opacity-50"
-                            : "btn-outline-danger"
-                        }`}
-                      >
-                        <i className="isax isax-trash me-1"></i>
-                        Delete
-                      </button>
+  type="button"
+  disabled={!isRowSelected}
+  onClick={handleDeleteClick}
+  className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold ${
+    isRowSelected
+      ? "bg-white text-danger"
+      : "bg-light text-muted opacity-50"
+  }`}
+  style={{
+    borderRadius: "4px",
+    cursor: isRowSelected ? "pointer" : "not-allowed",
+  }}
+>
+  <i className="isax isax-trash"></i>
+  <span>Delete</span>
+</button>
                     </div>
                   )}
                 </div>
 
                 {/* Table */}
-                <div
-                  className="border rounded shadow-sm bg-white overflow-hidden flex-grow-1"
-                  style={{
-                    borderRadius: "16px",
-                    border: "1px solid #e5e7eb",
-                  }}
+                {/* Main Content */}
+<div
+  className="border rounded bg-white flex-grow-1"
+  style={{
+    minHeight: "460px",
+    border: "1px solid #e5e7eb",
+  }}
+>
+ {!hasRecords ? (
+  <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted py-5 custom-empty-state physician-mobile-empty h-100">
+
+    {/* DESKTOP EMPTY ICON */}
+    <i
+      className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+      style={{
+        fontSize: "3rem",
+        color: "var(--primary, #0f763f)",
+      }}
+    ></i>
+
+    {/* MOBILE ADD BUTTON */}
+    <div
+      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
+      onClick={handleAdd}
+      style={{
+        width: "64px",
+        height: "64px",
+        border: "2px solid var(--primary, #0f763f)",
+        backgroundColor: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      <i
+        className="isax isax-add fs-1 text-primary"
+        style={{ fontSize: "2rem" }}
+      />
+    </div>
+
+    {/* MOBILE LABEL */}
+    <span
+      className="mt-2 fw-semibold text-muted d-lg-none"
+      style={{ fontSize: "14px" }}
+    >
+      Add New
+    </span>
+
+    {/* EMPTY TEXT */}
+    <p className="mb-0 fw-bold text-dark">
+      No diagnosis records found
+    </p>
+  </div>
+) : (
+    <>
+      <div className="table-responsive">
+        <table className="table table-hover align-middle mb-0">
+          <thead className="bg-light">
+            <tr>
+              <th className="px-4 py-3">Type</th>
+              <th className="px-4 py-3">Diagnosis</th>
+
+              <th className="px-4 py-3 d-none d-lg-table-cell">
+                ICD
+              </th>
+
+              <th className="px-4 py-3 d-none d-lg-table-cell">
+                Physician
+              </th>
+
+              <th className="px-4 py-3 text-center d-lg-none">
+                Actions
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {paginatedRecords.map((record) => (
+              <React.Fragment key={record.id}>
+                <tr
+                  onClick={() =>
+                    setSelectedRecordId(record.id)
+                  }
+                  className={
+                    selectedRecordId === record.id
+                      ? "selected-row"
+                      : ""
+                  }
+                  style={{ cursor: "pointer" }}
                 >
-                  <div className="table-responsive">
-                    <table className="table table-hover align-middle mb-0">
-                      <thead className="bg-light">
-                        <tr>
-                          <th className="px-4 py-3">Type</th>
-                          <th className="px-4 py-3">Diagnosis</th>
+                  <td className="px-4 py-3">
+                    {record.typeOfDiag}
+                  </td>
 
-                          <th className="px-4 py-3 d-none d-lg-table-cell">
-                            ICD
-                          </th>
+                  <td className="px-4 py-3 text-break">
+                    {record.diagnosisText}
+                  </td>
 
-                          <th className="px-4 py-3 d-none d-lg-table-cell">
-                            Physician
-                          </th>
+                  <td className="px-4 py-3 d-none d-lg-table-cell">
+                    {record.icdCode || "—"}
+                  </td>
 
-                          <th className="px-4 py-3 text-center d-lg-none">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
+                  <td className="px-4 py-3 d-none d-lg-table-cell">
+                    {record.physician}
+                  </td>
 
-                      <tbody>
-                        {!hasRecords ? (
-                          <tr>
-                            <td colSpan={5} className="border-0">
-                              <div className="empty-state-container d-flex flex-column align-items-center justify-content-center text-center p-4">
-                                <i
-                                  className="isax isax-document-text text-muted opacity-50 mb-3"
-                                  style={{ fontSize: "4rem" }}
-                                ></i>
+                  <td className="text-center d-lg-none">
+                    <button
+                      className="btn btn-sm btn-outline-secondary"
+                      onClick={(e) =>
+                        toggleRowExpand(e, record.id)
+                      }
+                    >
+                      {expandedRows[record.id]
+                        ? "Hide"
+                        : "See More"}
+                    </button>
+                  </td>
+                </tr>
 
-                                <h5 className="fw-bold">
-                                  No diagnosis records found
-                                </h5>
+                {expandedRows[record.id] && (
+                  <tr className="d-lg-none bg-light">
+                    <td colSpan={5}>
+                      <div className="p-3">
+                        <div className="mb-2">
+                          <strong>Primary:</strong>{" "}
+                          {record.isPrimary}
+                        </div>
 
-                                <p className="text-muted mb-4">
-                                  Start by adding a diagnosis record.
-                                </p>
+                        <div className="mb-2">
+                          <strong>ICD:</strong>{" "}
+                          {record.icdCode || "—"}
+                        </div>
 
-                                {isMobile && (
-                                  <button
-                                    onClick={handleAdd}
-                                    className="btn mobile-empty-add-btn shadow-sm"
-                                  >
-                                    <i className="isax isax-add-square me-2"></i>
-                                    Add Diagnosis
-                                  </button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        ) : (
-                          paginatedRecords.map((record) => (
-                            <React.Fragment key={record.id}>
-                              <tr
-                                onClick={() =>
-                                  setSelectedRecordId(record.id)
-                                }
-                                className={
-                                  selectedRecordId === record.id
-                                    ? "selected-row"
-                                    : ""
-                                }
-                                style={{ cursor: "pointer" }}
-                              >
-                                <td className="px-4 py-3">
-                                  {record.typeOfDiag}
-                                </td>
-
-                                <td className="px-4 py-3 text-break">
-                                  {record.diagnosisText}
-                                </td>
-
-                                <td className="px-4 py-3 d-none d-lg-table-cell">
-                                  {record.icdCode || "—"}
-                                </td>
-
-                                <td className="px-4 py-3 d-none d-lg-table-cell">
-                                  {record.physician}
-                                </td>
-
-                                <td className="text-center d-lg-none">
-                                  <button
-                                    className="btn btn-sm btn-outline-secondary"
-                                    onClick={(e) =>
-                                      toggleRowExpand(e, record.id)
-                                    }
-                                  >
-                                    {expandedRows[record.id]
-                                      ? "Hide"
-                                      : "See More"}
-                                  </button>
-                                </td>
-                              </tr>
-
-                              {expandedRows[record.id] && (
-                                <tr className="d-lg-none bg-light">
-                                  <td colSpan={5}>
-                                    <div className="p-3">
-                                      <div className="mb-2">
-                                        <strong>Primary:</strong>{" "}
-                                        {record.isPrimary}
-                                      </div>
-
-                                      <div className="mb-2">
-                                        <strong>ICD:</strong>{" "}
-                                        {record.icdCode || "—"}
-                                      </div>
-
-                                      <div>
-                                        <strong>Physician:</strong>{" "}
-                                        {record.physician}
-                                      </div>
-                                    </div>
-                                  </td>
-                                </tr>
-                              )}
-                            </React.Fragment>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* Pagination */}
-                  {hasRecords && (
-                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top bg-light gap-3">
-                      <div className="d-flex align-items-center gap-2">
-                        <span className="small text-muted">Show</span>
-
-                        <select
-                          className="form-select form-select-sm"
-                          style={{ width: "80px" }}
-                          value={pageSize}
-                          onChange={(e) => {
-                            setPageSize(Number(e.target.value));
-                            setCurrentPage(1);
-                          }}
-                        >
-                          <option value={10}>10</option>
-                          <option value={25}>25</option>
-                          <option value={50}>50</option>
-                        </select>
-
-                        <span className="small text-muted">
-                          entries
-                        </span>
+                        <div>
+                          <strong>Physician:</strong>{" "}
+                          {record.physician}
+                        </div>
                       </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-                      <div className="small text-muted">
-                        Showing{" "}
-                        {(currentPage - 1) * pageSize + 1} to{" "}
-                        {Math.min(
-                          currentPage * pageSize,
-                          records.length
-                        )}{" "}
-                        of {records.length}
-                      </div>
+      {/* Pagination */}
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top bg-light gap-3">
+        <div className="d-flex align-items-center gap-2">
+          <span className="small text-muted">Show</span>
 
-                      <div className="d-flex gap-2">
-                        <button
-                          className="btn btn-sm btn-outline-secondary"
-                          disabled={currentPage === 1}
-                          onClick={() =>
-                            setCurrentPage((prev) => prev - 1)
-                          }
-                        >
-                          Prev
-                        </button>
+          <select
+            className="form-select form-select-sm"
+            style={{ width: "80px" }}
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+          </select>
 
-                        <button
-                          className="btn btn-sm btn-outline-secondary"
-                          disabled={currentPage === totalPages}
-                          onClick={() =>
-                            setCurrentPage((prev) => prev + 1)
-                          }
-                        >
-                          Next
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+          <span className="small text-muted">
+            entries
+          </span>
+        </div>
+
+        <div className="small text-muted">
+          Showing{" "}
+          {(currentPage - 1) * pageSize + 1} to{" "}
+          {Math.min(
+            currentPage * pageSize,
+            records.length
+          )}{" "}
+          of {records.length}
+        </div>
+
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            disabled={currentPage === 1}
+            onClick={() =>
+              setCurrentPage((prev) => prev - 1)
+            }
+          >
+            Prev
+          </button>
+
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            disabled={currentPage === totalPages}
+            onClick={() =>
+              setCurrentPage((prev) => prev + 1)
+            }
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </>
+  )}
+</div>
 
                 {/* Footer Count */}
                 <div className="mt-3 fw-bold text-muted small">

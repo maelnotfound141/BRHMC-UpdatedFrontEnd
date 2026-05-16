@@ -328,21 +328,25 @@ const PhysicianModule = () => {
 
                     {/* ACTION BUTTONS */}
                   
-                          <div
-  className="d-flex flex-wrap justify-content-end align-items-center gap-2 ms-md-auto"
+          <div
+  className={`flex-wrap justify-content-end align-items-center gap-2 ms-md-auto ${
+    !hasRecords ? "d-none d-lg-flex" : "d-flex"
+  }`}
 >
-  {/* ADD BUTTON */}
-  <button
-    onClick={handleAdd}
-    className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold"
-    style={{
-      borderRadius: "3px",
-      transition: "all 0.2s ease",
-    }}
-  >
-    <i className="isax isax-add-square"></i>
-    <span>Add</span>
-  </button>
+ {/* ADD BUTTON */}
+<button
+  onClick={handleAdd}
+  className="btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white"
+  style={{
+    borderRadius: "3px",
+    transition: "all 0.2s ease",
+    backgroundColor: "#0f763f",
+    borderColor: "#0f763f",
+  }}
+>
+  <i className="isax isax-add-square"></i>
+  <span>Add</span>
+</button>
 
   {/* EDIT BUTTON */}
   <button

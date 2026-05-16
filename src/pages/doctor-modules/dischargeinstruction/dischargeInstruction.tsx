@@ -438,16 +438,27 @@ const DispositionModule = () => {
                     Discharge Instructions
                   </h5>
 
-                  <div className="d-flex flex-nowrap justify-content-end gap-2 ms-auto">
+                  <div
+  className={`justify-content-end gap-2 ms-auto ${
+    instructionData.length === 0
+      ? "d-none d-lg-flex"
+      : "d-flex flex-nowrap"
+  }`}
+>
                     <button
-                      type="button"
-                      onClick={handleOpenAddInstruction}
-                      className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary instruction-action-btn"
-                      style={{ borderRadius: "4px", cursor: "pointer" }}
-                    >
-                      <i className="isax isax-add"></i>
-                      <span>Add Instr</span>
-                    </button>
+  type="button"
+  onClick={handleOpenAddInstruction}
+  className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white instruction-action-btn"
+  style={{
+    borderRadius: "4px",
+    cursor: "pointer",
+    backgroundColor: "#0f763f",
+    border: "1px solid #0f763f",
+  }}
+>
+  <i className="isax isax-add"></i>
+  <span>Add Instr</span>
+</button>
 
                     <button
                       type="button"
@@ -471,19 +482,48 @@ const DispositionModule = () => {
 
                 <div className="border rounded bg-white instruction-main-panel overflow-hidden overflow-y-auto">
                   {!viewedInstruction ? (
-                    <div className="text-center text-muted py-5 px-3 d-flex flex-column align-items-center justify-content-center h-100">
-                      <i
-                        className="isax isax-folder-open mb-3 opacity-50"
-                        style={{ fontSize: "3rem" }}
-                      ></i>
-                      <h5 className="fw-bold mb-2 text-dark">
-                        No discharge instructions recorded.
-                      </h5>
-                      <p className="mb-0" style={{ fontSize: "0.95rem" }}>
-                        Click <strong className="text-dark">Add Instr</strong> in the toolbar above.
-                      </p>
-                    </div>
-                  ) : (
+  <div className="text-center text-muted py-5 px-3 d-flex flex-column align-items-center justify-content-center h-100">
+
+    {/* DESKTOP ICON */}
+    <i
+      className="isax isax-folder-open mb-3 opacity-50 d-none d-lg-block"
+      style={{ fontSize: "3rem" }}
+    ></i>
+
+    {/* MOBILE ADD BUTTON */}
+    <div
+      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
+      onClick={handleOpenAddInstruction}
+      style={{
+        width: "64px",
+        height: "64px",
+        border: "2px solid var(--primary, #0f763f)",
+        backgroundColor: "#fff",
+        cursor: "pointer",
+      }}
+    >
+      <i
+        className="isax isax-add text-primary"
+        style={{ fontSize: "2rem" }}
+      />
+    </div>
+
+    {/* MOBILE LABEL */}
+    <span
+      className="mt-2 fw-semibold text-muted d-lg-none"
+      style={{ fontSize: "14px" }}
+    >
+      Add New
+    </span>
+
+    {/* EMPTY TEXT */}
+    <h5 className="fw-bold mb-2 text-dark">
+      No discharge instructions recorded.
+    </h5>
+
+    
+  </div>
+) : (
                     <div className="p-3 p-md-4" style={{ fontSize: "0.95rem", lineHeight: "1.9" }}>
                       <div className="d-flex mb-3 flex-column flex-sm-row">
                         <div className="inst-label me-sm-4">Diet</div>
