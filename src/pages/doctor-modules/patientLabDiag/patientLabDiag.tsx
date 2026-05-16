@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import { useLocation } from "react-router";
 
@@ -10,38 +10,49 @@ interface LabRecord {
   remark: string;
 }
 
+// --- Component ---
 const PertinentLabDiagnostic = () => {
   const location = useLocation();
 
+  // --- Mock Patient ---
   const [mockPatientProfile] = useState({
     hospitalNumber: "000000000777288",
     lastName: "DO",
     firstName: "REA",
     middleName: "MON",
     address: "111 Estanza, Legazpi City, Albay",
-    birthdate: "01/01/2000",
-    age: "26 Yrs. Old",
-    civilStatus: "Married",
-    gender: "Male",
-    employmentStatus: "Employed",
-    nationality: "Filipino",
-    religion: "Catholic",
-    seniorCitizenNo: "",
-    mssNo: "",
-    isPersonnel: "No",
   });
 
-  // --- State Management ---
+  // --- States ---
   const [records, setRecords] = useState<LabRecord[]>([]);
-  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
+  const [selectedRecordId, setSelectedRecordId] = useState<string | null>(
+    null
+  );
+
+  const [expandedRows, setExpandedRows] = useState<
+    Record<string, boolean>
+  >({});
 
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const [isEditing, setIsEditing] = useState(false);
 
   // --- Responsive State ---
   const [isMobile, setIsMobile] = useState(false);
 
+  // --- Form ---
+  const [formData, setFormData] = useState({
+    labTest: "",
+    result: "",
+    remark: "",
+  });
+
+  // --- Pagination ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  // --- Effects ---
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 992);
@@ -51,54 +62,36 @@ const PertinentLabDiagnostic = () => {
 
     window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () =>
+      window.removeEventListener("resize", handleResize);
   }, []);
-
-  // Form State
-  const [formData, setFormData] = useState({
-    labTest: "",
-    result: "",
-    remark: "",
-  });
-
-  // pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     if (location.state?.selectedPatientId) {
-      setTimeout(() => {}, 1500);
+      setTimeout(() => {}, 1000);
     }
   }, [location.state]);
 
+  // --- Derived State ---
   const isRowSelected = selectedRecordId !== null;
   const hasRecords = records.length > 0;
 
-  // validation
-  const isFormValid =
-    formData.labTest.trim().length > 0 &&
-    formData.result.trim().length > 0;
+  const isFormValid = useMemo(() => {
+    return (
+      formData.labTest.trim().length > 0 &&
+      formData.result.trim().length > 0
+    );
+  }, [formData]);
 
-  // pagination
-  const totalPages = Math.max(1, Math.ceil(records.length / pageSize));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(records.length / pageSize)
+  );
 
   const paginatedRecords = records.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
-
-  const handlePageSizeChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setPageSize(Number(e.target.value));
-    setCurrentPage(1);
-  };
 
   // --- Helpers ---
   const resetForm = () => {
@@ -184,10 +177,8 @@ const PertinentLabDiagnostic = () => {
         ...formData,
       };
 
-      // newest first
       setRecords((prev) => [newRecord, ...prev]);
 
-      // return to first page
       setCurrentPage(1);
     }
 
@@ -195,48 +186,129 @@ const PertinentLabDiagnostic = () => {
     resetForm();
   };
 
-  const handleSaveAndClose = () => {
-    saveRecord();
+  const toggleRowExpand = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: string
+  ) => {
+    e.stopPropagation();
+
+    setExpandedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
 
   return (
     <>
       <style>
         {`
-          .hide-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
-          .hide-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-          .hide-scrollbar { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
-          .text-hover-primary:hover { color: var(--primary, #0f763f) !important; }
-
-          .table-hover tbody tr { cursor: pointer; transition: all 0.2s ease-in-out; }
+          body {
+            background: #f5f7fa;
+            color: #1f2937;
+          }
 
           .selected-row > td {
             background-color: #e6f4ea !important;
-            color: #0b592f !important;
+            transition: background-color 0.2s ease;
           }
 
           .selected-row > td:first-child {
-            border-left: 4px solid var(--primary, #0f763f) !important;
+            border-left: 4px solid #0f763f !important;
           }
 
-          .selected-row .text-muted {
-            color: #0f763f !important;
+          .text-hover-primary:hover {
+            color: var(--primary, #0f763f) !important;
           }
 
-          @media (max-width: 575.98px) {
-            .modal-footer-actions {
-              flex-direction: column-reverse;
-              width: 100%;
-            }
+          .card {
+            border-radius: 16px !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06) !important;
+            border: 1px solid #e5e7eb !important;
+            background: #ffffff;
+          }
 
-            .modal-footer-actions button {
-              width: 100%;
-              margin-top: 8px;
-            }
+          .table {
+            margin-bottom: 0;
+          }
 
-            .pagination-controls {
-              flex-direction: column;
-              gap: 12px;
+          .table thead {
+            background: #f8fafc;
+          }
+
+          .table thead th {
+            color: #374151;
+            font-weight: 700;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f8fafc !important;
+          }
+
+          .table tbody td {
+            border-color: #eef2f7;
+            vertical-align: middle;
+            color: #1f2937;
+          }
+
+          .table-hover tbody tr:hover {
+            background-color: #f0fdf4;
+            transition: background-color 0.2s ease;
+          }
+
+          .table tbody tr {
+            transition: all 0.2s ease;
+          }
+
+          .modal-content {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+          }
+
+          .modal-header {
+            background: linear-gradient(135deg, #333b45, #1f2937) !important;
+            border-bottom: none;
+            padding: 1rem 1.5rem;
+          }
+
+          .modal-title {
+            font-weight: 700;
+          }
+
+          .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #eef2f7;
+          }
+
+          .form-control,
+          .form-select {
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            min-height: 46px;
+            padding: 0.7rem 0.9rem;
+            transition: all 0.2s ease;
+          }
+
+          textarea.form-control {
+            min-height: 140px;
+          }
+
+          .form-control:focus,
+          .form-select:focus {
+            border-color: #0f763f;
+            box-shadow: 0 0 0 4px rgba(15,118,63,0.15);
+          }
+
+          .custom-empty-state {
+            min-height: 350px;
+          }
+
+          @media (max-width: 767px) {
+            .physician-mobile-empty {
+              min-height: 420px;
+              border: 1px solid #dee2e6;
+              border-radius: 10px;
+              background: #fff;
             }
           }
         `}
@@ -247,306 +319,335 @@ const PertinentLabDiagnostic = () => {
         style={{ minHeight: "100vh" }}
       >
         <div className="container-fluid px-3 px-lg-5 pt-0 flex-grow-1 d-flex flex-column">
-          <div className="doctor-dashboard-layout">
-                  <DoctorSidebar />
+          <div className="row flex-grow-1">
+            <DoctorSidebar />
 
-                 <div className="doctor-dashboard-main">
+            <div className="col-lg-8 col-xl-9 mt-4 mt-lg-0 d-flex flex-column">
               <div
-                className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column flex-grow-1"
+                className="card border-0 shadow-sm p-3 p-md-4 mb-4 flex-grow-1"
                 style={{
-                  borderRadius: "12px",
-                  borderTop: "4px solid var(--primary, #0f763f)",
+                  borderTop: "4px solid #0f763f",
                 }}
               >
-                {/* Patient Profile Header */}
-                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
-                  <div
-                    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
-                    style={{
-                      width: "90px",
-                      height: "90px",
-                      border: "2px solid var(--primary, #0f763f)",
-                    }}
-                  >
-                    <i
-                      className="isax isax-user fs-1 text-primary"
-                      style={{ color: "var(--primary, #0f763f)" }}
-                    />
-                  </div>
+                
+{/* Header */}
+<div className="d-flex flex-column flex-md-row align-items-center align-items-md-start text-center text-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom">
 
-                  <div>
-                    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
-                      ID: {mockPatientProfile.hospitalNumber}
-                    </div>
+  {/* Avatar */}
+  <div
+    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
+    style={{
+      width: "90px",
+      height: "90px",
+      border: "2px solid var(--primary, #0f763f)",
+    }}
+  >
+    <i
+      className="isax isax-user"
+      style={{
+        color: "var(--primary, #0f763f)",
+        fontSize: "42px",
+      }}
+    />
+  </div>
 
-                    <h3 className="fw-bold mb-1 text-dark fs-3 fs-md-2">
-                      {mockPatientProfile.lastName},{" "}
-                      {mockPatientProfile.firstName}{" "}
-                      {mockPatientProfile.middleName}
-                    </h3>
+  {/* Patient Details */}
+  <div className="d-flex flex-column align-items-center align-items-md-start text-center text-md-start">
 
-                    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                      <i className="isax isax-location text-danger" />
-                      {mockPatientProfile.address}
-                    </div>
-                  </div>
-                </div>
+    {/* ID Badge */}
+    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
+      ID: {mockPatientProfile.hospitalNumber}
+    </div>
 
-                {/* Main Data Section */}
-                <div className="d-flex flex-column flex-grow-1 mb-4">
-                  {/* Toolbar */}
-                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
-                    <h5 className="fw-bold text-dark mb-0 text-center text-md-start text-uppercase">
-                      Pertinent Lab/Diagnostic Findings
-                    </h5>
+    {/* Name */}
+    <h3 className="fw-bold mb-1 text-dark">
+      {mockPatientProfile.lastName},{" "}
+      {mockPatientProfile.firstName}{" "}
+      {mockPatientProfile.middleName}
+    </h3>
 
-                    {(!isMobile || hasRecords) && (
-                      <div
-                        className="d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto"
-                        style={{ gap: "6px" }}
-                      >
-                        <button
-                          onClick={handleAdd}
-                          className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0"
-                          style={{
-                            borderRadius: "4px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <i className="isax isax-add-square"></i>
-                          <span>Add</span>
-                        </button>
+    {/* Address */}
+    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+      <i className="isax isax-location text-danger" />
+      {mockPatientProfile.address}
+    </div>
 
-                        <button
-                          onClick={handleEdit}
-                          disabled={!isRowSelected}
-                          className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                            !isRowSelected
-                              ? "bg-light text-muted opacity-50"
-                              : "bg-white text-dark fw-bold"
-                          }`}
-                          style={{
-                            borderRadius: "4px",
-                            cursor: !isRowSelected
-                              ? "not-allowed"
-                              : "pointer",
-                          }}
-                        >
-                          <i className="isax isax-edit"></i>
-                          <span>Edit</span>
-                        </button>
+  </div>
+</div>
 
-                        <button
-                          onClick={handleDeleteClick}
-                          disabled={!isRowSelected}
-                          className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                            !isRowSelected
-                              ? "bg-light text-muted opacity-50"
-                              : "bg-white text-danger fw-bold"
-                          }`}
-                          style={{
-                            borderRadius: "4px",
-                            cursor: !isRowSelected
-                              ? "not-allowed"
-                              : "pointer",
-                          }}
-                        >
-                          <i className="isax isax-trash"></i>
-                          <span>Del</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                {/* Toolbar */}
+                {/* Toolbar */}
+<div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-3">
 
-                  {/* Table */}
-                  <div
-                    className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden"
-                    style={{ minHeight: "450px" }}
-                  >
-                    <div className="table-responsive flex-grow-1 bg-white p-0">
-                      <table
-                        className="table table-hover align-middle mb-0"
+  <h5 className="fw-bold text-uppercase mb-0 text-center text-md-start">
+    Pertinent Lab/Diagnostic Findings
+  </h5>
+
+  {(!isMobile || hasRecords) && (
+    <div className="d-flex justify-content-center justify-content-md-end gap-2 flex-wrap w-100 w-md-auto">
+
+      {/* Add */}
+      <button
+        type="button"
+        onClick={handleAdd}
+        className="btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white"
+        style={{
+          borderRadius: "4px",
+          cursor: "pointer",
+          backgroundColor: "#0f763f",
+          borderColor: "#0f763f",
+        }}
+      >
+        <i className="isax isax-add-square"></i>
+        <span>Add</span>
+      </button>
+
+      {/* Edit */}
+      <button
+        type="button"
+        disabled={!isRowSelected}
+        onClick={handleEdit}
+        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold ${
+          isRowSelected
+            ? "bg-white text-dark text-hover-primary"
+            : "bg-light text-muted opacity-50"
+        }`}
+        style={{
+          borderRadius: "4px",
+          cursor: isRowSelected ? "pointer" : "not-allowed",
+        }}
+      >
+        <i className="isax isax-edit"></i>
+        <span>Edit</span>
+      </button>
+
+      {/* Delete */}
+      <button
+        type="button"
+        disabled={!isRowSelected}
+        onClick={handleDeleteClick}
+        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold ${
+          isRowSelected
+            ? "bg-white text-danger"
+            : "bg-light text-muted opacity-50"
+        }`}
+        style={{
+          borderRadius: "4px",
+          cursor: isRowSelected ? "pointer" : "not-allowed",
+        }}
+      >
+        <i className="isax isax-trash"></i>
+        <span>Delete</span>
+      </button>
+
+    </div>
+  )}
+</div>
+
+                {/* Main Content */}
+                <div
+                  className="border rounded bg-white flex-grow-1"
+                  style={{
+                    minHeight: "460px",
+                    border: "1px solid #e5e7eb",
+                  }}
+                >
+                  {!hasRecords ? (
+                    <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted py-5 custom-empty-state physician-mobile-empty h-100">
+                      {/* Desktop Icon */}
+                      <i
+                        className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
                         style={{
-                          fontSize: "0.85rem",
-                          minWidth: "750px",
+                          fontSize: "3rem",
+                          color: "var(--primary, #0f763f)",
+                        }}
+                      ></i>
+
+                      {/* Mobile Add */}
+                      <div
+                        className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
+                        onClick={handleAdd}
+                        style={{
+                          width: "64px",
+                          height: "64px",
+                          border:
+                            "2px solid var(--primary, #0f763f)",
+                          backgroundColor: "#fff",
+                          cursor: "pointer",
                         }}
                       >
-                        <thead style={{ backgroundColor: "#f8f9fa" }}>
-                          <tr>
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "30%" }}
-                            >
-                              Laboratory Test
-                            </th>
+                        <i
+                          className="isax isax-add fs-1 text-primary"
+                          style={{ fontSize: "2rem" }}
+                        />
+                      </div>
 
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "40%" }}
-                            >
-                              Result
-                            </th>
+                      <span
+                        className="mt-2 fw-semibold text-muted d-lg-none"
+                        style={{ fontSize: "14px" }}
+                      >
+                        Add New
+                      </span>
 
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "30%" }}
-                            >
-                              Remark
-                            </th>
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          {paginatedRecords.length === 0 ? (
-                            <tr>
-                              <td
-                                colSpan={3}
-                                className="text-center text-muted py-5 border-0"
-                              >
-                                <div className="d-flex flex-column align-items-center justify-content-center">
-                                  <i
-                                    className="isax isax-document-text fs-1 mb-3 opacity-50 d-block"
-                                    style={{ fontSize: "3rem" }}
-                                  ></i>
-
-                                  <h6 className="fw-bold mb-1">
-                                    No lab/diagnostic findings recorded.
-                                  </h6>
-
-                                  <p className="small mb-3">
-                                    Click{" "}
-                                    <strong className="text-dark">
-                                      Add
-                                    </strong>{" "}
-                                    in the toolbar above to begin.
-                                  </p>
-
-                                  {/* Mobile Add Button */}
-                                  {isMobile && (
-                                    <button
-                                      onClick={handleAdd}
-                                      className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-white fw-bold"
-                                      style={{
-                                        borderRadius: "3px",
-                                        backgroundColor: "var(--primary, #0f763f)",
-                                        border: "1px solid var(--primary, #0f763f)",
-                                        minWidth: "100px",
-                                      }}
-                                    >
-                                      <i className="isax isax-add-square"></i>
-                                      <span>Add</span>
-                                    </button>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          ) : (
-                            paginatedRecords.map((record) => (
-                              <tr
-                                key={record.id}
-                                onClick={() =>
-                                  setSelectedRecordId(record.id)
-                                }
-                                className={
-                                  selectedRecordId === record.id
-                                    ? "selected-row"
-                                    : ""
-                                }
-                              >
-                                <td className="py-3 px-4 fw-medium text-dark align-top border-start-0">
-                                  {record.labTest}
-                                </td>
-
-                                <td
-                                  className="py-3 px-4 text-wrap text-break align-top"
-                                  style={{ maxWidth: "300px" }}
-                                >
-                                  {record.result}
-                                </td>
-
-                                <td className="py-3 px-4 text-muted align-top">
-                                  {record.remark}
-                                </td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
+                      <p className="mb-0 fw-bold text-dark">
+                        No lab/diagnostic findings found
+                      </p>
                     </div>
+                  ) : (
+                    <>
+                      <div className="table-responsive">
+                        <table className="table table-hover align-middle mb-0">
+                          <thead className="bg-light">
+                            <tr>
+                              <th className="px-4 py-3">
+                                Laboratory Test
+                              </th>
 
-                    {/* Pagination */}
-                    {hasRecords && (
-                      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center p-3 border-top bg-light gap-2 pagination-controls">
+                              <th className="px-4 py-3">
+                                Result
+                              </th>
+
+                              <th className="px-4 py-3 d-none d-lg-table-cell">
+                                Remark
+                              </th>
+
+                              <th className="px-4 py-3 text-center d-lg-none">
+                                Actions
+                              </th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            {paginatedRecords.map((record) => (
+                              <React.Fragment key={record.id}>
+                                <tr
+                                  onClick={() =>
+                                    setSelectedRecordId(record.id)
+                                  }
+                                  className={
+                                    selectedRecordId ===
+                                    record.id
+                                      ? "selected-row"
+                                      : ""
+                                  }
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <td className="px-4 py-3">
+                                    {record.labTest}
+                                  </td>
+
+                                  <td className="px-4 py-3 text-break">
+                                    {record.result}
+                                  </td>
+
+                                  <td className="px-4 py-3 d-none d-lg-table-cell">
+                                    {record.remark || "—"}
+                                  </td>
+
+                                  <td className="text-center d-lg-none">
+                                    <button
+                                      className="btn btn-sm btn-outline-secondary"
+                                      onClick={(e) =>
+                                        toggleRowExpand(
+                                          e,
+                                          record.id
+                                        )
+                                      }
+                                    >
+                                      {expandedRows[record.id]
+                                        ? "Hide"
+                                        : "See More"}
+                                    </button>
+                                  </td>
+                                </tr>
+
+                                {expandedRows[record.id] && (
+                                  <tr className="d-lg-none bg-light">
+                                    <td colSpan={4}>
+                                      <div className="p-3">
+                                        <div>
+                                          <strong>Remark:</strong>{" "}
+                                          {record.remark || "—"}
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </React.Fragment>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Pagination */}
+                      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top bg-light gap-3">
                         <div className="d-flex align-items-center gap-2">
-                          <span className="text-muted small fw-medium">
+                          <span className="small text-muted">
                             Show
                           </span>
 
                           <select
-                            className="form-select form-select-sm shadow-none"
-                            style={{
-                              width: "75px",
-                              borderColor: "#ced4da",
-                            }}
+                            className="form-select form-select-sm"
+                            style={{ width: "80px" }}
                             value={pageSize}
-                            onChange={handlePageSizeChange}
+                            onChange={(e) => {
+                              setPageSize(
+                                Number(e.target.value)
+                              );
+                              setCurrentPage(1);
+                            }}
                           >
                             <option value={10}>10</option>
                             <option value={25}>25</option>
                             <option value={50}>50</option>
-                            <option value={100}>100</option>
                           </select>
 
-                          <span className="text-muted small fw-medium">
+                          <span className="small text-muted">
                             entries
                           </span>
                         </div>
 
-                        <span className="text-muted small fw-medium text-center">
+                        <div className="small text-muted">
                           Showing{" "}
                           {(currentPage - 1) * pageSize + 1} to{" "}
                           {Math.min(
                             currentPage * pageSize,
                             records.length
                           )}{" "}
-                          of {records.length} entries
-                        </span>
+                          of {records.length}
+                        </div>
 
-                        <div className="d-flex gap-1">
+                        <div className="d-flex gap-2">
                           <button
-                            className="btn btn-sm btn-outline-secondary px-3"
-                            onClick={() =>
-                              handlePageChange(currentPage - 1)
-                            }
+                            className="btn btn-sm btn-outline-secondary"
                             disabled={currentPage === 1}
+                            onClick={() =>
+                              setCurrentPage((prev) => prev - 1)
+                            }
                           >
                             Prev
                           </button>
 
-                          <span className="btn btn-sm btn-light disabled px-3 text-dark fw-bold border">
-                            {currentPage} / {totalPages}
-                          </span>
-
                           <button
-                            className="btn btn-sm btn-outline-secondary px-3"
-                            onClick={() =>
-                              handlePageChange(currentPage + 1)
+                            className="btn btn-sm btn-outline-secondary"
+                            disabled={
+                              currentPage === totalPages
                             }
-                            disabled={currentPage === totalPages}
+                            onClick={() =>
+                              setCurrentPage((prev) => prev + 1)
+                            }
                           >
                             Next
                           </button>
                         </div>
                       </div>
-                    )}
-                  </div>
+                    </>
+                  )}
                 </div>
 
-                <div
-                  className="mt-2 text-muted fw-bold"
-                  style={{ fontSize: "0.85rem" }}
-                >
-                  Total Number of Record/s:{" "}
+                {/* Footer Count */}
+                <div className="mt-3 fw-bold text-muted small">
+                  Total Records:{" "}
                   <span className="text-dark">
                     {records.length}
                   </span>
@@ -561,171 +662,91 @@ const PertinentLabDiagnostic = () => {
       {showModal && (
         <div
           className="modal fade show d-block"
-          tabIndex={-1}
           style={{
             backgroundColor: "rgba(0,0,0,0.5)",
             zIndex: 1060,
           }}
         >
-          <div className="modal-dialog modal-lg modal-dialog-centered px-2 px-sm-3">
-            <div
-              className="modal-content border-0 shadow-lg"
-              style={{
-                borderRadius: "8px",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                className="modal-header border-0 py-3 d-flex align-items-center"
-                style={{ backgroundColor: "#333b45" }}
-              >
-                <h4
-                  className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2"
-                  style={{
-                    fontSize: "1.1rem",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  <i
-                    className="isax isax-add-square"
-                    style={{ fontSize: "1.5rem" }}
-                  ></i>
-
-                  {isEditing ? "EDIT" : "ADD"} PERTINENT LAB |
-                  RADIO | DIAGNOSTIC FINDINGS
-                </h4>
+          <div className="modal-dialog modal-xl modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header">
+                <h5 className="modal-title text-white">
+                  {isEditing ? "EDIT" : "ADD"} PERTINENT
+                  LAB/DIAGNOSTIC FINDING
+                </h5>
 
                 <button
-                  type="button"
-                  className="btn-close btn-close-white shadow-none"
+                  className="btn-close btn-close-white"
                   onClick={() => setShowModal(false)}
                 ></button>
               </div>
 
-              <div className="modal-body p-3 p-md-4 bg-white">
-                <div className="mb-3">
-                  <label
-                    className="fw-bold mb-1"
-                    style={{
-                      color: "var(--primary, #0f763f)",
-                      fontSize: "0.85rem",
-                    }}
-                  >
-                    Lab | Radio | Diagnostic{" "}
-                    <span className="text-danger">*</span>
-                  </label>
+              <div className="modal-body p-4">
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="small fw-bold mb-1">
+                      Laboratory Test
+                    </label>
 
-                  <input
-                    type="text"
-                    className={`form-control rounded-1 shadow-none ${
-                      !isFormValid &&
-                      formData.labTest.length === 0
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    style={{
-                      borderColor:
-                        "var(--primary, #0f763f)",
-                    }}
-                    value={formData.labTest}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        labTest: e.target.value,
-                      })
-                    }
-                    placeholder="Enter test name..."
-                  />
-                </div>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={formData.labTest}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          labTest: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
 
-                <div className="mb-3">
-                  <label
-                    className="fw-bold mb-1"
-                    style={{
-                      color: "var(--primary, #0f763f)",
-                      fontSize: "0.85rem",
-                    }}
-                  >
-                    Result{" "}
-                    <span className="text-danger">*</span>
-                  </label>
+                  <div className="col-md-6">
+                    <label className="small fw-bold mb-1">
+                      Remark
+                    </label>
 
-                  <textarea
-                    className={`form-control rounded-1 shadow-none ${
-                      !isFormValid &&
-                      formData.result.length === 0
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    rows={6}
-                    style={{
-                      borderColor:
-                        "var(--primary, #0f763f)",
-                      resize: "none",
-                      fontSize: "0.9rem",
-                    }}
-                    value={formData.result}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        result: e.target.value,
-                      })
-                    }
-                    placeholder="Enter results..."
-                  ></textarea>
-                </div>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={formData.remark}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          remark: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
 
-                <div className="mb-1">
-                  <label
-                    className="fw-bold mb-1"
-                    style={{
-                      color: "var(--primary, #0f763f)",
-                      fontSize: "0.85rem",
-                    }}
-                  >
-                    Remark
-                  </label>
+                  <div className="col-12">
+                    <label className="small fw-bold mb-1">
+                      Result
+                    </label>
 
-                  <input
-                    type="text"
-                    className="form-control rounded-1 shadow-none"
-                    style={{
-                      borderColor:
-                        "var(--primary, #0f763f)",
-                    }}
-                    value={formData.remark}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        remark: e.target.value,
-                      })
-                    }
-                    placeholder="Enter remarks (optional)..."
-                  />
+                    <textarea
+                      rows={6}
+                      className="form-control"
+                      value={formData.result}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          result: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div
-                className="modal-footer border-0 p-3 justify-content-end"
-                style={{ backgroundColor: "#e2e5e9" }}
-              >
-                <div className="d-flex modal-footer-actions gap-2 w-100 justify-content-sm-end">
-                  <button
-                    type="button"
-                    className="btn px-4 py-2 fw-medium shadow-sm text-white"
-                    style={{
-                      borderRadius: "3px",
-                      backgroundColor: "var(--primary, #0f763f)",
-                      border: "1px solid var(--primary, #0f763f)",
-                      opacity: !isFormValid ? 0.6 : 1,
-                      cursor: !isFormValid ? "not-allowed" : "pointer",
-                    }}
-                    onClick={handleSaveAndClose}
-                    disabled={!isFormValid}
-                  >
-                    Save and Close
-                  </button>
-                </div>
+              <div className="modal-footer bg-light">
+                <button
+                  className="btn btn-success px-4"
+                  disabled={!isFormValid}
+                  onClick={saveRecord}
+                >
+                  Save and Close
+                </button>
               </div>
             </div>
           </div>
@@ -736,73 +757,43 @@ const PertinentLabDiagnostic = () => {
       {showDeleteModal && (
         <div
           className="modal fade show d-block"
-          tabIndex={-1}
           style={{
             backgroundColor: "rgba(0,0,0,0.5)",
             zIndex: 1060,
           }}
         >
-          <div className="modal-dialog modal-sm modal-dialog-centered px-3">
-            <div
-              className="modal-content border-0 shadow-lg"
-              style={{
-                borderRadius: "8px",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                className="modal-header border-0 py-3 d-flex align-items-center"
-                style={{ backgroundColor: "#333b45" }}
-              >
-                <h3
-                  className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2"
-                  style={{
-                    fontSize: "1.1rem",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  <i
-                    className="isax isax-warning-2"
-                    style={{ fontSize: "1.5rem" }}
-                  ></i>
-
+          <div className="modal-dialog modal-sm modal-dialog-centered">
+            <div className="modal-content border-0 shadow">
+              <div className="modal-header">
+                <h5 className="modal-title text-white">
                   Confirm Delete
-                </h3>
+                </h5>
               </div>
 
-              <div className="modal-body p-4 bg-white text-center">
+              <div className="modal-body text-center py-4">
                 <i
-                  className="isax isax-trash text-danger mb-3 d-block"
-                  style={{ fontSize: "2.5rem" }}
+                  className="isax isax-trash text-danger mb-3"
+                  style={{ fontSize: "3rem" }}
                 ></i>
 
-                <p
-                  className="mb-0 text-dark fw-medium"
-                  style={{ fontSize: "1.05rem" }}
-                >
-                  Are you sure you want to delete this{" "}
-                  <strong className="text-danger">
-                    Finding
-                  </strong>
-                  ?
+                <p>
+                  Are you sure you want to delete this
+                  record?
                 </p>
               </div>
 
-              <div
-                className="modal-footer border-0 d-flex flex-column flex-sm-row justify-content-center gap-2 p-3"
-                style={{ backgroundColor: "#e2e5e9" }}
-              >
+              <div className="modal-footer">
                 <button
-                  type="button"
-                  className="btn btn-light rounded-1 px-4 py-2 fw-medium border-secondary-subtle w-100"
-                  onClick={() => setShowDeleteModal(false)}
+                  className="btn btn-light"
+                  onClick={() =>
+                    setShowDeleteModal(false)
+                  }
                 >
                   Cancel
                 </button>
 
                 <button
-                  type="button"
-                  className="btn btn-danger rounded-1 px-4 py-2 fw-medium w-100"
+                  className="btn btn-danger"
                   onClick={confirmDelete}
                 >
                   Delete

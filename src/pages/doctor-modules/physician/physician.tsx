@@ -210,45 +210,162 @@ const PhysicianModule = () => {
 
   return (
     <>
-      <style>
-        {`
-          .selected-row td {
-            background-color: rgba(15, 118, 63, 0.15) !important;
-          }
+   <style>
+{`
+/* ===== ACTION BUTTON SYSTEM ===== */
 
-          .custom-empty-state {
-            min-height: 350px;
-          }
+.action-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 
-          @media (max-width: 767px) {
-            .physician-mobile-card {
-              padding: 1rem !important;
-              border-radius: 14px !important;
-            }
+  flex-wrap: nowrap;
+  white-space: nowrap;
 
-            .physician-mobile-table {
-              border: none !important;
-              box-shadow: none !important;
-            }
+  justify-content: flex-end;
 
-            .physician-mobile-empty {
-              min-height: 420px;
-              border: 1px solid #dee2e6;
-              border-radius: 10px;
-              background: #fff;
-            }
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-            .physician-mobile-title {
-              font-size: 1rem !important;
-              text-align: center;
-            }
+/* hide scrollbar */
+.action-btn-group::-webkit-scrollbar {
+  display: none;
+}
 
-            .physician-mobile-name {
-              font-size: 1.7rem !important;
-            }
-          }
-        `}
-      </style>
+/* MOBILE FIX */
+@media (max-width: 767px) {
+  .action-btn-group {
+    justify-content: center !important;
+  }
+}
+
+/* ===== ACTION BUTTON BASE ===== */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+
+  padding: 0.4rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+
+  border-radius: 4px;
+  border: 1px solid transparent;
+
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+/* PRIMARY */
+.action-btn-primary {
+  background: var(--primary, #0f763f);
+  border-color: var(--primary, #0f763f);
+  color: #fff;
+}
+
+.action-btn-primary:hover {
+  background: #0d6a39;
+  border-color: #0d6a39;
+  color: #fff;
+}
+
+/* NEUTRAL */
+.action-btn-neutral {
+  background: #fff;
+  border-color: #dee2e6;
+  color: #212529;
+}
+
+.action-btn-neutral:hover {
+  background: #f8f9fa;
+}
+
+/* DANGER */
+.action-btn-danger {
+  background: #fff;
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.action-btn-danger:hover {
+  background: #dc3545;
+  color: #fff;
+}
+
+/* DISABLED */
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== REMOVE CUSTOM TABLE COLOR OVERRIDE (RESTORES ORIGINAL LOOK) ===== */
+/* ❌ removed forced row background color */
+
+/* ===== EMPTY STATE ===== */
+.custom-empty-state {
+  min-height: 350px;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 767px) {
+
+  .physician-mobile-name {
+    font-size: 1.5rem !important;
+    line-height: 1.2;
+  }
+
+  .physician-mobile-title {
+    font-size: 0.95rem !important;
+    text-align: center;
+    width: 100%;
+  }
+
+  .physician-mobile-table {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .physician-mobile-empty {
+    min-height: 420px;
+    border: 1px solid #dee2e6;
+    border-radius: 14px;
+    background: #fff;
+    padding: 2rem 1rem;
+  }
+
+  .physician-mobile-empty p {
+    font-size: 14px;
+  }
+
+  .mobile-profile-icon {
+    width: 85px !important;
+    height: 85px !important;
+  }
+
+  .mobile-add-circle {
+    width: 72px !important;
+    height: 72px !important;
+    border-radius: 50%;
+    border: 2px solid #0f763f;
+    background: white;
+    cursor: pointer;
+  }
+
+  .mobile-address {
+    font-size: 12px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .mobile-badge {
+    font-size: 11px;
+  }
+}
+`}
+</style>
 
       <div
         className="content doctor-content bg-light mt-n4 d-flex flex-column"
@@ -268,55 +385,89 @@ const PhysicianModule = () => {
                 }}
               >
                 {/* PROFILE HEADER */}
-                <div className="d-flex flex-column align-items-center gap-3 mb-4 pb-4 border-bottom text-center">
-                  <div
-                    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm"
-                    style={{
-                      width: "90px",
-                      height: "90px",
-                      border:
-                        "2px solid var(--primary, #0f763f)",
-                    }}
-                  >
-                    <i
-                      className="isax isax-user fs-1"
-                      style={{
-                        color:
-                          "var(--primary, #0f763f)",
-                      }}
-                    />
-                  </div>
+{/* PROFILE HEADER */}
+<div
+  className="
+    d-flex
+    flex-column
+    flex-md-row
+    align-items-center
+    align-items-md-start
+    text-center
+    text-md-start
+    gap-3
+    mb-4
+    pb-4
+    border-bottom
+  "
+>
 
-                  <div>
-                    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
-                      ID:{" "}
-                      {
-                        mockPatientProfile.hospitalNumber
-                      }
-                    </div>
+<div
+  className="
+    rounded-circle
+    d-flex
+    align-items-center
+    justify-content-center
+    bg-light
+    shadow-sm
+    flex-shrink-0
+    mx-auto
+    mx-md-0
+  "
+  style={{
+    width: "90px",
+    height: "90px",
+    minWidth: "90px",
+    minHeight: "90px",
+    border: "2px solid var(--primary, #0f763f)",
+  }}
+>
+  <i
+    className="isax isax-user"
+    style={{
+      color: "var(--primary, #0f763f)",
+      fontSize: "38px",
+    }}
+  />
+</div>
 
-                    <h3 className="fw-bold mb-1 text-dark physician-mobile-name">
-                      {
-                        mockPatientProfile.lastName
-                      }
-                      ,{" "}
-                      {
-                        mockPatientProfile.firstName
-                      }{" "}
-                      {
-                        mockPatientProfile.middleName
-                      }
-                    </h3>
+  <div
+    className="
+      d-flex
+      flex-column
+      align-items-center
+      align-items-md-start
+    "
+  >
 
-                    <div className="text-muted small d-flex align-items-center justify-content-center gap-2">
-                      <i className="isax isax-location text-danger" />
+    <div className="badge bg-light text-secondary border mb-2 px-2 py-1 mobile-badge">
+      ID: {mockPatientProfile.hospitalNumber}
+    </div>
 
-                      {
-                        mockPatientProfile.address
-                      }
-                    </div>
-                  </div>
-                </div>
+    <h3 className="fw-bold mb-1 text-dark physician-mobile-name">
+      {mockPatientProfile.lastName},{" "}
+      {mockPatientProfile.firstName}{" "}
+      {mockPatientProfile.middleName}
+    </h3>
+
+    <div
+      className="
+        text-muted
+        small
+        d-flex
+        align-items-center
+        justify-content-center
+        justify-content-md-start
+        gap-2
+        mobile-address
+      "
+    >
+      <i className="isax isax-location text-danger" />
+      {mockPatientProfile.address}
+    </div>
+
+  </div>
+</div>
 
                 {/* PHYSICIAN SECTION */}
                 <div className="d-flex flex-column flex-grow-1 mb-4">
@@ -328,58 +479,55 @@ const PhysicianModule = () => {
 
                     {/* ACTION BUTTONS */}
                   
-          <div
-  className={`flex-wrap justify-content-end align-items-center gap-2 ms-md-auto ${
-    !hasRecords ? "d-none d-lg-flex" : "d-flex"
+<div
+  className={`d-flex flex-wrap justify-content-end align-items-center gap-2 ms-md-auto action-btn-group ${
+    !hasRecords ? "d-none d-lg-flex" : ""
   }`}
 >
- {/* ADD BUTTON */}
-<button
-  onClick={handleAdd}
-  className="btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white"
-  style={{
-    borderRadius: "3px",
-    transition: "all 0.2s ease",
-    backgroundColor: "#0f763f",
-    borderColor: "#0f763f",
-  }}
->
-  <i className="isax isax-add-square"></i>
-  <span>Add</span>
-</button>
+  {/* ADD */}
+  <button
+    onClick={handleAdd}
+    className="btn btn-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-white fw-bold"
+    style={{
+      borderRadius: "3px",
+      backgroundColor: "var(--primary, #0f763f)",
+      border: "1px solid var(--primary, #0f763f)",
+    }}
+  >
+    <i className="isax isax-add-square"></i>
+    <span>Add</span>
+  </button>
 
-  {/* EDIT BUTTON */}
+  {/* EDIT */}
   <button
     onClick={handleOpenEdit}
     disabled={selectedRecordId === null}
-    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
+    className={`btn btn-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 ${
       selectedRecordId === null
         ? "bg-light text-muted opacity-50"
-        : "bg-white text-dark fw-bold"
+        : "bg-white text-dark fw-bold border border-secondary-subtle"
     }`}
     style={{
       borderRadius: "3px",
       cursor: selectedRecordId === null ? "not-allowed" : "pointer",
-      transition: "all 0.2s ease",
     }}
   >
     <i className="isax isax-edit"></i>
     <span>Edit</span>
   </button>
 
-  {/* DELETE BUTTON */}
+  {/* DELETE */}
   <button
     onClick={handleDeleteClick}
     disabled={selectedRecordId === null}
-    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
+    className={`btn btn-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 ${
       selectedRecordId === null
         ? "bg-light text-muted opacity-50"
-        : "bg-white text-danger fw-bold"
+        : "bg-white text-danger fw-bold border border-secondary-subtle"
     }`}
     style={{
       borderRadius: "3px",
       cursor: selectedRecordId === null ? "not-allowed" : "pointer",
-      transition: "all 0.2s ease",
     }}
   >
     <i className="isax isax-trash"></i>
