@@ -105,9 +105,11 @@ const DoctorSidebar = () => {
     }
   };
 
-  const openModal = () => {
-    if (!isSidebarOpen && !isMobileView) return;
+  const handleNavClick = () => {
+    closeMobileSidebar();
+  };
 
+  const openModal = () => {
     setActiveTab(FORM_TABS[0].id);
     setIsLoading(true);
     setIsModalOpen(true);
@@ -177,11 +179,35 @@ const DoctorSidebar = () => {
           transition: all 0.25s ease;
         }
 
+        .doctor-sidebar-responsive-wrap .widget-profile {
+          position: relative;
+          z-index: 1;
+          pointer-events: auto;
+        }
+
+        .doctor-sidebar-responsive-wrap .dashboard-widget {
+          position: relative;
+          z-index: 10;
+          pointer-events: auto;
+        }
+
+        .doctor-sidebar-responsive-wrap .dashboard-menu {
+          position: relative;
+          z-index: 10;
+          pointer-events: auto;
+        }
+
+        .doctor-sidebar-responsive-wrap .dashboard-menu ul,
+        .doctor-sidebar-responsive-wrap .dashboard-menu ul li,
+        .doctor-sidebar-responsive-wrap .dashboard-menu ul li a {
+          pointer-events: auto;
+        }
+
         .doctor-desktop-collapse-btn {
           position: absolute;
           top: 14px;
           right: 14px;
-          z-index: 25;
+          z-index: 30;
           width: 34px;
           height: 34px;
           border: 0;
@@ -195,6 +221,7 @@ const DoctorSidebar = () => {
           transition: all 0.2s ease;
           padding: 0;
           cursor: pointer;
+          pointer-events: auto;
         }
 
         .doctor-desktop-collapse-btn:hover {
@@ -215,6 +242,7 @@ const DoctorSidebar = () => {
           font-size: 20px;
           color: var(--primary, #0f763f);
           line-height: 1;
+          pointer-events: none;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .doctor-desktop-collapse-btn {
@@ -229,7 +257,8 @@ const DoctorSidebar = () => {
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .widget-profile {
-          padding: 54px 8px 14px !important;
+          padding: 54px 8px 8px !important;
+          margin-bottom: 0 !important;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info h3,
@@ -253,15 +282,22 @@ const DoctorSidebar = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          pointer-events: auto;
+          cursor: pointer;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-widget {
           padding: 0 !important;
+          margin-top: 4px !important;
+          position: relative;
+          z-index: 20;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu {
           padding: 0 !important;
           margin: 0 !important;
+          position: relative;
+          z-index: 20;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul {
@@ -271,12 +307,16 @@ const DoctorSidebar = () => {
           flex-direction: column;
           align-items: center;
           gap: 6px;
+          position: relative;
+          z-index: 20;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li {
           width: 100%;
           margin: 0 !important;
           padding: 0 8px !important;
+          position: relative;
+          z-index: 20;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a {
@@ -289,6 +329,10 @@ const DoctorSidebar = () => {
           align-items: center;
           justify-content: center;
           border-radius: 8px;
+          position: relative;
+          z-index: 25;
+          cursor: pointer;
+          pointer-events: auto;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a i {
@@ -299,6 +343,7 @@ const DoctorSidebar = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          pointer-events: none;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li.active a {
@@ -337,10 +382,12 @@ const DoctorSidebar = () => {
             overflow-y: auto;
             z-index: 1045;
             flex: none !important;
+            pointer-events: none;
           }
 
           .doctor-sidebar-responsive-wrap.sidebar-mobile-open {
             transform: translateX(0);
+            pointer-events: auto;
           }
 
           .doctor-sidebar-responsive-wrap.sidebar-expanded,
@@ -354,6 +401,11 @@ const DoctorSidebar = () => {
             position: static;
           }
 
+          .doctor-sidebar-responsive-wrap.sidebar-expanded .widget-profile,
+          .doctor-sidebar-responsive-wrap.sidebar-collapsed .widget-profile {
+            padding-top: inherit !important;
+          }
+
           .doctor-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info h3,
           .doctor-sidebar-responsive-wrap.sidebar-collapsed .patient-details,
           .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu span,
@@ -363,6 +415,7 @@ const DoctorSidebar = () => {
 
           .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-widget {
             padding: inherit !important;
+            margin-top: inherit !important;
           }
 
           .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul {
@@ -807,9 +860,9 @@ const DoctorSidebar = () => {
             className="widget-profile pro-widget-content"
             onClick={openModal}
             style={{
-              cursor: isSidebarOpen || isMobileView ? "pointer" : "default",
+              cursor: "pointer",
             }}
-            title={isSidebarOpen || isMobileView ? "Patient Form" : undefined}
+            title="Patient Form"
           >
             <div className="profile-info-widget justify-content-center">
               <div className="profile-det-info text-center">
@@ -840,7 +893,7 @@ const DoctorSidebar = () => {
                   <li key={item.path} className={isActive(item) ? "active" : ""}>
                     <Link
                       to={item.path}
-                      onClick={closeMobileSidebar}
+                      onClick={handleNavClick}
                       title={
                         !isSidebarOpen && !isMobileView ? item.label : undefined
                       }
