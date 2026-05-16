@@ -464,38 +464,59 @@ const PatientSignsAndSymptoms = () => {
                              
                                {/* MOBILE ONLY ADD ICON BUTTON */}
                                  
-<div className="d-flex flex-column justify-content-center align-items-center w-100 text-center py-5 d-lg-none">
-  {/* Circular Add Button */}
-  <div
+{/* EMPTY STATE */}
+<div className="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+  {/* Add Button */}
+  <button
+    type="button"
     onClick={handleAdd}
-    className="rounded-circle d-flex align-items-center justify-content-center border shadow-sm"
+    disabled={isEditing}
+    className="border-0 bg-transparent d-flex flex-column align-items-center"
     style={{
-      width: "64px",
-      height: "64px",
-      border: "2px solid var(--primary, #0f763f)",
-      backgroundColor: "#fff",
       cursor: isEditing ? "not-allowed" : "pointer",
     }}
-    title="Add New Sign & Symptoms"
   >
-    <i
-      className="isax isax-add fs-1"
-      style={{ fontSize: "2.5rem", color: "var(--primary, #0f763f)" }}
-    />
+    <div
+      className="rounded-circle d-flex align-items-center justify-content-center"
+      style={{
+        width: "64px",
+        height: "64px",
+        border: "2px solid var(--primary, #0f763f)",
+        color: "var(--primary, #0f763f)",
+        backgroundColor: "#fff",
+      }}
+    >
+      <i
+        className="isax isax-add"
+        style={{
+          fontSize: "32px",
+          fontWeight: 700,
+        }}
+      />
+    </div>
+
+    <span
+      className="mt-2"
+      style={{
+        fontSize: "14px",
+        color: "#6c757d",
+        fontWeight: 500,
+      }}
+    >
+      Add New
+    </span>
+  </button>
+
+  {/* Empty Message */}
+  <div
+    className="mt-3 fw-semibold"
+    style={{
+      fontSize: "15px",
+      color: "#212529",
+    }}
+  >
+    No signatory records found
   </div>
-
-  {/* "Add New" Label */}
-  <span
-    className="mt-2 fw-semibold text-muted"
-    style={{ fontSize: "14px" }}
-  >
-    Add New
-  </span>
-
-  {/* Message Text */}
-  <p className="mt-3 fw-semibold text-muted" style={{ fontSize: "16px" }}>
-    No pertinent signs and symptoms recorded.
-  </p>
 </div>
                               </div>
                             ) : (
