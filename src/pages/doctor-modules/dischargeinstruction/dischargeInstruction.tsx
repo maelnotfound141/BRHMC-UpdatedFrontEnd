@@ -407,6 +407,11 @@ const DispositionModule = () => {
   flex-wrap: nowrap;
   white-space: nowrap;
 }
+  
+.discharge-mobile-name {
+  font-size: clamp(1.6rem, 3vw, 2.8rem) !important;
+  line-height: 1.2;
+}
 
 /* hide scrollbar if overflow */
 .instruction-action-buttons::-webkit-scrollbar {
@@ -502,7 +507,7 @@ const DispositionModule = () => {
     </div>
 
     {/* Name */}
-    <h3 className="fw-bold mb-2 text-dark fs-4 fs-md-3">
+    <h3 className="fw-bold mb-2 text-dark discharge-mobile-name">
       {mockPatientProfile.lastName}, {mockPatientProfile.firstName}{" "}
       {mockPatientProfile.middleName}
     </h3>
