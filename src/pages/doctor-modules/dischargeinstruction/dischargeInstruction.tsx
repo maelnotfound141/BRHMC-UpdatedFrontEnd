@@ -275,7 +275,6 @@ const DispositionModule = () => {
 
 /* =========================================================
    MODAL TABLE
-   (UNCHANGED — NO COLOR/TABLE OVERRIDES)
 ========================================================= */
 
 .modal-table th,
@@ -395,7 +394,7 @@ const DispositionModule = () => {
 }
 
 /* =========================================================
-   ACTION BUTTON CONTAINER FIX (UPDATED)
+   ACTION BUTTON CONTAINER
 ========================================================= */
 
 .instruction-action-buttons {
@@ -403,11 +402,11 @@ const DispositionModule = () => {
   align-items: center;
   gap: 0.5rem;
 
-  justify-content: flex-end; /* desktop */
+  justify-content: flex-end;
   flex-wrap: nowrap;
   white-space: nowrap;
 }
-  
+
 .discharge-mobile-name {
   font-size: clamp(1.6rem, 3vw, 2.8rem) !important;
   line-height: 1.2;
@@ -419,8 +418,17 @@ const DispositionModule = () => {
 }
 
 /* =========================================================
+   HIDE TOP DISPOSE BUTTON ON MOBILE WHEN EMPTY
+========================================================= */
+
+@media (max-width: 991.98px) {
+  .instruction-action-buttons.hide-mobile-empty {
+    display: none !important;
+  }
+}
+
+/* =========================================================
    MOBILE: CENTER ADD + EDIT BUTTONS
-   (THIS IS THE FIX YOU WANTED)
 ========================================================= */
 
 @media (max-width: 767px) {
@@ -532,11 +540,9 @@ const DispositionModule = () => {
                     Discharge Instructions
                   </h5>
 
-                  <div
+                 <div
   className={`instruction-action-buttons gap-2 ${
-    instructionData.length === 0
-      ? "d-none d-lg-flex"
-      : "d-flex flex-nowrap"
+    instructionData.length === 0 ? "hide-mobile-empty" : ""
   }`}
 >
                     <button

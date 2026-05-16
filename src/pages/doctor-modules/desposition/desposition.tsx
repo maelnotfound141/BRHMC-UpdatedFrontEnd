@@ -212,8 +212,12 @@ const DispositionModule = () => {
   <h5 className="fw-bold text-uppercase mb-0 text-center text-md-start">
     Disposition
   </h5>
-
-  <div className="d-flex justify-content-center justify-content-md-end gap-2 flex-wrap w-100 w-md-auto">
+  
+  <div
+  className={`d-flex justify-content-center justify-content-md-end gap-2 flex-wrap w-100 w-md-auto ${
+    !dispositionData ? "d-none d-md-flex" : ""
+  }`}
+>
 
     <button
       type="button"
