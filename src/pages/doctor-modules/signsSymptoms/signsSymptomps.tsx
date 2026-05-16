@@ -458,41 +458,66 @@ const PatientSignsAndSymptoms = () => {
                           <td className="p-3 p-md-4 border-bottom-0">
                             {!isEditing && !hasSavedData ? (
                               <div className="d-flex flex-column align-items-center justify-content-center text-muted py-5">
-                                <i className="isax isax-document-text fs-1 mb-2 opacity-50"></i>
+                                
 
-                                <p className="mb-1 text-center">
-                                  No pertinent signs and
-                                  symptoms recorded.
-                                </p>
 
                              
                                {/* MOBILE ONLY ADD ICON BUTTON */}
                                  
-                                    <div className="d-flex flex-column justify-content-center align-items-center w-100 text-center py-5 d-lg-none">
-                                      <button
-                                        onClick={handleAdd}
-                                        disabled={isEditing}
-                                        className={`d-flex align-items-center justify-content-center shadow-sm ${
-                                          isEditing ? "opacity-50" : ""
-                                        }`}
-                                        style={{
-                                          width: "64px",
-                                          height: "64px",
-                                          borderRadius: "50%",
-                                          border: "none",
-                                          backgroundColor: "var(--primary, #0f763f)",
-                                          color: "#fff",
-                                          cursor: isEditing ? "not-allowed" : "pointer",
-                                        }}
-                                        title="Add Signs & Symptoms"
-                                      >
-                                        <i className="isax isax-add" style={{ fontSize: "2rem" }} />
-                                      </button>
+{/* EMPTY STATE */}
+<div className="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+  {/* Add Button */}
+  <button
+    type="button"
+    onClick={handleAdd}
+    disabled={isEditing}
+    className="border-0 bg-transparent d-flex flex-column align-items-center"
+    style={{
+      cursor: isEditing ? "not-allowed" : "pointer",
+    }}
+  >
+    <div
+      className="rounded-circle d-flex align-items-center justify-content-center"
+      style={{
+        width: "64px",
+        height: "64px",
+        border: "2px solid var(--primary, #0f763f)",
+        color: "var(--primary, #0f763f)",
+        backgroundColor: "#fff",
+      }}
+    >
+      <i
+        className="isax isax-add"
+        style={{
+          fontSize: "32px",
+          fontWeight: 700,
+        }}
+      />
+    </div>
 
-                                      <span className="mt-3 fw-semibold text-muted" style={{ fontSize: "16px" }}>
-                                        Add New
-                                      </span>
-                                    </div>
+    <span
+      className="mt-2"
+      style={{
+        fontSize: "14px",
+        color: "#6c757d",
+        fontWeight: 500,
+      }}
+    >
+      Add New
+    </span>
+  </button>
+
+  {/* Empty Message */}
+  <div
+    className="mt-3 fw-semibold"
+    style={{
+      fontSize: "15px",
+      color: "#212529",
+    }}
+  >
+    No signatory records found
+  </div>
+</div>
                               </div>
                             ) : (
                               <div className="row g-2">
