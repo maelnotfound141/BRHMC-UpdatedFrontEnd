@@ -463,61 +463,61 @@ const PatientSignsAndSymptoms = () => {
 
                              
                                {/* MOBILE ONLY ADD ICON BUTTON */}
-                                 
-{/* EMPTY STATE */}
-<div className="d-flex flex-column align-items-center justify-content-center py-5 text-center">
-  {/* Add Button */}
-  <button
-    type="button"
-    onClick={handleAdd}
-    disabled={isEditing}
-    className="border-0 bg-transparent d-flex flex-column align-items-center"
-    style={{
-      cursor: isEditing ? "not-allowed" : "pointer",
-    }}
-  >
-    <div
-      className="rounded-circle d-flex align-items-center justify-content-center"
-      style={{
-        width: "64px",
-        height: "64px",
-        border: "2px solid var(--primary, #0f763f)",
-        color: "var(--primary, #0f763f)",
-        backgroundColor: "#fff",
-      }}
-    >
-      <i
-        className="isax isax-add"
-        style={{
-          fontSize: "32px",
-          fontWeight: 700,
-        }}
-      />
-    </div>
+                                                                
+                                {/* EMPTY STATE */}
+                                <div className="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+                                  {/* Add Button */}
+                                  <button
+                                    type="button"
+                                    onClick={handleAdd}
+                                    disabled={isEditing}
+                                    className="border-0 bg-transparent d-flex flex-column align-items-center"
+                                    style={{
+                                      cursor: isEditing ? "not-allowed" : "pointer",
+                                    }}
+                                  >
+                                    <div
+                                      className="rounded-circle d-flex align-items-center justify-content-center"
+                                      style={{
+                                        width: "64px",
+                                        height: "64px",
+                                        border: "2px solid var(--primary, #0f763f)",
+                                        color: "var(--primary, #0f763f)",
+                                        backgroundColor: "#fff",
+                                      }}
+                                    >
+                                      <i
+                                        className="isax isax-add"
+                                        style={{
+                                          fontSize: "32px",
+                                          fontWeight: 700,
+                                        }}
+                                      />
+                                    </div>
 
-    <span
-      className="mt-2"
-      style={{
-        fontSize: "14px",
-        color: "#6c757d",
-        fontWeight: 500,
-      }}
-    >
-      Add New
-    </span>
-  </button>
+                                    <span
+                                      className="mt-2"
+                                      style={{
+                                        fontSize: "14px",
+                                        color: "#6c757d",
+                                        fontWeight: 500,
+                                      }}
+                                    >
+                                      Add New
+                                    </span>
+                                  </button>
 
-  {/* Empty Message */}
-  <div
-    className="mt-3 fw-semibold"
-    style={{
-      fontSize: "15px",
-      color: "#212529",
-    }}
-  >
-    No signatory records found
-  </div>
-</div>
+                                  {/* Empty Message */}
+                                  <div
+                                    className="mt-3 fw-semibold"
+                                    style={{
+                                      fontSize: "15px",
+                                      color: "#212529",
+                                    }}
+                                  >
+                                    No signatory records found
+                                  </div>
+                                </div>
                               </div>
                             ) : (
                               <div className="row g-2">
