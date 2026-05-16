@@ -273,55 +273,78 @@ const RegDetails = () => {
 
   return (
     <>
-      <style>
-        {`
-          .text-hover-primary:hover {
-            color: var(--primary, #0f763f) !important;
-          }
+     <style>
+  {`
+    .text-hover-primary:hover {
+      color: var(--primary, #0f763f) !important;
+    }
 
-          .reg-toolbar-btn:disabled {
-            cursor: not-allowed !important;
-          }
+    .reg-toolbar-btn:disabled {
+      cursor: not-allowed !important;
+    }
 
-          .reg-update-modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 1050;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-          }
+    .nurse-dashboard-layout {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      width: 100%;
+    }
 
-          .reg-update-modal {
-            width: 100%;
-            max-width: 900px;
-            max-height: 90vh;
-            overflow-y: auto;
-            background: #fff;
-            border-radius: 8px;
-          }
+    .nurse-dashboard-main {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: 100%;
+    }
 
-          .reg-modal-section-title {
-            background: #eef5f8;
-            border-left: 4px solid var(--primary, #0f763f);
-          }
-        `}
-      </style>
+    @media (max-width: 991.98px) {
+      .nurse-dashboard-layout {
+        display: block;
+      }
 
+      .nurse-dashboard-main {
+        width: 100%;
+      }
+    }
+
+    .reg-update-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .reg-update-modal {
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .reg-modal-section-title {
+      background: #eef5f8;
+      border-left: 4px solid var(--primary, #0f763f);
+    }
+  `}
+</style>
       {/* page content */}
-      <div
-        className="content nurse-content bg-light mt-n4"
-        style={{ minHeight: "100vh" }}
-      >
-        <div className="container-fluid px-3 px-lg-5 pt-0">
-          <div className="row">
-            {/* nurse sidebar */}
-            <NurseSidebar />
+      {/* page content */}
+<div
+  className="content nurse-content bg-light mt-n4"
+  style={{ minHeight: "100vh" }}
+>
+  <div className="container-fluid px-3 px-lg-5 pt-0">
+    <div className="nurse-dashboard-layout">
+      {/* nurse sidebar */}
+      <NurseSidebar />
 
-            {/* specific patient record */}
-            <div className="col-lg-8 col-xl-9 mt-4 mt-lg-0">
+      {/* specific patient record */}
+      <div className="nurse-dashboard-main mt-4 mt-lg-0">
               <div
                 className="card border-0 shadow-sm rounded-3 overflow-hidden mb-4"
                 style={{

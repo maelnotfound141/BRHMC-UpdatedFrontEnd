@@ -5,15 +5,19 @@
 
 // Global Header Styles
 .header {
-  position: relative;
-  transition: all 0.9s;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 111;
+  background: variables.$white;
+  border-bottom: 1px solid variables.$border-color;
+  transition: all 0.25s ease;
 
   &.fixed {
     background: variables.$white;
     top: 0;
-    transition: all 0.9s;
     animation: 500ms ease-in-out 0s normal none 1 running fadeInDown;
-    position: fixed;
+    position: sticky;
     width: 100%;
     z-index: 111;
     box-shadow: variables.$box-shadow;
@@ -32,6 +36,7 @@
 
     @include mixins.respond-below(lg) {
       height: 60px;
+      min-height: 60px;
       padding: 0;
       gap: 10px;
     }
@@ -195,7 +200,6 @@
       }
     }
 
-    // Main Navigation Styles
     .main-nav {
       list-style: none;
       display: flex;
@@ -273,7 +277,6 @@
       }
     }
 
-    // Right Header Icons
     .header-navbar-rht {
       margin: 0 !important;
       display: flex;
@@ -304,7 +307,6 @@
         position: relative;
         margin: 0 !important;
 
-        // Hide duplicate old header buttons on mobile, but keep time, profile, and sidebar toggle.
         &:not(.profile-icon):not(.module-sidebar-toggle-item) {
           @include mixins.respond-below(lg) {
             display: none;
@@ -396,7 +398,6 @@
     }
   }
 
-  // Specific Modifiers
   &.inner-header {
     border-bottom: 1px solid variables.$border-color;
 
@@ -444,7 +445,6 @@
   }
 }
 
-// Mobile Menu Open State
 .menu-opened .main-menu-wrapper {
   @include mixins.respond-below(lg) {
     transform: translateX(0) !important;
@@ -455,7 +455,6 @@ html.menu-opened body {
   overflow: hidden;
 }
 
-// Sidebar Overlay
 .sidebar-overlay {
   background-color: rgba(0, 0, 0, 0.6);
   display: none;
@@ -473,14 +472,12 @@ html.menu-opened body {
   }
 }
 
-// Offcanvas Support
 .offcanvas {
   &.show {
     z-index: 9999;
   }
 }
 
-// Additional utility for theme toggle
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -499,7 +496,6 @@ html.menu-opened body {
   }
 }
 
-// Animation
 @keyframes fadeInDown {
   from {
     opacity: 0;

@@ -1,4 +1,4 @@
-import NurseSidebar from "@/components/custom-sidebar/nurseSidebar";
+  import NurseSidebar from "@/components/custom-sidebar/nurseSidebar";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 
@@ -651,17 +651,18 @@ const RegDetails = () => {
   return (
     <>
       {/* page content */}
-      <div
-        className="content nurse-content bg-light mt-n4"
-        style={{ minHeight: "100vh" }}
-      >
-        <div className="container-fluid px-3 px-lg-5 pt-0">
-          <div className="row">
-            {/* nurse sidebar */}
-            <NurseSidebar />
+   {/* page content */}
+<div
+  className="content nurse-content bg-light mt-n4"
+  style={{ minHeight: "100vh" }}
+>
+  <div className="container-fluid px-3 px-lg-5 pt-0">
+    <div className="nurse-dashboard-layout">
+      {/* nurse sidebar */}
+      <NurseSidebar />
 
-            {/* specific patient record */}
-            <div className="col-lg-8 col-xl-9 mt-4 mt-lg-0">
+      {/* specific patient record */}
+      <div className="nurse-dashboard-main mt-4 mt-lg-0">
               <div className="card border-0 shadow-sm rounded-3 overflow-hidden mb-4 acc-main-card">
                 {/* patient profile header */}
                 <div className="bg-white px-3 px-md-4 pt-4">
@@ -1176,7 +1177,7 @@ const RegDetails = () => {
 
                     <button
                       type="button"
-                      className="btn btn-sm text-white fw-bold px-5 py-2"
+                      className="btn btn-sm fw-bold px-5 py-2"
                       style={{
                         backgroundColor: selectedEditRoom
                           ? "var(--primary, #0f763f)"

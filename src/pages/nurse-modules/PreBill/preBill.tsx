@@ -87,17 +87,18 @@ const PreBill = () => {
    
 
       {/* Page Content */}
-      <div
-        className="content doctor-content bg-light mt-n4"
-        style={{ minHeight: "100vh" }}
-      >
-        <div className="container-fluid px-3 px-lg-5 pt-0">
-          <div className="row">
-            {/* Profile Sidebar */}
-            <NurseSidebar />
+ {/* page content */}
+<div
+  className="content nurse-content bg-light mt-n4"
+  style={{ minHeight: "100vh" }}
+>
+  <div className="container-fluid px-3 px-lg-5 pt-0">
+    <div className="nurse-dashboard-layout">
+      {/* nurse sidebar */}
+      <NurseSidebar />
 
-            {/* Specific Patient Record */}
-            <div className="col-lg-8 col-xl-9 mt-4 mt-lg-0">
+      {/* specific patient record */}
+      <div className="nurse-dashboard-main mt-4 mt-lg-0">
               <div
                 className="card border-0 shadow-sm p-3 p-md-4 mb-4"
                 style={{

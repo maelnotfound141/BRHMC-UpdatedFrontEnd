@@ -4,16 +4,22 @@
 @use "../utils/variables";
 
 .content {
-    flex: 1;
-    min-height: 200px;
-	padding: 20px 0 36px;
-	@include mixins.respond-below(lg) {
-    	padding: 40px 0 16px;
-    }
-	h4 {
-		font-size: variables.$font-size-18;
-		font-weight: variables.$font-weight-medium;
-	}
+  flex: 1;
+  min-height: 200px;
+  padding: 20px 0 36px;
+
+  @include mixins.respond-below(lg) {
+  padding: 8px 0 16px;
+}
+
+  @include mixins.respond-below(sm) {
+    padding: 12px 0 14px;
+  }
+
+  h4 {
+    font-size: variables.$font-size-18;
+    font-weight: variables.$font-weight-medium;
+  }
 }
 .top-space {
 	padding-top: 240px;
@@ -239,3 +245,59 @@
     width: 100%;
   }
 }
+
+    .text-hover-primary:hover {
+      color: var(--primary, #0f763f) !important;
+    }
+
+    .reg-toolbar-btn:disabled {
+      cursor: not-allowed !important;
+    }
+
+    .nurse-dashboard-layout {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .nurse-dashboard-main {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: 100%;
+    }
+
+    @media (max-width: 991.98px) {
+      .nurse-dashboard-layout {
+        display: block;
+      }
+
+      .nurse-dashboard-main {
+        width: 100%;
+      }
+    }
+
+    .reg-update-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .reg-update-modal {
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .reg-modal-section-title {
+      background: #eef5f8;
+      border-left: 4px solid var(--primary, #0f763f);
+    }

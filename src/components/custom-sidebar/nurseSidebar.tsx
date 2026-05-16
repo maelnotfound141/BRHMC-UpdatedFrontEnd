@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setNurseMobileSidebar } from "@/core/redux/sidebarSlice";
 import { nurseSidebarData } from "@/core/data/json/nurseSidebarData";
 
+const SIDEBAR_COLLAPSED_KEY = "nurse-sidebar-desktop-collapsed";
+
 const NurseSidebar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -13,7 +15,11 @@ const NurseSidebar = () => {
   );
 
   const [isMobileView, setIsMobileView] = useState(false);
-  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
+
+  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
+  });
 
   const isSidebarOpen = isMobileView
     ? nurseMobileSidebar
@@ -34,6 +40,15 @@ const NurseSidebar = () => {
 
     return () => window.removeEventListener("resize", checkScreen);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    localStorage.setItem(
+      SIDEBAR_COLLAPSED_KEY,
+      isDesktopCollapsed ? "true" : "false"
+    );
+  }, [isDesktopCollapsed]);
 
   useEffect(() => {
     if (!isMobileView) {
@@ -72,6 +87,10 @@ const NurseSidebar = () => {
     }
   };
 
+  const handleNavClick = () => {
+    closeMobileSidebar();
+  };
+
   return (
     <>
       <style>{`
@@ -80,52 +99,101 @@ const NurseSidebar = () => {
           flex: 0 0 280px;
           max-width: 280px;
           transition: all 0.25s ease;
-          z-index: 1038;
+          z-index: 20;
         }
 
         .nurse-sidebar-responsive-wrap.sidebar-collapsed {
-          flex-basis: 78px;
+          flex: 0 0 78px;
           max-width: 78px;
         }
 
         .nurse-sidebar-responsive-wrap .profile-sidebar {
           position: sticky;
-          top: 90px;
+          top: 105px;
           width: 100%;
           overflow: hidden;
           transition: all 0.25s ease;
         }
 
+        .nurse-sidebar-responsive-wrap .widget-profile {
+          position: relative;
+          z-index: 1;
+        }
+
+        .nurse-sidebar-responsive-wrap .dashboard-widget {
+          position: relative;
+          z-index: 10;
+          pointer-events: auto;
+        }
+
+        .nurse-sidebar-responsive-wrap .dashboard-menu {
+          position: relative;
+          z-index: 10;
+          pointer-events: auto;
+        }
+
+        .nurse-sidebar-responsive-wrap .dashboard-menu ul,
+        .nurse-sidebar-responsive-wrap .dashboard-menu ul li,
+        .nurse-sidebar-responsive-wrap .dashboard-menu ul li a {
+          pointer-events: auto;
+        }
+
         .nurse-desktop-collapse-btn {
           position: absolute;
-          top: 10px;
-          right: -14px;
-          z-index: 5;
-          width: 30px;
-          height: 30px;
+          top: 14px;
+          right: 14px;
+          z-index: 30;
+          width: 34px;
+          height: 34px;
           border: 0;
-          border-radius: 50%;
-          background: var(--primary, #0f763f);
-          color: #fff;
+          border-radius: 6px;
+          background: transparent !important;
+          color: var(--primary, #0f763f);
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 5px 14px rgba(15, 118, 63, 0.25);
+          box-shadow: none !important;
           transition: all 0.2s ease;
+          padding: 0;
+          cursor: pointer;
+          pointer-events: auto;
         }
 
         .nurse-desktop-collapse-btn:hover {
-          filter: brightness(0.95);
-          transform: translateY(-1px);
+          background: rgba(15, 118, 63, 0.08) !important;
+          color: var(--primary, #0f763f);
+          transform: none;
+        }
+
+        .nurse-desktop-collapse-btn:focus,
+        .nurse-desktop-collapse-btn:active {
+          outline: none;
+          box-shadow: none !important;
+          background: transparent !important;
+          color: var(--primary, #0f763f);
         }
 
         .nurse-desktop-collapse-btn i {
-          font-size: 12px;
+          font-size: 20px;
+          color: var(--primary, #0f763f);
+          line-height: 1;
+          pointer-events: none;
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .nurse-desktop-collapse-btn {
+          top: 14px;
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-expanded .widget-profile {
+          padding-top: 54px !important;
         }
 
         .nurse-sidebar-responsive-wrap.sidebar-collapsed .widget-profile {
-          padding-left: 8px !important;
-          padding-right: 8px !important;
+          padding: 54px 8px 8px !important;
+          margin-bottom: 0 !important;
         }
 
         .nurse-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info h3,
@@ -135,20 +203,90 @@ const NurseSidebar = () => {
           display: none !important;
         }
 
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .profile-info-widget {
+          justify-content: center !important;
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info {
+          width: 100%;
+        }
+
         .nurse-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info .mb-3 {
-          font-size: 1.5rem !important;
-          margin-bottom: 0 !important;
+          font-size: 1.45rem !important;
+          margin: 0 !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-widget {
+          padding: 0 !important;
+          margin-top: 4px !important;
+          position: relative;
+          z-index: 20;
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu {
+          padding: 0 !important;
+          margin: 0 !important;
+          position: relative;
+          z-index: 20;
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul {
+          padding: 0 !important;
+          margin: 0 !important;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          position: relative;
+          z-index: 20;
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li {
+          width: 100%;
+          margin: 0 !important;
+          padding: 0 8px !important;
+          position: relative;
+          z-index: 20;
         }
 
         .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a {
+          width: 42px;
+          height: 42px;
+          min-height: 42px;
+          margin: 0 auto !important;
+          padding: 0 !important;
+          display: flex;
+          align-items: center;
           justify-content: center;
-          padding-left: 0;
-          padding-right: 0;
+          border-radius: 8px;
+          position: relative;
+          z-index: 25;
+          cursor: pointer;
+          pointer-events: auto;
         }
 
         .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a i {
-          margin-right: 0 !important;
-          font-size: 18px;
+          margin: 0 !important;
+          padding: 0 !important;
+          font-size: 17px;
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li.active a {
+          background: var(--primary, #0f763f) !important;
+          color: #fff !important;
+        }
+
+        .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li.active a i {
+          color: #fff !important;
         }
 
         .nurse-sidebar-mobile-backdrop {
@@ -178,10 +316,12 @@ const NurseSidebar = () => {
             overflow-y: auto;
             z-index: 1045;
             flex: none !important;
+            pointer-events: none;
           }
 
           .nurse-sidebar-responsive-wrap.sidebar-mobile-open {
             transform: translateX(0);
+            pointer-events: auto;
           }
 
           .nurse-sidebar-responsive-wrap.sidebar-expanded,
@@ -195,6 +335,11 @@ const NurseSidebar = () => {
             position: static;
           }
 
+          .nurse-sidebar-responsive-wrap.sidebar-expanded .widget-profile,
+          .nurse-sidebar-responsive-wrap.sidebar-collapsed .widget-profile {
+            padding-top: inherit !important;
+          }
+
           .nurse-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info h3,
           .nurse-sidebar-responsive-wrap.sidebar-collapsed .patient-details,
           .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu span,
@@ -202,10 +347,29 @@ const NurseSidebar = () => {
             display: initial !important;
           }
 
+          .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-widget {
+            padding: inherit !important;
+            margin-top: inherit !important;
+          }
+
+          .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul {
+            display: block;
+            padding: inherit !important;
+            margin: inherit !important;
+          }
+
+          .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li {
+            width: auto;
+            padding: inherit !important;
+          }
+
           .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a {
+            width: auto;
+            height: auto;
+            min-height: initial;
+            margin: inherit !important;
+            padding: inherit !important;
             justify-content: flex-start;
-            padding-left: inherit;
-            padding-right: inherit;
           }
 
           .nurse-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a i {
@@ -258,11 +422,7 @@ const NurseSidebar = () => {
             aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           >
-            <i
-              className={`fa-solid ${
-                isSidebarOpen ? "fa-angles-left" : "fa-angles-right"
-              }`}
-            />
+            <i className="fa-solid fa-bars" />
           </button>
         )}
 
@@ -278,11 +438,11 @@ const NurseSidebar = () => {
                   className="text-uppercase fw-bold mt-2"
                   style={{ letterSpacing: "1px" }}
                 >
-                  Nursing Care Module
+                  Nursing Care
                 </h3>
 
                 <div className="patient-details mt-2">
-                  <p className="small text-muted mb-0">Admission Record</p>
+                  <p className="small text-muted mb-0"></p>
                 </div>
               </div>
             </div>
@@ -295,7 +455,7 @@ const NurseSidebar = () => {
                   <li key={item.path} className={isActive(item) ? "active" : ""}>
                     <Link
                       to={item.path}
-                      onClick={closeMobileSidebar}
+                      onClick={handleNavClick}
                       title={
                         !isSidebarOpen && !isMobileView ? item.label : undefined
                       }
