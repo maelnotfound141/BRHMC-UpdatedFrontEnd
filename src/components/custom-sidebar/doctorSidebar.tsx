@@ -15,6 +15,8 @@ const FORM_TABS = [
   { id: "archive-file", label: "Archive File" },
 ];
 
+const SIDEBAR_COLLAPSED_KEY = "doctor-sidebar-desktop-collapsed";
+
 const DoctorSidebar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -30,7 +32,12 @@ const DoctorSidebar = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [isMobileView, setIsMobileView] = useState(false);
-  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
+
+  const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+
+    return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "true";
+  });
 
   const isSidebarOpen = isMobileView
     ? doctorMobileSidebar
@@ -51,6 +58,15 @@ const DoctorSidebar = () => {
 
     return () => window.removeEventListener("resize", checkScreen);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    localStorage.setItem(
+      SIDEBAR_COLLAPSED_KEY,
+      isDesktopCollapsed ? "true" : "false"
+    );
+  }, [isDesktopCollapsed]);
 
   useEffect(() => {
     if (!isMobileView) {
@@ -90,6 +106,8 @@ const DoctorSidebar = () => {
   };
 
   const openModal = () => {
+    if (!isSidebarOpen && !isMobileView) return;
+
     setActiveTab(FORM_TABS[0].id);
     setIsLoading(true);
     setIsModalOpen(true);
@@ -147,7 +165,7 @@ const DoctorSidebar = () => {
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed {
-          flex-basis: 78px;
+          flex: 0 0 78px;
           max-width: 78px;
         }
 
@@ -161,34 +179,57 @@ const DoctorSidebar = () => {
 
         .doctor-desktop-collapse-btn {
           position: absolute;
-          top: 10px;
-          right: -14px;
+          top: 14px;
+          right: 14px;
           z-index: 25;
-          width: 30px;
-          height: 30px;
+          width: 34px;
+          height: 34px;
           border: 0;
-          border-radius: 50%;
-          background: var(--primary, #0f763f);
-          color: #fff;
+          border-radius: 6px;
+          background: transparent !important;
+          color: var(--primary, #0f763f);
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 5px 14px rgba(15, 118, 63, 0.25);
+          box-shadow: none !important;
           transition: all 0.2s ease;
+          padding: 0;
+          cursor: pointer;
         }
 
         .doctor-desktop-collapse-btn:hover {
-          filter: brightness(0.95);
-          transform: translateY(-1px);
+          background: rgba(15, 118, 63, 0.08) !important;
+          color: var(--primary, #0f763f);
+          transform: none;
+        }
+
+        .doctor-desktop-collapse-btn:focus,
+        .doctor-desktop-collapse-btn:active {
+          outline: none;
+          box-shadow: none !important;
+          background: transparent !important;
+          color: var(--primary, #0f763f);
         }
 
         .doctor-desktop-collapse-btn i {
-          font-size: 12px;
+          font-size: 20px;
+          color: var(--primary, #0f763f);
+          line-height: 1;
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .doctor-desktop-collapse-btn {
+          top: 14px;
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-expanded .widget-profile {
+          padding-top: 54px !important;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .widget-profile {
-          padding-left: 8px !important;
-          padding-right: 8px !important;
+          padding: 54px 8px 14px !important;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info h3,
@@ -198,20 +239,75 @@ const DoctorSidebar = () => {
           display: none !important;
         }
 
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .profile-info-widget {
+          justify-content: center !important;
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info {
+          width: 100%;
+        }
+
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .profile-det-info .mb-3 {
-          font-size: 1.5rem !important;
-          margin-bottom: 0 !important;
+          font-size: 1.45rem !important;
+          margin: 0 !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-widget {
+          padding: 0 !important;
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu {
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul {
+          padding: 0 !important;
+          margin: 0 !important;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li {
+          width: 100%;
+          margin: 0 !important;
+          padding: 0 8px !important;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a {
+          width: 42px;
+          height: 42px;
+          min-height: 42px;
+          margin: 0 auto !important;
+          padding: 0 !important;
+          display: flex;
+          align-items: center;
           justify-content: center;
-          padding-left: 0;
-          padding-right: 0;
+          border-radius: 8px;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a i {
-          margin-right: 0 !important;
-          font-size: 18px;
+          margin: 0 !important;
+          padding: 0 !important;
+          font-size: 17px;
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li.active a {
+          background: var(--primary, #0f763f) !important;
+          color: #fff !important;
+        }
+
+        .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li.active a i {
+          color: #fff !important;
         }
 
         .doctor-sidebar-mobile-backdrop {
@@ -265,10 +361,28 @@ const DoctorSidebar = () => {
             display: initial !important;
           }
 
+          .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-widget {
+            padding: inherit !important;
+          }
+
+          .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul {
+            display: block;
+            padding: inherit !important;
+            margin: inherit !important;
+          }
+
+          .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li {
+            width: auto;
+            padding: inherit !important;
+          }
+
           .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a {
+            width: auto;
+            height: auto;
+            min-height: initial;
+            margin: inherit !important;
+            padding: inherit !important;
             justify-content: flex-start;
-            padding-left: inherit;
-            padding-right: inherit;
           }
 
           .doctor-sidebar-responsive-wrap.sidebar-collapsed .dashboard-menu ul li a i {
@@ -684,11 +798,7 @@ const DoctorSidebar = () => {
             aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           >
-            <i
-              className={`fa-solid ${
-                isSidebarOpen ? "fa-angles-left" : "fa-angles-right"
-              }`}
-            />
+            <i className="fa-solid fa-bars" />
           </button>
         )}
 
@@ -696,8 +806,10 @@ const DoctorSidebar = () => {
           <div
             className="widget-profile pro-widget-content"
             onClick={openModal}
-            style={{ cursor: "pointer" }}
-            title="Patient Form"
+            style={{
+              cursor: isSidebarOpen || isMobileView ? "pointer" : "default",
+            }}
+            title={isSidebarOpen || isMobileView ? "Patient Form" : undefined}
           >
             <div className="profile-info-widget justify-content-center">
               <div className="profile-det-info text-center">
