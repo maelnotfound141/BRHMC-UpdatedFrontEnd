@@ -327,59 +327,60 @@ const PhysicianModule = () => {
                     </h5>
 
                     {/* ACTION BUTTONS */}
-                  {/* ACTION BUTTONS */}
-<div className="d-flex flex-wrap justify-content-end gap-2 ms-md-auto">
-
+                  
+                          <div
+  className="d-flex flex-wrap justify-content-end align-items-center gap-2 ms-md-auto"
+>
   {/* ADD BUTTON */}
   <button
     onClick={handleAdd}
-    className="btn btn-sm d-flex align-items-center gap-2 px-3 py-2 text-white fw-bold"
+    className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold"
     style={{
       borderRadius: "3px",
-      backgroundColor: "var(--primary, #0f763f)",
-      border: "1px solid var(--primary, #0f763f)",
+      transition: "all 0.2s ease",
     }}
   >
     <i className="isax isax-add-square"></i>
-    Add
+    <span>Add</span>
   </button>
 
   {/* EDIT BUTTON */}
   <button
     onClick={handleOpenEdit}
     disabled={selectedRecordId === null}
-    className={`btn btn-sm d-flex align-items-center gap-2 px-3 py-2 ${
+    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
       selectedRecordId === null
         ? "bg-light text-muted opacity-50"
-        : "bg-white text-dark fw-bold border border-secondary-subtle"
+        : "bg-white text-dark fw-bold"
     }`}
     style={{
       borderRadius: "3px",
       cursor: selectedRecordId === null ? "not-allowed" : "pointer",
+      transition: "all 0.2s ease",
     }}
   >
     <i className="isax isax-edit"></i>
-    Edit
+    <span>Edit</span>
   </button>
 
   {/* DELETE BUTTON */}
   <button
     onClick={handleDeleteClick}
     disabled={selectedRecordId === null}
-    className={`btn btn-sm d-flex align-items-center gap-2 px-3 py-2 ${
+    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
       selectedRecordId === null
         ? "bg-light text-muted opacity-50"
-        : "bg-white text-danger fw-bold border border-secondary-subtle"
+        : "bg-white text-danger fw-bold"
     }`}
     style={{
       borderRadius: "3px",
       cursor: selectedRecordId === null ? "not-allowed" : "pointer",
+      transition: "all 0.2s ease",
     }}
   >
     <i className="isax isax-trash"></i>
-    Del
+    <span>Del</span>
   </button>
-
 </div>
                   </div>
 
@@ -410,106 +411,82 @@ const PhysicianModule = () => {
                       )}
 
                       <tbody>
-                        {hasRecords ? (
-                          physicians.map(
-                            (record) => (
-                              <tr
-                                key={record.id}
-                                onClick={() =>
-                                  setSelectedRecordId(
-                                    record.id
-                                  )
-                                }
-                                onDoubleClick={() => {
-                                  setSelectedRecordId(
-                                    record.id
-                                  );
+  {hasRecords ? (
+    physicians.map((record) => (
+      <tr
+        key={record.id}
+        onClick={() => setSelectedRecordId(record.id)}
+        onDoubleClick={() => {
+          setSelectedRecordId(record.id);
+          openEditModalForRecord(record);
+        }}
+        className={
+          selectedRecordId === record.id ? "selected-row" : ""
+        }
+        style={{ cursor: "pointer" }}
+      >
+        <td className="ps-3 py-3 text-dark border-bottom-0">
+          {record.type}
+        </td>
 
-                                  openEditModalForRecord(
-                                    record
-                                  );
-                                }}
-                                className={
-                                  selectedRecordId ===
-                                  record.id
-                                    ? "selected-row"
-                                    : ""
-                                }
-                                style={{
-                                  cursor: "pointer",
-                                }}
-                              >
-                                <td className="ps-3 py-3 text-dark border-bottom-0">
-                                  {
-                                    record.type
-                                  }
-                                </td>
+        <td className="py-3 text-dark border-bottom-0 d-none d-md-table-cell">
+          {record.name}
+        </td>
 
-                                <td className="py-3 text-dark border-bottom-0 d-none d-md-table-cell">
-                                  {
-                                    record.name
-                                  }
-                                </td>
+        <td className="pe-3 py-3 text-dark border-bottom-0">
+          {record.accessStatus}
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={3} className="border-bottom-0">
+        <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted py-5 custom-empty-state physician-mobile-empty">
 
-                                <td className="pe-3 py-3 text-dark border-bottom-0">
-                                  {
-                                    record.accessStatus
-                                  }
-                                </td>
-                              </tr>
-                            )
-                          )
-                        ) : (
-                          <tr>
-                            <td
-                              colSpan={3}
-                              className="border-bottom-0"
-                            >
-                              <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted py-5 custom-empty-state physician-mobile-empty">
-                                
-                                {/* MOBILE ONLY PLUS BUTTON */}
-                                <button
-                                  onClick={handleAdd}
-                                  className="btn rounded-circle d-flex d-md-none align-items-center justify-content-center mb-3"
-                                  style={{
-                                    width: "72px",
-                                    height: "72px",
-                                    border:
-                                      "2px solid var(--primary, #0f763f)",
-                                    color:
-                                      "var(--primary, #0f763f)",
-                                    background:
-                                      "#fff",
-                                  }}
-                                >
-                                  <i
-                                    className="isax isax-add"
-                                    style={{
-                                      fontSize:
-                                        "2rem",
-                                    }}
-                                  />
-                                </button>
+          {/* DOCUMENT ICON (same as SignatoryModule) */}
+          <i
+            className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+            style={{
+              fontSize: "3rem",
+              color: "var(--primary, #0f763f)",
+            }}
+          ></i>
 
-                                {/* MOBILE ONLY ADD LABEL */}
-                                <p className="fw-medium mb-2 text-dark d-md-none">
-                                  Add New
-                                </p>
+          {/* MOBILE ADD BUTTON */}
+          <div
+            className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
+            onClick={handleAdd}
+            style={{
+              width: "64px",
+              height: "64px",
+              border: "2px solid var(--primary, #0f763f)",
+              backgroundColor: "#fff",
+              cursor: "pointer",
+            }}
+          >
+            <i
+              className="isax isax-add fs-1 text-primary"
+              style={{ fontSize: "2rem" }}
+            />
+          </div>
 
-                                {/* EMPTY MESSAGE */}
-                                <p className="mb-0 fw-bold text-dark">
-                                  No physician
-                                  records found
-                                </p>
+          {/* MOBILE LABEL */}
+          <span
+            className="mt-2 fw-semibold text-muted d-lg-none"
+            style={{ fontSize: "14px" }}
+          >
+            Add New
+          </span>
 
-                                {/* DESKTOP ADD BUTTON */}
-                                {/* MOBILE ONLY ADD BUTTON */}
-
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
+          {/* EMPTY TEXT */}
+          <p className="mb-0 fw-bold text-dark">
+            No physician records found
+          </p>
+        </div>
+      </td>
+    </tr>
+  )}
+</tbody>
                     </table>
                   </div>
 
@@ -786,3 +763,5 @@ const PhysicianModule = () => {
 };
 
 export default PhysicianModule;
+
+
