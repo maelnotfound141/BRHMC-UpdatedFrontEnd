@@ -504,48 +504,48 @@ const SignatoryModule = () => {
 
                         <tbody>
                           {paginatedRecords.length === 0 ? (
-  <tr>
-  <td colSpan={3} className="text-center text-muted py-5 border-0">
-  <div className="d-flex flex-column align-items-center justify-content-center gap-3">
+                              <tr>
+                                  <td colSpan={3} className="text-center text-muted py-5 border-0">
+                                  <div className="d-flex flex-column align-items-center justify-content-center gap-3">
 
-    {/* MOBILE ONLY ADD BUTTON - CIRCULAR STYLE */}
-    <div
-      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
-      onClick={handleAdd}
-      style={{
-        width: "64px",
-        height: "64px",
-        border: "2px solid var(--primary, #0f763f)",
-        backgroundColor: "#fff",
-        cursor: "pointer",
-      }}
-      title="Add New Signatory"
-    >
-      <i
-        className="isax isax-add fs-1 text-primary"
-        style={{ fontSize: "2rem" }}
-      />
-    </div>
+                                    {/* MOBILE ONLY ADD BUTTON - CIRCULAR STYLE */}
+                                    <div
+                                      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
+                                      onClick={handleAdd}
+                                      style={{
+                                        width: "64px",
+                                        height: "64px",
+                                        border: "2px solid var(--primary, #0f763f)",
+                                        backgroundColor: "#fff",
+                                        cursor: "pointer",
+                                      }}
+                                      title="Add New Signatory"
+                                    >
+                                      <i
+                                        className="isax isax-add fs-1 text-primary"
+                                        style={{ fontSize: "2rem" }}
+                                      />
+                                    </div>
 
-    {/* Add New Text Below */}
-    <span
-      className="mt-2 fw-semibold text-muted"
-      style={{ fontSize: "14px" }}
-    >
-      Add New
-    </span>
+                                    {/* Add New Text Below */}
+                                    <span
+                                      className="mt-2 fw-semibold text-muted"
+                                      style={{ fontSize: "14px" }}
+                                    >
+                                      Add New
+                                    </span>
 
-    {/* TEXT BELOW BUTTON */}
-    <div className="text-center">
-      <h6 className="fw-bold mb-1">
-        No signatory records found
-      </h6>
+                                    {/* TEXT BELOW BUTTON */}
+                                    <div className="text-center">
+                                      <h6 className="fw-bold mb-1">
+                                        No signatory records found
+                                      </h6>
 
-      
-    </div>
-  </div>
-</td>
-  </tr>
+                                      
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
 ) : (
                             paginatedRecords.map(
                               (record) => (
