@@ -500,85 +500,53 @@ const SignatoryModule = () => {
                   >
                     <div className="table-responsive flex-grow-1 bg-white p-0">
                       <table className="table table-hover align-middle mb-0 table-fixed">
-                        <thead
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                          }}
-                        >
-                          <tr>
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "35%" }}
-                            >
-                              Form
-                            </th>
-
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "45%" }}
-                            >
-                              Name of Physician
-                            </th>
-
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "20%" }}
-                            >
-                              Date Signed
-                            </th>
-                          </tr>
-                        </thead>
+                        
 
                         <tbody>
                           {paginatedRecords.length === 0 ? (
-                            <tr>
-                              <td
-                                colSpan={3}
-                                className="text-center text-muted py-5 border-0"
-                              >
-                                <div className="d-flex flex-column align-items-center justify-content-center">
-                                  <i
-                                    className="isax isax-document-text fs-1 mb-3 opacity-50 d-block"
-                                    style={{
-                                      fontSize: "3rem",
-                                    }}
-                                  ></i>
+  <tr>
+  <td colSpan={3} className="text-center text-muted py-5 border-0">
+  <div className="d-flex flex-column align-items-center justify-content-center gap-3">
 
-                                  <h6 className="fw-bold mb-1">
-                                    No signatory records
-                                    found.
-                                  </h6>
+    {/* MOBILE ONLY ADD BUTTON - CIRCULAR STYLE */}
+    <div
+      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
+      onClick={handleAdd}
+      style={{
+        width: "64px",
+        height: "64px",
+        border: "2px solid var(--primary, #0f763f)",
+        backgroundColor: "#fff",
+        cursor: "pointer",
+      }}
+      title="Add New Signatory"
+    >
+      <i
+        className="isax isax-add fs-1 text-primary"
+        style={{ fontSize: "2rem" }}
+      />
+    </div>
 
-                                  <p className="small mb-3">
-                                    Click{" "}
-                                    <strong className="text-dark">
-                                      Add
-                                    </strong>{" "}
-                                    in the toolbar above to
-                                    begin.
-                                  </p>
+    {/* Add New Text Below */}
+    <span
+      className="mt-2 fw-semibold text-muted"
+      style={{ fontSize: "14px" }}
+    >
+      Add New
+    </span>
 
-                                  {isMobile && (
-                                    <button
-                                      onClick={handleAdd}
-                                      className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-white fw-bold"
-                                      style={{
-                                        borderRadius:
-                                          "3px",
-                                        backgroundColor:
-                                          "var(--primary, #0f763f)",
-                                        border:
-                                          "1px solid var(--primary, #0f763f)",
-                                      }}
-                                    >
-                                      <i className="isax isax-add-square"></i>
-                                      <span>Add</span>
-                                    </button>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          ) : (
+    {/* TEXT BELOW BUTTON */}
+    <div className="text-center">
+      <h6 className="fw-bold mb-1">
+        No signatory records found
+      </h6>
+
+      
+    </div>
+  </div>
+</td>
+  </tr>
+) : (
                             paginatedRecords.map(
                               (record) => (
                                 <tr
