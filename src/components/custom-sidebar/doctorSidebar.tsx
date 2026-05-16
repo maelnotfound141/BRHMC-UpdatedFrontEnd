@@ -143,7 +143,7 @@ const DoctorSidebar = () => {
           flex: 0 0 280px;
           max-width: 280px;
           transition: all 0.25s ease;
-          z-index: 1038;
+          z-index: 20;
         }
 
         .doctor-sidebar-responsive-wrap.sidebar-collapsed {
@@ -153,7 +153,7 @@ const DoctorSidebar = () => {
 
         .doctor-sidebar-responsive-wrap .profile-sidebar {
           position: sticky;
-          top: 90px;
+          top: 105px;
           width: 100%;
           overflow: hidden;
           transition: all 0.25s ease;
@@ -163,7 +163,7 @@ const DoctorSidebar = () => {
           position: absolute;
           top: 10px;
           right: -14px;
-          z-index: 5;
+          z-index: 25;
           width: 30px;
           height: 30px;
           border: 0;

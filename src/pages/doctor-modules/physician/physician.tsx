@@ -230,10 +230,10 @@ const PhysicianModule = () => {
         style={{ minHeight: "100vh" }}
       >
         <div className="container-fluid px-3 px-lg-5 pt-0 flex-grow-1 d-flex flex-column">
-          <div className="row flex-grow-1">
-            <DoctorSidebar />
+         <div className="doctor-dashboard-layout">
+                  <DoctorSidebar />
 
-            <div className="col-lg-8 col-xl-9 mt-4 mt-lg-0 d-flex flex-column">
+                 <div className="doctor-dashboard-main">
               <div
                 className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column h-100"
                 style={{
