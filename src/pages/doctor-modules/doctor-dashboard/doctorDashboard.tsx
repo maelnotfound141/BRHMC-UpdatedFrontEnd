@@ -478,7 +478,7 @@ const DoctorDashboard = () => {
                             <i className="isax isax-personalcard" />
                           </span>
                           <input
-                            type="text"
+                            type="number"
                             className={`form-control border-start-0 ${errors.patientId ? 'is-invalid' : ''}`}
                             id="patientId"
                             placeholder="Enter Hospital Number"
@@ -526,23 +526,62 @@ const DoctorDashboard = () => {
                       </div>
                     </div>
                   </div>
-                <div className="modal-footer bg-light d-flex justify-content-end gap-2">
-                    <button 
-                      type="button" 
-                      className="btn btn-secondary fw-bold" 
-                      style={{ borderRadius: '8px', minWidth: '100px' }} 
-                      onClick={handleCloseModal}
-                    >
-                      Close
-                    </button>
-                    <button 
-                      type="submit" 
-                      className="btn btn-primary fw-bold" 
-                      style={{ borderRadius: '8px', minWidth: '150px' }}
-                    >
-                      Search Patient
-                    </button>
-                  </div>
+               <div className="modal-footer bg-light d-flex justify-content-end gap-2">
+                <button
+                  type="button"
+                  className="btn fw-bold"
+                  style={
+                    {
+                      borderRadius: "8px",
+                      minWidth: "100px",
+                      backgroundColor: "#6c757d",
+                      borderColor: "#6c757d",
+                      color: "#ffffff",
+                      boxShadow: "none",
+
+                      "--bs-btn-bg": "#6c757d",
+                      "--bs-btn-border-color": "#6c757d",
+                      "--bs-btn-hover-bg": "#5c636a",
+                      "--bs-btn-hover-border-color": "#565e64",
+                      "--bs-btn-active-bg": "#565e64",
+                      "--bs-btn-active-border-color": "#51585e",
+                      "--bs-btn-disabled-bg": "#6c757d",
+                      "--bs-btn-disabled-border-color": "#6c757d",
+                      "--bs-btn-focus-shadow-rgb": "108, 117, 125",
+                    } as React.CSSProperties
+                  }
+                  onClick={handleCloseModal}
+                >
+                  Close
+                </button>
+
+  <button
+    type="submit"
+    className="btn fw-bold"
+    style={
+      {
+        borderRadius: "8px",
+        minWidth: "150px",
+        backgroundColor: "var(--primary, #0f763f)",
+        borderColor: "var(--primary, #0f763f)",
+        color: "#ffffff",
+        boxShadow: "none",
+
+        "--bs-btn-bg": "var(--primary, #0f763f)",
+        "--bs-btn-border-color": "var(--primary, #0f763f)",
+        "--bs-btn-hover-bg": "var(--primary, #0f763f)",
+        "--bs-btn-hover-border-color": "var(--primary, #0f763f)",
+        "--bs-btn-active-bg": "var(--primary, #0f763f)",
+        "--bs-btn-active-border-color": "var(--primary, #0f763f)",
+        "--bs-btn-disabled-bg": "var(--primary, #0f763f)",
+        "--bs-btn-disabled-border-color": "var(--primary, #0f763f)",
+        "--bs-btn-focus-shadow-rgb": "15, 118, 63",
+      } as React.CSSProperties
+    }
+  >
+    Search Patient
+  </button>
+</div>
                 </form>
 
               ) : selectedPatient ? (
