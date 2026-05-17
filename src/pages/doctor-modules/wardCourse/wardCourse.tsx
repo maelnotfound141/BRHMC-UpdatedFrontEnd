@@ -228,6 +228,46 @@ const CourseInTheWard = () => {
     <>
       <style>
         {`
+
+
+
+
+.mobile-empty-add-btn {
+width: 72px;
+height: 72px;
+border-radius: 50%;
+background: #ffffff;
+border: 2px solid var(--primary, #0f763f);
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 6px 18px rgba(15, 118, 63, 0.15);
+transition: all 0.2s ease-in-out;
+cursor: pointer;
+}
+
+.mobile-empty-add-btn:hover,
+.mobile-empty-add-btn:active {
+transform: translateY(-2px) scale(1.03);
+box-shadow: 0 10px 24px rgba(15, 118, 63, 0.22);
+background-color: #f8fffb;
+}
+
+.mobile-empty-add-btn i {
+font-size: 2rem;
+color: var(--primary, #0f763f);
+}
+
+.mobile-empty-add-label {
+margin-top: 10px;
+font-size: 0.85rem;
+font-weight: 600;
+color: #6c757d;
+letter-spacing: 0.2px;
+}
+.mobile-empty-add-btn
+.mobile-empty-add-label
+
           .hide-scrollbar::-webkit-scrollbar {
             height: 6px;
             width: 6px;
@@ -420,14 +460,14 @@ const CourseInTheWard = () => {
                   >
                     <div className="table-responsive flex-grow-1 bg-white p-0">
                       <table
-                        className="table table-hover align-middle mb-0"
-                        style={{
-                          fontSize: "0.85rem",
-                          minWidth: "750px",
-                          tableLayout: "fixed",
-                          width: "100%",
-                        }}
-                      >
+  className="table table-hover align-middle mb-0"
+  style={{
+    fontSize: "0.85rem",
+    width: "100%",
+    tableLayout: isMobile ? "auto" : "fixed",
+    minWidth: isMobile ? "100%" : "750px",
+  }}
+>
                         <thead style={{ backgroundColor: "#f8f9fa" }}>
                           <tr>
                             <th
@@ -461,51 +501,61 @@ const CourseInTheWard = () => {
                         </thead>
 
                         <tbody>
-                          {paginatedRecords.length === 0 ? (
-                            <tr>
-                              <td
-                                colSpan={4}
-                                className="text-center text-muted py-5 border-0"
-                              >
-                                <div className="d-flex flex-column align-items-center justify-content-center">
-                                  <i
-                                    className="isax isax-document-text fs-1 mb-3 opacity-50 d-block"
-                                    style={{ fontSize: "3rem" }}
-                                  ></i>
+                            {paginatedRecords.length === 0 ? (
+                              <tr>
+                                <td
+                                  colSpan={4}
+                                  className="text-center text-muted py-5 border-0"
+                                >
+                                  <div className="d-flex flex-column align-items-center justify-content-center gap-3">
 
-                                  <h6 className="fw-bold mb-1">
-                                    No course records found.
-                                  </h6>
-
-                                  <p className="small mb-3">
-                                    Click{" "}
-                                    <strong className="text-dark">
-                                      Add
-                                    </strong>{" "}
-                                    in the toolbar above to begin.
-                                  </p>
-
-                                  {isMobile && (
-                                    <button
-                                      onClick={handleAdd}
-                                      className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-white fw-bold"
+                                    {/* DESKTOP ONLY DOCUMENT ICON */}
+                                    <i
+                                      className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
                                       style={{
-                                        borderRadius: "3px",
-                                        backgroundColor:
-                                          "var(--primary, #0f763f)",
-                                        border:
-                                          "1px solid var(--primary, #0f763f)",
-                                        minWidth: "100px",
+                                        fontSize: "3rem",
+                                        color: "var(--primary, #0f763f)",
                                       }}
+                                    ></i>
+
+                                    {/* MOBILE ONLY ADD BUTTON - CIRCULAR STYLE */}
+                                    <div
+                                      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
+                                      onClick={handleAdd}
+                                      style={{
+                                        width: "64px",
+                                        height: "64px",
+                                        border:
+                                          "2px solid var(--primary, #0f763f)",
+                                        backgroundColor: "#fff",
+                                        cursor: "pointer",
+                                      }}
+                                      title="Add New Course Record"
                                     >
-                                      <i className="isax isax-add-square"></i>
-                                      <span>Add</span>
-                                    </button>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          ) : (
+                                      <i
+                                        className="isax isax-add fs-1 text-primary"
+                                        style={{ fontSize: "2rem" }}
+                                      />
+                                    </div>
+
+                                    {/* MOBILE ONLY ADD TEXT */}
+                                    <span
+                                      className="mt-2 fw-semibold text-muted d-lg-none"
+                                      style={{ fontSize: "14px" }}
+                                    >
+                                      Add New
+                                    </span>
+
+                                    {/* EMPTY STATE TEXT */}
+                                    <div className="text-center">
+                                      <h6 className="fw-bold mb-1">
+                                        No course records found.
+                                      </h6>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            ) : (
                             paginatedRecords.map((record) => (
                               <tr
                                 key={record.id}
@@ -523,23 +573,22 @@ const CourseInTheWard = () => {
                                 </td>
 
                                 <td
-                                  className="py-3 px-4 align-top"
+                                  className="py-3 px-3 align-top"
                                   style={{
                                     whiteSpace: "normal",
                                     wordBreak: "break-word",
-                                    overflowWrap: "break-word",
-                                    maxWidth: "0",
+                                    overflowWrap: "anywhere",
                                   }}
                                 >
                                   {record.courseText}
                                 </td>
 
                                 <td
-                                  className="py-3 px-4 align-top"
+                                  className="py-3 px-3 align-top"
                                   style={{
                                     whiteSpace: "normal",
                                     wordBreak: "break-word",
-                                    overflowWrap: "break-word",
+                                    overflowWrap: "anywhere",
                                   }}
                                 >
                                   {record.entryBy}
@@ -966,5 +1015,3 @@ const CourseInTheWard = () => {
 };
 
 export default CourseInTheWard;
-
-

@@ -348,7 +348,7 @@ const isEmpty = !hasData;
     }}
   >
     <i
-      className="isax isax-add-square text-primary"
+      className="isax isax-add text-primary"
       style={{ fontSize: "2rem" }}
     />
   </div>
@@ -362,9 +362,7 @@ const isEmpty = !hasData;
     No {activeTab} data recorded.
   </h6>
 
-  <p className="small mb-0">
-    Click <strong className="text-dark">Add</strong> or tap the icon above to begin.
-  </p>
+ 
 
 </div>
                       ) : (
