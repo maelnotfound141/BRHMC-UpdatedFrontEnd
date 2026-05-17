@@ -694,7 +694,7 @@ const DiagnosisModule = () => {
       className="mt-2 fw-semibold text-muted d-lg-none"
       style={{ fontSize: "14px" }}
     >
-      Add New
+      
     </span>
 
     {/* EMPTY TEXT */}

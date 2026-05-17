@@ -213,46 +213,65 @@ const PhysicianModule = () => {
   <style>
 {`
 
+
 /* =========================================================
-   PHYSICIAN MODULE STYLES
+   CLEAN WHITE TABLE UI (NO HOVER - MEDICAL STYLE)
 ========================================================= */
 
-/* ===== TABLE INTERACTION ===== */
+/* ===== TABLE BASE LOOK ===== */
+.table {
+  background-color: #ffffff !important;
+}
 
+/* Force white rows */
+.table tbody tr {
+  background-color: #ffffff !important;
+}
+
+/* Remove ALL hover effects completely */
+.table-hover tbody tr:hover,
+.table-hover tbody tr:hover > td {
+  background-color: #ffffff !important;
+  color: inherit !important;
+}
+
+/* Keep click behavior but no hover styling */
 .table-hover tbody tr {
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: none !important;
 }
 
-/* Hover Effect */
-.table-hover tbody tr:hover > td {
-  background-color: #edf9f0 !important;
-  color: #0b592f;
-}
-
-/* Selected Row */
+/* ===== SELECTED ROW (GREEN MEDICAL HIGHLIGHT) ===== */
 .selected-row > td {
-  background-color: #e6f4ea !important;
+  background-color: #e6f4ea !important; /* soft green like your UI */
   color: #0b592f !important;
 }
 
-/* Left Border Highlight */
+/* left border accent */
 .selected-row > td:first-child {
   border-left: 4px solid var(--primary, #0f763f) !important;
 }
 
-/* Optional Zebra Rows */
-.table-hover tbody tr:nth-child(even) td {
-  background-color: #f8f9fa;
+/* ===== TABLE HEADER (CLEAN WHITE HEADER) ===== */
+.table thead th {
+  background-color: #ffffff !important;
+  color: #6c757d !important;
+  font-weight: 600;
+  border-bottom: 1px solid #e9ecef !important;
 }
 
-/* Preserve selected state */
-.selected-row > td {
-  background-color: #e6f4ea !important;
+/* ===== TABLE CELLS ===== */
+.table td {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f1f3f5 !important;
+}
+
+/* ===== REMOVE STRIPING IF ANY ===== */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #ffffff !important;
 }
 
 /* ===== TABLE LAYOUT ===== */
-
 .table-fixed {
   table-layout: fixed;
   width: 100%;
@@ -265,103 +284,17 @@ const PhysicianModule = () => {
   vertical-align: top;
 }
 
-/* Text Wrapping */
+/* ===== TEXT WRAP ===== */
 .text-wrap-custom {
   white-space: normal !important;
   word-break: break-word;
 }
 
-/* ===== ACTION BUTTON SYSTEM ===== */
-
-.action-btn-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  justify-content: flex-end;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.action-btn-group::-webkit-scrollbar {
-  display: none;
-}
-
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.75rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-/* Primary */
-.action-btn-primary {
-  background: var(--primary, #0f763f);
-  border-color: var(--primary, #0f763f);
-  color: #fff;
-}
-
-.action-btn-primary:hover {
-  background: #0d6a39;
-  border-color: #0d6a39;
-  color: #fff;
-}
-
-/* Neutral */
-.action-btn-neutral {
-  background: #fff;
-  border-color: #dee2e6;
-  color: #212529;
-}
-
-.action-btn-neutral:hover {
-  background: #f8f9fa;
-}
-
-/* Danger */
-.action-btn-danger {
-  background: #fff;
-  border-color: #dc3545;
-  color: #dc3545;
-}
-
-.action-btn-danger:hover {
-  background: #dc3545;
-  color: #fff;
-}
-
-/* Disabled */
-.action-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* ===== EMPTY TABLE STATE ===== */
-
-.physician-mobile-table {
-  min-height: 450px;
-}
-
-.physician-mobile-table table {
-  height: 100%;
-}
-
-.physician-mobile-table tbody {
-  height: 100%;
-}
-
 .empty-table-cell {
   height: 450px;
   min-height: 450px;
-  background-color: #f3f3f3;
+  background-color: #ffffff !important;
   vertical-align: middle;
 }
 
@@ -373,95 +306,15 @@ const PhysicianModule = () => {
   align-items: center;
 }
 
-/* ===== EMPTY STATE ===== */
-
-.custom-empty-state {
-  min-height: 350px;
-}
-
-/* ===== MOBILE RESPONSIVE ===== */
-
+/* ===== MOBILE CLEANUP ===== */
 @media (max-width: 767px) {
-
-  /* Action Buttons */
-  .action-btn-group {
-    justify-content: center !important;
-  }
-
-  /* Patient Name */
-  .physician-mobile-name {
-    font-size: 1.5rem !important;
-    line-height: 1.2;
-  }
-
-  /* Section Title */
-  .physician-mobile-title {
-    font-size: 0.95rem !important;
-    text-align: center;
-    width: 100%;
-  }
-
-  /* Remove Card Shadow On Mobile */
-  .physician-mobile-table {
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-  }
-
-  /* Empty State */
-  .physician-mobile-empty {
-    min-height: 420px;
-    border: 1px solid #dee2e6;
-    border-radius: 14px;
-    background: #f3f3f3;
-    padding: 2rem 1rem;
-  }
-
-  .physician-mobile-empty p {
-    font-size: 14px;
-  }
-
-  /* Profile Icon */
-  .mobile-profile-icon {
-    width: 85px !important;
-    height: 85px !important;
-  }
-
-  /* Add Circle Button */
-  .mobile-add-circle {
-  width: 64px !important;
-  height: 64px !important;
-  border-radius: 50%;
-  background: var(--primary, #0f763f);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.mobile-add-circle:hover {
-  transform: scale(1.05);
-}
-
-.mobile-add-circle:active {
-  transform: scale(0.95);
-}
-
-  /* Address */
-  .mobile-address {
-    font-size: 12px;
-    justify-content: center;
-    text-align: center;
-  }
-
-  /* Badge */
-  .mobile-badge {
-    font-size: 11px;
-  }
-
-  /* Mobile Table Font */
   .table td,
   .table th {
     font-size: 13px;
+  }
+
+  .table thead th {
+    font-size: 12px;
   }
 }
 `}

@@ -343,133 +343,108 @@ const SignatoryModule = () => {
 
   return (
     <>
-      <style>
-        {`
+    <style>
+{`
+/* =========================
+   REMOVE HOVER COMPLETELY
+========================= */
+.table-hover tbody tr:hover > td {
+  background-color: transparent !important;
+  color: inherit !important;
+}
 
+.table-hover tbody tr {
+  cursor: default !important;
+}
 
+/* =========================
+   SELECTED ROW (MATCHES UI GREEN THEME)
+========================= */
+.selected-row > td {
+  background-color: #e9f7ef !important; /* soft clinical green */
+  color: #0f763f !important;
+}
 
-          .table-hover tbody tr {
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-          }
+/* left accent bar like your UI theme */
+.selected-row > td:first-child {
+  border-left: 4px solid #0f763f !important;
+}
 
-          .selected-row > td {
-            background-color: #e6f4ea !important;
-            color: #0b592f !important;
-          }
+/* =========================
+   TABLE BASE STYLE (CLEAN CLINICAL LOOK)
+========================= */
+.table {
+  background-color: #ffffff;
+}
 
-          .selected-row > td:first-child {
-            border-left: 4px solid var(--primary, #0f763f) !important;
-          }
+.table td,
+.table th {
+  border-color: #f1f1f1 !important;
+}
 
-          .table-fixed {
-            table-layout: fixed;
-            width: 100%;
-            height: 100%;
-          }
+/* optional subtle row separation (medical UI style) */
+.table tbody tr {
+  border-bottom: 1px solid #f3f3f3;
+}
 
-          .table-fixed td,
-          .table-fixed th {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            vertical-align: top;
-          }
+/* =========================
+   FIXED TABLE LAYOUT
+========================= */
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
 
-          .text-wrap-custom {
-            white-space: normal !important;
-            word-break: break-word;
-          }
+.table-fixed td,
+.table-fixed th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  vertical-align: top;
+}
 
-          /* EMPTY TABLE STATE */
-          .table-responsive table {
-            height: 100%;
-          }
+/* =========================
+   TEXT WRAP
+========================= */
+.text-wrap-custom {
+  white-space: normal !important;
+  word-break: break-word;
+}
 
-          .table-responsive tbody {
-            height: 100%;
-          }
+/* =========================
+   EMPTY STATE
+========================= */
+.empty-table-cell {
+  height: 450px;
+  min-height: 450px;
+  background-color: #f8faf9;
+  vertical-align: middle;
+}
 
-          .empty-table-cell {
-            height: 450px;
-            min-height: 450px;
-            background-color: #f3f3f3;
-            vertical-align: middle;
-          }
+.empty-table-cell > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
-          .empty-table-cell > div {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-          }
+/* =========================
+   MOBILE CLEANUP
+========================= */
+@media (max-width: 575.98px) {
+  .modal-footer-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
 
-          /* MOBILE */
-          @media (max-width: 575.98px) {
-            .modal-footer-actions {
-              flex-direction: column-reverse;
-              width: 100%;
-            }
-
-            .modal-footer-actions button {
-              width: 100%;
-              margin-top: 8px;
-            }
-
-            .pagination-controls {
-              flex-direction: column;
-              gap: 12px;
-            }
-          }
-          .table-hover tbody tr {
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-          }
-
-          .selected-row > td {
-            background-color: #e6f4ea !important;
-            color: #0b592f !important;
-          }
-
-          .selected-row > td:first-child {
-            border-left: 4px solid var(--primary, #0f763f) !important;
-          }
-
-          .table-fixed {
-            table-layout: fixed;
-            width: 100%;
-          }
-
-          .table-fixed td,
-          .table-fixed th {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            vertical-align: top;
-          }
-
-          .text-wrap-custom {
-            white-space: normal !important;
-            word-break: break-word;
-          }
-
-          @media (max-width: 575.98px) {
-            .modal-footer-actions {
-              flex-direction: column-reverse;
-              width: 100%;
-            }
-
-            .modal-footer-actions button {
-              width: 100%;
-              margin-top: 8px;
-            }
-
-            .pagination-controls {
-              flex-direction: column;
-              gap: 12px;
-            }
-          }
-        `}
-      </style>
+  .modal-footer-actions button {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+`}
+</style>
+`
 
       <div
         className="content doctor-content bg-light mt-n4 d-flex flex-column"
