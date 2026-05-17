@@ -639,7 +639,7 @@ const RegDetails = () => {
                         >
                           <button
                             type="button"
-                            className="reg-toolbar-btn btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0"
+                            className="reg-toolbar-btn charges-add-item-btn btn btn-sm btn-primary shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap text-white fw-bold flex-grow-1 flex-md-grow-0"
                             style={{ borderRadius: "4px", cursor: "pointer" }}
                             onClick={handleOpenAddItemModal}
                           >
@@ -951,60 +951,78 @@ const RegDetails = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="charges-modal-selected-panel">
-                    <div className="border rounded-3 bg-light p-3 p-md-4">
-                      <div className="small text-muted fw-bold text-uppercase mb-1">
-                        Item Description
-                      </div>
+                 <div className="charges-modal-selected-panel">
+  <div className="charges-selected-large-card">
+    <div className="charges-selected-header">
+      <div>
+        <div className="small text-muted fw-bold text-uppercase mb-1">
+          Item Description
+        </div>
 
-                      <h5 className="fw-bold text-dark mb-4">
-                        {selectedItem.description}
-                      </h5>
+        <h4 className="charges-selected-title">
+          {selectedItem.description}
+        </h4>
+      </div>
 
-                      <div className="row g-3">
-                        <div className="col-12 col-md-4">
-                          <label className="form-label small fw-bold text-muted">
-                            Rate
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control text-end fw-bold"
-                            value={formatMoney(selectedItem.rate)}
-                            readOnly
-                          />
-                        </div>
+      <button
+        type="button"
+        className="charges-change-item-btn"
+        onClick={() => setSelectedItem(null)}
+      >
+        Change Item
+      </button>
+    </div>
 
-                        <div className="col-12 col-md-4">
-                          <label className="form-label small fw-bold text-muted">
-                            Quantity
-                          </label>
-                          <input
-                            type="number"
-                            min="1"
-                            className="form-control text-end fw-bold"
-                            value={quantity}
-                            onChange={(event) =>
-                              setQuantity(
-                                Math.max(1, Number(event.target.value) || 1)
-                              )
-                            }
-                          />
-                        </div>
+    <div className="charges-calc-large-grid">
+      <div className="charges-calc-box">
+        <label>Rate</label>
+        <input
+          type="text"
+          value={formatMoney(selectedItem.rate)}
+          readOnly
+        />
+      </div>
 
-                        <div className="col-12 col-md-4">
-                          <label className="form-label small fw-bold text-muted">
-                            Total
-                          </label>
-                          <input
-                            type="text"
-                            className="form-control text-end fw-bold"
-                            value={formatMoney(selectedTotal)}
-                            readOnly
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+      <div className="charges-calc-box charges-qty-box">
+        <label>Quantity</label>
+
+        <div className="charges-large-qty-control">
+          <button
+            type="button"
+            onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+          >
+            -
+          </button>
+
+          <input
+            type="number"
+            min="1"
+            value={quantity}
+            onChange={(event) =>
+              setQuantity(Math.max(1, Number(event.target.value) || 1))
+            }
+          />
+
+          <button
+            type="button"
+            onClick={() => setQuantity((prev) => prev + 1)}
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      <div className="charges-calc-box charges-total-box-large">
+        <label>Total</label>
+        <input
+          type="text"
+          value={formatMoney(selectedTotal)}
+          readOnly
+        />
+      </div>
+    </div>
+  </div>
+</div>
                 )}
               </div>
 
@@ -1397,6 +1415,22 @@ const RegDetails = () => {
           border-color: var(--primary, #0f763f) !important;
         }
 
+        .charges-add-item-btn,
+        .charges-add-item-btn:hover,
+        .charges-add-item-btn:focus,
+        .charges-add-item-btn:active,
+        .charges-add-item-btn.active,
+        .charges-add-item-btn.show {
+          background-color: var(--primary, #0f763f) !important;
+          border-color: var(--primary, #0f763f) !important;
+          color: #fff !important;
+        }
+
+        .charges-add-item-btn:focus,
+        .charges-add-item-btn:focus-visible {
+          box-shadow: 0 0 0 0.2rem rgba(15, 118, 63, 0.25) !important;
+        }
+
         .acc-view-btn {
           border: 1px solid var(--primary, #0f763f);
           color: var(--primary, #0f763f);
@@ -1628,6 +1662,192 @@ const RegDetails = () => {
             min-width: 95px;
           }
         }
+          .charges-selected-large-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  background: #f8fafc;
+  border: 1px solid #d8e2e5;
+  border-radius: 10px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.charges-selected-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 34px;
+}
+
+.charges-selected-title {
+  color: #111827;
+  font-size: 1.65rem;
+  font-weight: 900;
+  line-height: 1.25;
+  margin-bottom: 0;
+}
+
+.charges-change-item-btn {
+  border: 1px solid var(--primary, #0f763f);
+  background: #fff;
+  color: var(--primary, #0f763f);
+  border-radius: 6px;
+  padding: 9px 18px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.charges-change-item-btn:hover {
+  background: var(--primary, #0f763f);
+  color: #fff;
+}
+
+.charges-calc-large-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+}
+
+.charges-calc-box {
+  background: #fff;
+  border: 1px solid #d8e2e5;
+  border-radius: 10px;
+  padding: 18px;
+  min-height: 145px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.charges-calc-box label {
+  color: #6b7280;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.charges-calc-box input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #111827;
+  font-size: 1.55rem;
+  font-weight: 900;
+  text-align: right;
+  padding: 0;
+}
+
+.charges-large-qty-control {
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  border: 1px solid #d8e2e5;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  min-height: 54px;
+}
+
+.charges-large-qty-control button {
+  border: 0;
+  background: #eef3f7;
+  color: #111827;
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.charges-large-qty-control button:hover {
+  background: rgba(15, 118, 63, 0.12);
+  color: var(--primary, #0f763f);
+}
+
+.charges-large-qty-control input {
+  border-left: 1px solid #d8e2e5;
+  border-right: 1px solid #d8e2e5;
+  text-align: center;
+  font-size: 1.45rem;
+}
+
+.charges-total-box-large {
+  background: rgba(15, 118, 63, 0.07);
+  border-color: rgba(15, 118, 63, 0.25);
+}
+
+.charges-total-box-large input {
+  color: var(--primary, #0f763f);
+}
+
+/* TABLET */
+@media (max-width: 991.98px) {
+  .charges-selected-large-card {
+    justify-content: flex-start;
+    padding: 22px;
+    overflow-y: auto;
+  }
+
+  .charges-selected-header {
+    margin-bottom: 22px;
+  }
+
+  .charges-selected-title {
+    font-size: 1.35rem;
+  }
+
+  .charges-calc-large-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .charges-calc-box {
+    min-height: 118px;
+    padding: 16px;
+  }
+
+  .charges-calc-box input {
+    font-size: 1.35rem;
+  }
+
+  .charges-large-qty-control {
+    min-height: 50px;
+  }
+}
+
+/* SMALL TABLET / PHONE */
+@media (max-width: 575.98px) {
+  .charges-selected-large-card {
+    padding: 16px;
+  }
+
+  .charges-selected-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .charges-selected-title {
+    font-size: 1.1rem;
+  }
+
+  .charges-change-item-btn {
+    width: 100%;
+  }
+
+  .charges-calc-box {
+    min-height: 105px;
+  }
+
+  .charges-calc-box input {
+    font-size: 1.15rem;
+  }
+
+  .charges-large-qty-control {
+    grid-template-columns: 44px 1fr 44px;
+  }
+}
       `}</style>
     </>
   );
