@@ -272,6 +272,56 @@ const DispositionModule = () => {
         /* =========================================================
    DRUG TABLE ODD EVEN ROW COLORS
 ========================================================= */
+
+/* Floating Empty-State FAB */
+.empty-state-fab {
+  width: 64px;
+  height: 64px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary, #0f763f);
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  box-shadow:
+    0 10px 20px rgba(15,118,63,0.25),
+    0 4px 8px rgba(0,0,0,0.12);
+}
+
+.empty-state-fab i {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Soft Glow */
+.empty-state-fab::after {
+  content: "";
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: rgba(15,118,63,0.10);
+  z-index: -1;
+}
+
+/* Hover */
+.empty-state-fab:hover {
+  background: #0c5f33;
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Active */
+.empty-state-fab:active {
+  transform: scale(0.96);
+}
 @media (max-width: 991.98px) {
   .instruction-main-panel {
     min-height: 65vh;
@@ -687,33 +737,19 @@ const DispositionModule = () => {
                       ></i>
 
                       {/* ADD BUTTON — shown on mobile only, sits inline with the text below */}
-                      <div
-                        className="rounded-circle d-flex d-lg-none align-items-center justify-content-center shadow-sm"
-                        onClick={handleOpenAddInstruction}
-                        style={{
-                          width: "72px",
-                          height: "72px",
-                          border: "2px solid var(--primary, #0f763f)",
-                          backgroundColor: "#fff",
-                          cursor: "pointer",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <i
-                          className="isax isax-add"
-                          style={{
-                            fontSize: "2.2rem",
-                            color: "var(--primary, #0f763f)",
-                          }}
-                        />
-                      </div>
-
+                      <button
+  type="button"
+  onClick={handleOpenAddInstruction}
+  className="empty-state-fab d-lg-none"
+>
+  <i className="isax isax-add"></i>
+</button>
                       {/* "Add New" label — mobile only */}
                       <span
                         className="d-lg-none fw-semibold text-muted"
                         style={{ fontSize: "14px", marginTop: "12px" }}
                       >
-                        Add New
+                        
                       </span>
 
                       {/* EMPTY TEXT — always shown, tight below the button */}

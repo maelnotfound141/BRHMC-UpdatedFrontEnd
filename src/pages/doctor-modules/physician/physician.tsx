@@ -429,13 +429,22 @@ const PhysicianModule = () => {
 
   /* Add Circle Button */
   .mobile-add-circle {
-    width: 72px !important;
-    height: 72px !important;
-    border-radius: 50%;
-    border: 2px solid #0f763f;
-    background: white;
-    cursor: pointer;
-  }
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50%;
+  background: var(--primary, #0f763f);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-add-circle:hover {
+  transform: scale(1.05);
+}
+
+.mobile-add-circle:active {
+  transform: scale(0.95);
+}
 
   /* Address */
   .mobile-address {
@@ -695,29 +704,32 @@ const PhysicianModule = () => {
           ></i>
 
           {/* MOBILE ADD BUTTON */}
-          <div
-            className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
-            onClick={handleAdd}
-            style={{
-              width: "64px",
-              height: "64px",
-              border: "2px solid var(--primary, #0f763f)",
-              backgroundColor: "#fff",
-              cursor: "pointer",
-            }}
-          >
-            <i
-              className="isax isax-add fs-1 text-primary"
-              style={{ fontSize: "2rem" }}
-            />
-          </div>
+          {/* MOBILE ADD BUTTON */}
+<div
+  className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mobile-add-circle"
+  onClick={handleAdd}
+  style={{
+    width: "64px",
+    height: "64px",
+    backgroundColor: "var(--primary, #0f763f)",
+    cursor: "pointer",
+  }}
+>
+  <i
+    className="isax isax-add"
+    style={{
+      fontSize: "2rem",
+      color: "#fff",
+    }}
+  />
+</div>
 
           {/* MOBILE LABEL */}
           <span
             className="mt-2 fw-semibold text-muted d-lg-none"
             style={{ fontSize: "14px" }}
           >
-            Add New
+            
           </span>
 
           {/* EMPTY TEXT */}

@@ -127,6 +127,57 @@ const isEmpty = !hasData;
             opacity: 0.5;
             cursor: not-allowed;
           }
+
+
+          /* Floating Add Button */
+.empty-state-fab {
+  width: 64px;
+  height: 64px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary, #0f763f);
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  box-shadow:
+    0 10px 20px rgba(15,118,63,0.25),
+    0 4px 8px rgba(0,0,0,0.12);
+}
+
+.empty-state-fab i {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* soft glow */
+.empty-state-fab::after {
+  content: "";
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: rgba(15,118,63,0.10);
+  z-index: -1;
+}
+
+/* hover */
+.empty-state-fab:hover {
+  background: #0c5f33;
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* click */
+.empty-state-fab:active {
+  transform: scale(0.96);
+}
             .acc-info-backdrop {
   position: fixed;
   inset: 0;
@@ -336,27 +387,20 @@ const isEmpty = !hasData;
   <i className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block" style={{ fontSize: '3rem' }}></i>
 
   {/* MOBILE ADD BUTTON */}
-  <div
-    className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
-    onClick={handleAdd}
-    style={{
-      width: "64px",
-      height: "64px",
-      border: "2px solid var(--primary, #0f763f)",
-      backgroundColor: "#fff",
-      cursor: "pointer",
-    }}
-  >
-    <i
-      className="isax isax-add text-primary"
-      style={{ fontSize: "2rem" }}
-    />
-  </div>
+  <button
+  type="button"
+  onClick={handleAdd}
+  className="empty-state-fab d-lg-none"
+>
+  <i className="isax isax-add"></i>
+</button>
 
   {/* MOBILE LABEL */}
-  <span className="mt-2 fw-semibold text-muted d-lg-none" style={{ fontSize: "14px" }}>
-    Add New
+  <span className="mt-2 fw-semibold text-muted d-lg-none" style={{ fontSize: "24px" }}>
+    
   </span>
+  <td>
+  </td>
 
   <h6 className="fw-bold mb-1">
     No {activeTab} data recorded.

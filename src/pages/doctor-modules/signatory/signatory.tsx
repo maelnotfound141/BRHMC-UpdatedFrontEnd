@@ -348,79 +348,79 @@ const SignatoryModule = () => {
 
 
 
-.table-hover tbody tr {
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
+          .table-hover tbody tr {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+          }
 
-.selected-row > td {
-  background-color: #e6f4ea !important;
-  color: #0b592f !important;
-}
+          .selected-row > td {
+            background-color: #e6f4ea !important;
+            color: #0b592f !important;
+          }
 
-.selected-row > td:first-child {
-  border-left: 4px solid var(--primary, #0f763f) !important;
-}
+          .selected-row > td:first-child {
+            border-left: 4px solid var(--primary, #0f763f) !important;
+          }
 
-.table-fixed {
-  table-layout: fixed;
-  width: 100%;
-  height: 100%;
-}
+          .table-fixed {
+            table-layout: fixed;
+            width: 100%;
+            height: 100%;
+          }
 
-.table-fixed td,
-.table-fixed th {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  vertical-align: top;
-}
+          .table-fixed td,
+          .table-fixed th {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            vertical-align: top;
+          }
 
-.text-wrap-custom {
-  white-space: normal !important;
-  word-break: break-word;
-}
+          .text-wrap-custom {
+            white-space: normal !important;
+            word-break: break-word;
+          }
 
-/* EMPTY TABLE STATE */
-.table-responsive table {
-  height: 100%;
-}
+          /* EMPTY TABLE STATE */
+          .table-responsive table {
+            height: 100%;
+          }
 
-.table-responsive tbody {
-  height: 100%;
-}
+          .table-responsive tbody {
+            height: 100%;
+          }
 
-.empty-table-cell {
-  height: 450px;
-  min-height: 450px;
-  background-color: #f3f3f3;
-  vertical-align: middle;
-}
+          .empty-table-cell {
+            height: 450px;
+            min-height: 450px;
+            background-color: #f3f3f3;
+            vertical-align: middle;
+          }
 
-.empty-table-cell > div {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+          .empty-table-cell > div {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
 
-/* MOBILE */
-@media (max-width: 575.98px) {
-  .modal-footer-actions {
-    flex-direction: column-reverse;
-    width: 100%;
-  }
+          /* MOBILE */
+          @media (max-width: 575.98px) {
+            .modal-footer-actions {
+              flex-direction: column-reverse;
+              width: 100%;
+            }
 
-  .modal-footer-actions button {
-    width: 100%;
-    margin-top: 8px;
-  }
+            .modal-footer-actions button {
+              width: 100%;
+              margin-top: 8px;
+            }
 
-  .pagination-controls {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
+            .pagination-controls {
+              flex-direction: column;
+              gap: 12px;
+            }
+          }
           .table-hover tbody tr {
             cursor: pointer;
             transition: all 0.2s ease-in-out;
@@ -611,32 +611,36 @@ const SignatoryModule = () => {
             }}
           ></i>
 
-          {/* MOBILE ONLY ADD BUTTON - CIRCULAR STYLE */}
-          <div
-            className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
-            onClick={handleAdd}
-            style={{
-              width: "64px",
-              height: "64px",
-              border:
-                "2px solid var(--primary, #0f763f)",
-              backgroundColor: "#fff",
-              cursor: "pointer",
-            }}
-            title="Add New Signatory"
-          >
-            <i
-              className="isax isax-add fs-1 text-primary"
-              style={{ fontSize: "2rem" }}
-            />
-          </div>
+{/* MOBILE FLOATING ADD BUTTON */}
+{isMobile && (
+  <div
+    className="d-flex d-lg-none justify-content-center mb-3"
+    onClick={handleAdd}
+  >
+    <div
+      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+      style={{
+        width: "60px",
+        height: "60px",
+        border: "2px solid var(--primary, #0f763f)",
+        backgroundColor: "var(--primary, #0f763f)",
+        cursor: "pointer",
+        transition: "0.2s ease-in-out",
+      }}
+    >
+      <i
+        className="isax isax-add fs-3 text-white"
+      />
+    </div>
+  </div>
+)}
 
           {/* MOBILE ONLY ADD TEXT */}
           <span
             className="mt-2 fw-semibold text-muted d-lg-none"
             style={{ fontSize: "14px" }}
           >
-            Add New
+            
           </span>
 
           {/* EMPTY STATE TEXT */}
