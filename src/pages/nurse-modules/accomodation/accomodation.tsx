@@ -368,6 +368,25 @@ const RegDetails = () => {
     0
   );
 
+  const getEditBedByValue = (value: string | null) => {
+    if (!value) return null;
+
+    const [roomName, bedName] = value.split("|");
+
+    for (const room of editRoomGroups) {
+      const bed = room.beds.find(
+        (roomBed) => room.roomName === roomName && roomBed.bed === bedName
+      );
+
+      if (bed) return bed;
+    }
+
+    return null;
+  };
+
+  const selectedEditBed = getEditBedByValue(selectedEditRoom);
+  const canSaveEditRoom = selectedEditBed?.status === "Vacant";
+
   const selectedEditRoomLabel = selectedEditRoom
     ? selectedEditRoom.replace("|", " - Bed ")
     : "No bed selected";
@@ -400,6 +419,14 @@ const RegDetails = () => {
   const handleSaveEditRoom = () => {
     if (!selectedEditRoom) {
       handleShowInfo("Please select a room and bed before saving.");
+      return;
+    }
+
+    const selectedBed = getEditBedByValue(selectedEditRoom);
+
+    if (selectedBed?.status !== "Vacant") {
+      setSelectedEditRoom(null);
+      handleShowInfo("Please select a vacant room and bed before saving.");
       return;
     }
 
@@ -471,6 +498,15 @@ const RegDetails = () => {
     );
 
     handleShowInfo("Revoke successfully completed.");
+  };
+
+  const handleSelectEditBed = (room: RoomGroup, bed: RoomBed) => {
+    if (bed.status !== "Vacant") {
+      setSelectedEditRoom(null);
+      return;
+    }
+
+    setSelectedEditRoom(`${room.roomName}|${bed.bed}`);
   };
 
   const SectionHeader = ({ title }: { title: string }) => (
@@ -1080,8 +1116,14 @@ const RegDetails = () => {
                               <tr
                                 key={`${room.roomName}-${bed.bed}`}
                                 className={isSelected ? "acc-room-selected" : ""}
-                                onClick={() => setSelectedEditRoom(value)}
-                                style={{ cursor: "pointer" }}
+                                onClick={() => handleSelectEditBed(room, bed)}
+                                style={{
+                                  cursor:
+                                    bed.status === "Vacant"
+                                      ? "pointer"
+                                      : "not-allowed",
+                                  opacity: bed.status === "Vacant" ? 1 : 0.72,
+                                }}
                               >
                                 <td className="text-center">
                                   {isSelected ? (
@@ -1155,6 +1197,7 @@ const RegDetails = () => {
                           bed={bed}
                           selectedValue={selectedEditRoom}
                           onSelect={setSelectedEditRoom}
+                          allowOnlyVacant
                         />
                       ))
                     )}
@@ -1179,16 +1222,16 @@ const RegDetails = () => {
                       type="button"
                       className="btn btn-sm fw-bold px-5 py-2"
                       style={{
-                        backgroundColor: selectedEditRoom
+                        backgroundColor: canSaveEditRoom
                           ? "var(--primary, #0f763f)"
                           : "#f8f9fa",
-                        borderColor: selectedEditRoom
+                        borderColor: canSaveEditRoom
                           ? "var(--primary, #0f763f)"
                           : "#dee2e6",
-                        color: selectedEditRoom ? "#fff" : "#6c757d",
-                        cursor: selectedEditRoom ? "pointer" : "not-allowed",
+                        color: canSaveEditRoom ? "#fff" : "#6c757d",
+                        cursor: canSaveEditRoom ? "pointer" : "not-allowed",
                       }}
-                      disabled={!selectedEditRoom}
+                      disabled={!canSaveEditRoom}
                       onClick={handleSaveEditRoom}
                     >
                       <i className="isax isax-save-2 me-2"></i>

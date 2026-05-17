@@ -1,5 +1,5 @@
 import NurseSidebar from "@/components/custom-sidebar/nurseSidebar";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router";
 
 /* patient charges module */
@@ -47,6 +47,11 @@ const RegDetails = () => {
   const [selectedItem, setSelectedItem] = useState<ChargeItem | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedRecord, setSelectedRecord] = useState<ChargeRecord | null>(null);
+  const [recordPendingDelete, setRecordPendingDelete] =
+    useState<ChargeRecord | null>(null);
+  const [editingRecordId, setEditingRecordId] = useState<number | null>(null);
+  const totalBarRef = useRef<HTMLDivElement | null>(null);
+  const [isTotalBarVisible, setIsTotalBarVisible] = useState(false);
 
   const formatDateTimeNow = () => {
     const now = new Date();
@@ -405,11 +410,14 @@ const RegDetails = () => {
   }, [allItems, searchValue]);
 
   const selectedTotal = selectedItem ? selectedItem.rate * quantity : 0;
+  const isEditingCharge = editingRecordId !== null;
 
   const totalAmount = chargeRecords.reduce(
     (sum, record) => sum + record.totalCost,
     0
   );
+  const shouldFloatTotalAmount = chargeRecords.length > 5;
+  const showFloatingTotalAmount = shouldFloatTotalAmount && !isTotalBarVisible;
 
   const hasItemWithoutChargeSlip = chargeRecords.some(
     (record) => record.chargeSlipNo === "-"
@@ -422,6 +430,26 @@ const RegDetails = () => {
       setTimeout(() => {}, 1500);
     }
   }, [location.state]);
+
+  useEffect(() => {
+    const totalBar = totalBarRef.current;
+
+    if (!shouldFloatTotalAmount || !totalBar) {
+      setIsTotalBarVisible(false);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsTotalBarVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(totalBar);
+
+    return () => observer.disconnect();
+  }, [shouldFloatTotalAmount]);
 
   const formatMoney = (value: number) => {
     return value.toLocaleString("en-PH", {
@@ -447,6 +475,7 @@ const RegDetails = () => {
   };
 
   const handleOpenAddItemModal = () => {
+    setEditingRecordId(null);
     resetAddItemForm("Service");
     setShowAddItemModal(true);
   };
@@ -460,7 +489,7 @@ const RegDetails = () => {
     setQuantity(1);
   };
 
-  const handleAddChargeItem = () => {
+  const handleSaveChargeItem = () => {
     if (!selectedItem) {
       handleShowInfo("Please select an item first.");
       return;
@@ -471,8 +500,7 @@ const RegDetails = () => {
       return;
     }
 
-    const newRecord: ChargeRecord = {
-      id: Date.now(),
+    const savedCharge = {
       typeOfCharge:
         selectedItem.category === "Procedure"
           ? "Procedure"
@@ -483,13 +511,36 @@ const RegDetails = () => {
       unitCost: selectedItem.rate,
       quantity,
       totalCost: selectedItem.rate * quantity,
-      chargeSlipChecked: true,
-      chargeSlipNo: "-",
-      dateTimeEntered: formatDateTimeNow(),
-      enteredBy: "Lique, Rowan M",
     };
 
-    setChargeRecords((prev) => [...prev, newRecord]);
+    if (editingRecordId) {
+      setChargeRecords((prev) =>
+        prev.map((record) =>
+          record.id === editingRecordId
+            ? {
+                ...record,
+                ...savedCharge,
+              }
+            : record
+        )
+      );
+      setEditingRecordId(null);
+      setShowAddItemModal(false);
+      handleShowInfo("Item successfully updated.");
+      return;
+    }
+
+    setChargeRecords((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        ...savedCharge,
+        chargeSlipChecked: true,
+        chargeSlipNo: "-",
+        dateTimeEntered: formatDateTimeNow(),
+        enteredBy: "Lique, Rowan M",
+      },
+    ]);
     setShowAddItemModal(false);
     handleShowInfo("Item successfully added.");
   };
@@ -534,8 +585,55 @@ const RegDetails = () => {
     );
   };
 
-  const handleDeleteRecord = (id: number) => {
-    setChargeRecords((prev) => prev.filter((record) => record.id !== id));
+  const handleRequestDeleteRecord = (record: ChargeRecord) => {
+    setRecordPendingDelete(record);
+  };
+
+  const handleCancelDeleteRecord = () => {
+    setRecordPendingDelete(null);
+  };
+
+  const handleConfirmDeleteRecord = () => {
+    if (!recordPendingDelete) return;
+
+    setChargeRecords((prev) =>
+      prev.filter((record) => record.id !== recordPendingDelete.id)
+    );
+
+    if (selectedRecord?.id === recordPendingDelete.id) {
+      setSelectedRecord(null);
+      setShowRecordDetailsModal(false);
+    }
+
+    setRecordPendingDelete(null);
+  };
+
+  const handleEditRecord = (record: ChargeRecord) => {
+    const matchingItem = [...oxygenItems, ...serviceItems, ...procedureItems].find(
+      (item) =>
+        item.description === record.itemDescription &&
+        item.rate === record.unitCost
+    );
+    const fallbackCategory: ChargeCategory =
+      record.typeOfCharge === "Procedure"
+        ? "Procedure"
+        : record.typeOfCharge === "Oxygen"
+        ? "Oxygen"
+        : "Service";
+
+    setEditingRecordId(record.id);
+    setActiveTab(matchingItem?.category || fallbackCategory);
+    setSearchValue("");
+    setSelectedItem(
+      matchingItem || {
+        id: record.id,
+        category: fallbackCategory,
+        description: record.itemDescription,
+        rate: record.unitCost,
+      }
+    );
+    setQuantity(Math.max(1, record.quantity || 1));
+    setShowAddItemModal(true);
   };
 
   const handleViewRecordDetails = (record: ChargeRecord) => {
@@ -634,12 +732,16 @@ const RegDetails = () => {
                         )}
 
                         <div
-                          className="d-flex flex-column flex-sm-row flex-wrap justify-content-center justify-content-xl-end pb-1 pb-lg-0"
+                          className="charges-toolbar-actions d-flex flex-column flex-sm-row flex-wrap justify-content-center justify-content-xl-end pb-1 pb-lg-0"
                           style={{ gap: "6px" }}
                         >
                           <button
                             type="button"
-                            className="reg-toolbar-btn charges-add-item-btn btn btn-sm btn-primary shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap text-white fw-bold flex-grow-1 flex-md-grow-0"
+                            className={`reg-toolbar-btn charges-add-item-btn btn btn-sm btn-primary shadow-sm align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap text-white fw-bold flex-grow-1 flex-md-grow-0 ${
+                              chargeRecords.length > 0
+                                ? "d-flex"
+                                : "d-none d-lg-flex"
+                            }`}
                             style={{ borderRadius: "4px", cursor: "pointer" }}
                             onClick={handleOpenAddItemModal}
                           >
@@ -649,7 +751,11 @@ const RegDetails = () => {
 
                           <button
                             type="button"
-                            className="reg-toolbar-btn btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0"
+                            className={`reg-toolbar-btn btn btn-sm border border-secondary-subtle shadow-sm align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0 ${
+                              chargeRecords.length > 0
+                                ? "d-flex"
+                                : "d-none d-lg-flex"
+                            }`}
                             style={{ borderRadius: "4px", cursor: "pointer" }}
                             onClick={handleGenerateChargeSlip}
                           >
@@ -670,7 +776,6 @@ const RegDetails = () => {
                       <table className="table table-sm align-middle mb-0 acc-table charges-table">
                         <thead>
                           <tr>
-                            <th className="charges-col-delete"></th>
                             <th className="charges-col-type">Type of Charge</th>
                             <th className="charges-col-item">
                               Item Description
@@ -679,20 +784,11 @@ const RegDetails = () => {
                               Unit Cost
                             </th>
                             <th className="charges-col-qty text-center">Qty</th>
-                            <th className="charges-col-total text-end">
-                              Total Cost
-                            </th>
                             <th className="charges-col-slip text-center">
                               Charge Slip
                             </th>
-                            <th className="charges-col-date d-none d-lg-table-cell">
-                              Date/Time Entered
-                            </th>
-                            <th className="charges-col-entered d-none d-xl-table-cell">
-                              Entered by
-                            </th>
-                            <th className="text-end d-table-cell d-lg-none">
-                              Action
+                            <th className="charges-col-actions text-center">
+                              Actions
                             </th>
                           </tr>
                         </thead>
@@ -707,17 +803,6 @@ const RegDetails = () => {
                                   : "acc-active-row"
                               }
                             >
-                              <td className="text-center">
-                                <button
-                                  type="button"
-                                  className="charges-delete-btn"
-                                  onClick={() => handleDeleteRecord(record.id)}
-                                  title="Delete"
-                                >
-                                  <i className="isax isax-trash"></i>
-                                </button>
-                              </td>
-
                               <td>
                                 <span className="acc-table-text fw-bold">
                                   {record.typeOfCharge}
@@ -739,12 +824,6 @@ const RegDetails = () => {
                               <td className="text-center">
                                 <span className="acc-table-text">
                                   {record.quantity}
-                                </span>
-                              </td>
-
-                              <td className="text-end">
-                                <span className="acc-table-text fw-bold">
-                                  {formatMoney(record.totalCost)}
                                 </span>
                               </td>
 
@@ -771,37 +850,66 @@ const RegDetails = () => {
                                 )}
                               </td>
 
-                              <td className="d-none d-lg-table-cell">
-                                <span className="acc-table-text">
-                                  {record.dateTimeEntered}
-                                </span>
-                              </td>
+                              <td className="text-center charges-actions-cell">
+                                <div className="charges-action-group">
+                                  <button
+                                    type="button"
+                                    className="charges-action-btn charges-view-btn"
+                                    onClick={() => handleViewRecordDetails(record)}
+                                    title="View More"
+                                  >
+                                    <i className="isax isax-eye"></i>
+                                    <span>View More</span>
+                                  </button>
 
-                              <td className="d-none d-xl-table-cell">
-                                <span className="acc-table-text">
-                                  {record.enteredBy}
-                                </span>
-                              </td>
+                                  <button
+                                    type="button"
+                                    className="charges-action-btn"
+                                    onClick={() => handleEditRecord(record)}
+                                    title="Edit"
+                                  >
+                                    <i className="isax isax-edit-2"></i>
+                                    <span>Edit</span>
+                                  </button>
 
-                              <td className="text-end d-table-cell d-lg-none">
-                                <button
-                                  type="button"
-                                  className="acc-view-btn"
-                                  onClick={() => handleViewRecordDetails(record)}
-                                >
-                                  View
-                                </button>
+                                  <button
+                                    type="button"
+                                    className="charges-action-btn charges-delete-btn"
+                                    onClick={() =>
+                                      handleRequestDeleteRecord(record)
+                                    }
+                                    title="Delete"
+                                  >
+                                    <i className="isax isax-trash"></i>
+                                    <span>Delete</span>
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))}
+
+                          {chargeRecords.length === 0 && (
+                            <tr className="charges-empty-row d-table-row d-lg-none">
+                              <td colSpan={6} className="charges-empty-cell">
+                                <button
+                                  type="button"
+                                  className="charges-empty-add-btn"
+                                  onClick={handleOpenAddItemModal}
+                                >
+                                  <span className="charges-empty-add-icon"></span>
+                                  <span>Add Item</span>
+                                </button>
+                              </td>
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
                   </div>
 
-                  <div className="charges-total-bar">
+                  <div className="charges-total-bar" ref={totalBarRef}>
                     <span>Total Amount</span>
-                    <strong>{formatMoney(totalAmount)}</strong>
+                    <strong>PHP {formatMoney(totalAmount)}</strong>
                   </div>
                 </div>
               </div>
@@ -809,6 +917,13 @@ const RegDetails = () => {
           </div>
         </div>
       </div>
+
+      {showFloatingTotalAmount && (
+        <div className="charges-floating-total shadow-lg">
+          <span>Total Amount</span>
+          <strong>PHP {formatMoney(totalAmount)}</strong>
+        </div>
+      )}
 
       {/* add item modal */}
       {showAddItemModal && (
@@ -825,18 +940,27 @@ const RegDetails = () => {
               >
                 <div>
                   <h5 className="modal-title text-white fw-bold mb-0 d-flex align-items-center gap-2">
-                    <i className="isax isax-add-circle"></i>
-                    Add Charge Item
+                    <i
+                      className={`isax ${
+                        isEditingCharge ? "isax-edit-2" : "isax-add-circle"
+                      }`}
+                    ></i>
+                    {isEditingCharge ? "Edit Charge Item" : "Add Charge Item"}
                   </h5>
                   <div className="small text-white-50">
-                    Select an item from Oxygen, Service, or Procedure.
+                    {isEditingCharge
+                      ? "Update the selected charge item details."
+                      : "Select an item from Oxygen, Service, or Procedure."}
                   </div>
                 </div>
 
                 <button
                   type="button"
                   className="btn-close btn-close-white"
-                  onClick={() => setShowAddItemModal(false)}
+                  onClick={() => {
+                    setEditingRecordId(null);
+                    setShowAddItemModal(false);
+                  }}
                 />
               </div>
 
@@ -1031,7 +1155,10 @@ const RegDetails = () => {
                   <button
                     type="button"
                     className="btn btn-sm btn-light border fw-bold px-4"
-                    onClick={() => setShowAddItemModal(false)}
+                    onClick={() => {
+                      setEditingRecordId(null);
+                      setShowAddItemModal(false);
+                    }}
                   >
                     Cancel
                   </button>
@@ -1052,10 +1179,14 @@ const RegDetails = () => {
                         backgroundColor: "var(--primary, #0f763f)",
                         borderColor: "var(--primary, #0f763f)",
                       }}
-                      onClick={handleAddChargeItem}
+                      onClick={handleSaveChargeItem}
                     >
-                      <i className="isax isax-add-circle me-2"></i>
-                      Add
+                      <i
+                        className={`isax ${
+                          isEditingCharge ? "isax-tick-circle" : "isax-add-circle"
+                        } me-2`}
+                      ></i>
+                      {isEditingCharge ? "Save" : "Add"}
                     </button>
                   </>
                 )}
@@ -1172,6 +1303,72 @@ const RegDetails = () => {
         </div>
       )}
 
+      {/* delete confirmation modal */}
+      {recordPendingDelete && (
+        <div
+          className="modal fade show d-block"
+          tabIndex={-1}
+          style={{ backgroundColor: "rgba(0,0,0,0.45)", zIndex: 1075 }}
+        >
+          <div className="modal-dialog modal-dialog-centered px-2">
+            <div className="modal-content border-0 shadow-lg overflow-hidden">
+              <div className="modal-header border-0 bg-light">
+                <div>
+                  <h5 className="modal-title fw-bold mb-0 text-dark">
+                    Delete Charge Item
+                  </h5>
+                  <div className="small text-muted">
+                    This action will remove the charge from the patient list.
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={handleCancelDeleteRecord}
+                />
+              </div>
+
+              <div className="modal-body bg-white">
+                <div className="d-flex gap-3 align-items-start">
+                  <div className="charges-delete-confirm-icon">
+                    <i className="isax isax-trash"></i>
+                  </div>
+
+                  <div>
+                    <div className="fw-bold text-dark mb-1">
+                      Are you sure you want to delete this charge?
+                    </div>
+                    <div className="small text-muted">
+                      {recordPendingDelete.typeOfCharge} -{" "}
+                      {recordPendingDelete.itemDescription}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer border-0 bg-light">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-light border fw-bold px-4"
+                  onClick={handleCancelDeleteRecord}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger fw-bold px-4"
+                  onClick={handleConfirmDeleteRecord}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* info modal */}
       {showInfoModal && (
         <div className="acc-info-backdrop">
@@ -1248,25 +1445,52 @@ const RegDetails = () => {
           font-size: 1rem;
         }
 
+        .charges-toolbar-actions {
+          width: 100%;
+        }
+
         .charges-total-bar {
-          position: sticky;
-          bottom: 0;
-          z-index: 20;
           margin-top: auto;
-          background: #fff;
-          color: #1f2a44;
-          min-height: 44px;
+          background: var(--primary, #0f763f);
+          color: #fff;
+          min-height: 52px;
           display: flex;
           align-items: center;
-          gap: 4px;
-          padding: 10px 0;
+          justify-content: flex-end;
+          gap: 8px;
+          padding: 12px 16px;
           font-size: 1rem;
-          border-top: 1px solid #eef1f4;
+          border-top: 1px solid rgba(15, 118, 63, 0.35);
+          border-radius: 0 0 4px 4px;
         }
 
         .charges-total-bar strong {
-          font-size: 1rem;
-          font-weight: 800;
+          color: #fff;
+          font-size: 1.08rem;
+          font-weight: 900;
+        }
+
+        .charges-floating-total {
+          position: fixed;
+          right: 28px;
+          bottom: 24px;
+          z-index: 1040;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 52px;
+          padding: 12px 18px;
+          border-radius: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.24);
+          background: var(--primary, #0f763f);
+          color: #fff;
+          font-size: 0.95rem;
+        }
+
+        .charges-floating-total strong {
+          color: #fff;
+          font-size: 1.08rem;
+          font-weight: 900;
         }
 
         .acc-table-wrap {
@@ -1279,7 +1503,8 @@ const RegDetails = () => {
 
         .charges-table {
           table-layout: fixed;
-          min-width: 1120px;
+          width: 100%;
+          min-width: 920px;
         }
 
         .charges-table thead th {
@@ -1307,6 +1532,69 @@ const RegDetails = () => {
           background: #f7fbf9;
         }
 
+        .charges-empty-cell {
+          height: 260px;
+          text-align: center;
+          background: #fff;
+        }
+
+        .charges-empty-add-btn {
+          border: 0;
+          background: transparent;
+          color: var(--primary, #0f763f);
+          width: min(100%, 320px);
+          min-height: 220px;
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          font-size: 1rem;
+          font-weight: 900;
+          margin: 0 auto;
+        }
+
+        .charges-empty-add-icon {
+          position: relative;
+          width: 96px;
+          height: 96px;
+          border: 6px solid var(--primary, #0f763f);
+          border-radius: 50%;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .charges-empty-add-icon::before,
+        .charges-empty-add-icon::after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 48px;
+          height: 8px;
+          border-radius: 999px;
+          background: var(--primary, #0f763f);
+          transform: translate(-50%, -50%);
+        }
+
+        .charges-empty-add-icon::after {
+          transform: translate(-50%, -50%) rotate(90deg);
+        }
+
+        .charges-empty-add-btn:hover {
+          color: #0b5d32;
+        }
+
+        .charges-empty-add-btn:hover .charges-empty-add-icon {
+          border-color: #0b5d32;
+        }
+
+        .charges-empty-add-btn:hover .charges-empty-add-icon::before,
+        .charges-empty-add-btn:hover .charges-empty-add-icon::after {
+          background: #0b5d32;
+        }
+
         .charges-row-warning {
           background: #fffaf0 !important;
         }
@@ -1315,40 +1603,32 @@ const RegDetails = () => {
           background: #fff4d8 !important;
         }
 
-        .charges-col-delete {
-          width: 48px;
-        }
-
         .charges-col-type {
-          width: 150px;
+          width: 18%;
         }
 
         .charges-col-item {
-          width: 190px;
+          width: 24%;
         }
 
         .charges-col-unit {
-          width: 105px;
+          width: 110px;
         }
 
         .charges-col-qty {
-          width: 70px;
-        }
-
-        .charges-col-total {
-          width: 110px;
+          width: 72px;
         }
 
         .charges-col-slip {
           width: 150px;
         }
 
-        .charges-col-date {
+        .charges-col-actions {
           width: 150px;
         }
 
-        .charges-col-entered {
-          width: 150px;
+        .charges-actions-cell {
+          min-width: 150px;
         }
 
         .acc-table-text {
@@ -1360,21 +1640,69 @@ const RegDetails = () => {
           vertical-align: middle;
         }
 
-        .charges-delete-btn {
-          border: 0;
-          background: transparent;
-          color: #5b9a9a;
-          width: 28px;
-          height: 28px;
+        .charges-action-group {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          width: 100%;
+        }
+
+        .charges-action-btn {
+          border: 1px solid #d8e2e5;
+          background: #fff;
+          color: #344054;
+          width: 34px;
+          height: 34px;
+          padding: 0;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           border-radius: 4px;
+          font-size: 0.75rem;
+          font-weight: 800;
+          transition: background-color 0.15s ease, color 0.15s ease,
+            border-color 0.15s ease;
+        }
+
+        .charges-action-btn span {
+          display: none;
+        }
+
+        .charges-view-btn {
+          border-color: rgba(15, 118, 63, 0.35);
+          color: var(--primary, #0f763f);
+        }
+
+        .charges-view-btn:hover,
+        .charges-action-btn:hover {
+          background: var(--primary, #0f763f);
+          border-color: var(--primary, #0f763f);
+          color: #fff;
+        }
+
+        .charges-delete-btn {
+          border-color: rgba(220, 53, 69, 0.28);
+          color: #b42318;
         }
 
         .charges-delete-btn:hover {
+          background: #dc3545;
+          border-color: #dc3545;
+          color: #fff;
+        }
+
+        .charges-delete-confirm-icon {
+          width: 42px;
+          height: 42px;
+          border-radius: 50%;
           background: rgba(220, 53, 69, 0.1);
           color: #dc3545;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.3rem;
+          flex-shrink: 0;
         }
 
         .charges-checkbox {
@@ -1429,21 +1757,6 @@ const RegDetails = () => {
         .charges-add-item-btn:focus,
         .charges-add-item-btn:focus-visible {
           box-shadow: 0 0 0 0.2rem rgba(15, 118, 63, 0.25) !important;
-        }
-
-        .acc-view-btn {
-          border: 1px solid var(--primary, #0f763f);
-          color: var(--primary, #0f763f);
-          background: #fff;
-          border-radius: 4px;
-          font-size: 0.72rem;
-          font-weight: 700;
-          padding: 4px 10px;
-        }
-
-        .acc-view-btn:hover {
-          background: var(--primary, #0f763f);
-          color: #fff;
         }
 
         .charges-fixed-modal-dialog {
@@ -1593,11 +1906,7 @@ const RegDetails = () => {
 
         @media (max-width: 1199.98px) {
           .charges-table {
-            min-width: 1040px;
-          }
-
-          .charges-col-entered {
-            width: 130px;
+            min-width: 920px;
           }
 
           .charges-warning-banner {
@@ -1618,7 +1927,54 @@ const RegDetails = () => {
           }
 
           .charges-table {
-            min-width: 880px;
+            min-width: 720px;
+          }
+
+          .charges-col-actions {
+            width: 126px;
+          }
+
+          .charges-actions-cell {
+            min-width: 126px;
+          }
+
+          .charges-action-group {
+            gap: 5px;
+          }
+
+          .charges-action-btn {
+            width: 32px;
+            height: 32px;
+          }
+
+          .charges-toolbar-actions {
+            justify-content: flex-end !important;
+          }
+
+          .charges-toolbar-actions .reg-toolbar-btn {
+            flex-grow: 0 !important;
+          }
+
+          .charges-empty-cell {
+            height: 320px;
+          }
+
+          .charges-empty-add-btn {
+            width: min(82vw, 340px);
+            min-height: 260px;
+            font-size: 1.1rem;
+          }
+
+          .charges-empty-add-icon {
+            width: 116px;
+            height: 116px;
+            border-width: 7px;
+          }
+
+          .charges-empty-add-icon::before,
+          .charges-empty-add-icon::after {
+            width: 58px;
+            height: 9px;
           }
 
           .charges-fixed-modal-content {
@@ -1639,6 +1995,44 @@ const RegDetails = () => {
         }
 
         @media (max-width: 575.98px) {
+          .charges-floating-total {
+            right: 12px;
+            bottom: 12px;
+            left: 12px;
+            justify-content: center;
+          }
+
+          .charges-table {
+            min-width: 660px;
+          }
+
+          .charges-col-actions {
+            width: 112px;
+          }
+
+          .charges-actions-cell {
+            min-width: 112px;
+          }
+
+          .charges-action-btn {
+            width: 30px;
+            min-height: 30px;
+          }
+
+          .charges-empty-cell {
+            height: 300px;
+          }
+
+          .charges-empty-add-btn {
+            width: min(78vw, 300px);
+            min-height: 240px;
+          }
+
+          .charges-empty-add-icon {
+            width: 104px;
+            height: 104px;
+          }
+
           .charges-card-body {
             min-height: calc(100vh - 430px);
             padding: 10px;
