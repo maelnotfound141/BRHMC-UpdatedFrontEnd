@@ -30,6 +30,11 @@ const Accomodation = lazy (() => import ("@/pages/nurse-modules/accomodation/acc
 const Charges = lazy (() => import ("@/pages/nurse-modules/nurseCharges/charges"));
 const PreBill = lazy (() => import ("@/pages/nurse-modules/PreBill/preBill"));
 const Discharge = lazy (() => import ("@/pages/nurse-modules/nurseDischarge/discharge")); 
+const NursePatientLog = lazy(() => import("@/pages/nurse-modules/patientLog/patientLog"));
+const NurseUtility = lazy(() => import("@/pages/nurse-modules/utility/utility"));
+const NurseRequestTemplate = lazy(() => import("@/pages/nurse-modules/utility/requestTemplate"));
+const NurseRequisition = lazy(() => import("@/pages/nurse-modules/utility/requisition"));
+const NurseReport = lazy(() => import("@/pages/nurse-modules/report/report"));
 
 //Auth Components
 const Login = lazy(() => import("@/pages/authentication/login/login"));
@@ -360,10 +365,65 @@ export const customLayout = [
   },
   {
     id: "21",
-    path: route.Discharge,
+    path: route.nurseDischarge,
     element: (
       <Suspense fallback={suspenseFallback}>
         <Discharge />
+      </Suspense>
+    ),
+    route: Route,
+    meta_title: "BRHMC",
+  },
+  {
+    id: "nurse-utility-patientlog",
+    path: route.nursePatientLog,
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <NursePatientLog />
+      </Suspense>
+    ),
+    route: Route,
+    meta_title: "BRHMC",
+  },
+  {
+    id: "nurse-utility-tools",
+    path: route.nurseUtility,
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <NurseUtility />
+      </Suspense>
+    ),
+    route: Route,
+    meta_title: "BRHMC",
+  },
+  {
+    id: "nurse-utility-request-template",
+    path: route.nurseRequestTemplate,
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <NurseRequestTemplate />
+      </Suspense>
+    ),
+    route: Route,
+    meta_title: "BRHMC",
+  },
+  {
+    id: "nurse-utility-requisition",
+    path: route.nurseRequisition,
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <NurseRequisition />
+      </Suspense>
+    ),
+    route: Route,
+    meta_title: "BRHMC",
+  },
+  {
+    id: "nurse-utility-report",
+    path: route.nurseReport,
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <NurseReport />
       </Suspense>
     ),
     route: Route,

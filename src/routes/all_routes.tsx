@@ -28,6 +28,11 @@ doctorReports: "/reports",
   nurseCharges: "/nurse-Charges",
   nursePreBill: "/Pre-Bill",
   nurseDischarge: "/nurse-Discharge",
+  nursePatientLog: "/nurse-patient-log",
+  nurseUtility: "/nurse-utility",
+  nurseRequestTemplate: "/nurse-utility/request-template",
+  nurseRequisition: "/nurse-utility/requisition",
+  nurseReport: "/nurse-report",
 
   // Other Pages routes
   login: "/login",

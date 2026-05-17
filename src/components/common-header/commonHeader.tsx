@@ -12,6 +12,14 @@ import ProfileModal from "../profile-modal/ProfileModal";
 import { doctorSidebarData } from "@/core/data/json/doctorSidebarData";
 import { nurseSidebarData } from "@/core/data/json/nurseSidebarData";
 
+const nurseUtilityRoutes = [
+  all_routes.nursePatientLog,
+  all_routes.nurseUtility,
+  all_routes.nurseRequestTemplate,
+  all_routes.nurseRequisition,
+  all_routes.nurseReport,
+];
+
 const Header = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -37,6 +45,8 @@ const Header = () => {
   }, [location.pathname]);
 
   const isNurseRoute = useMemo(() => {
+    if (nurseUtilityRoutes.includes(location.pathname)) return true;
+
     return nurseSidebarData.some((item) => {
       if (location.pathname === item.path) return true;
       if (location.pathname.startsWith(`${item.path}/`)) return true;
