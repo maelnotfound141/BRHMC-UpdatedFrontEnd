@@ -339,12 +339,37 @@ const PhysicalExamination = () => {
   const renderFormContent = () => {
     if (!showForm) {
       return (
-        <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted py-5 px-3 text-center">
-          <i className="isax isax-document-text fs-1 mb-3 opacity-50" style={{ fontSize: '3rem' }}></i>
-          <h5 className="text-dark fw-bold mb-1">No physical exam data recorded.</h5>
-          <p className="small">Click <strong className="text-dark">Add</strong> in the toolbar above to begin editing <strong className="text-dark">{activeCategory}</strong>.</p>
-        </div>
-      );
+  <div
+    className="d-flex flex-column align-items-center justify-content-center text-center w-100"
+    style={{
+      minHeight: "100%",
+      marginTop: "auto",
+      marginBottom: "auto",
+    }}
+  >
+    <button
+      onClick={handleAdd}
+      className="btn d-lg-none shadow mb-3"
+      style={{
+        width: "64px",
+        height: "64px",
+        borderRadius: "50%",
+        backgroundColor: "var(--primary, #0f763f)",
+        color: "#fff",
+        border: "none",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+    </button>
+
+    <h5 className="text-dark fw-bold mb-0">
+      No physical exam data recorded.
+    </h5>
+  </div>
+);
     }
 
     return (
@@ -412,6 +437,21 @@ const PhysicalExamination = () => {
           @media (max-width: 991px) {
             .vital-group-margin { margin-top: 0.5rem; }
           }
+
+.sidebar-flex {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .sidebar-flex {
+    flex-direction: column;
+    overflow-x: hidden;
+    white-space: normal;
+  }
+}
             .acc-info-backdrop {
   position: fixed;
   inset: 0;
@@ -530,6 +570,7 @@ const PhysicalExamination = () => {
                         style={{ borderRadius: "3px", cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer" }}
                       >
                         <i className="isax isax-add-square"></i> <span className="d-none d-md-inline">Add</span>
+                        
                       </button>
                       
                       <button 
@@ -586,7 +627,7 @@ const PhysicalExamination = () => {
                   <div className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column flex-lg-row overflow-hidden" style={{ minHeight: "450px" }}>
                     
                     <div className="bg-light border-bottom border-lg-bottom-0 border-lg-end responsive-exam-sidebar overflow-x-auto hide-scrollbar">
-                      <div className="list-group list-group-flush rounded-0 h-100 p-2 gap-1 d-flex flex-row flex-lg-column">
+                      <div className="list-group list-group-flush rounded-0 h-100 p-2 gap-1 sidebar-flex">
                         {EXAM_CATEGORIES.map((category) => {
                           const hasContent = categoryHasData(category, formData);
 
@@ -613,10 +654,15 @@ const PhysicalExamination = () => {
                         })}
                       </div>
                     </div>
+<div
+  className="flex-grow-1 d-flex flex-column p-3 p-md-4 position-relative overflow-y-auto"
+  style={{ maxHeight: "600px" }}
+>
+  {/* Mobile Center FAB */}
 
-                    <div className="flex-grow-1 d-flex flex-column p-3 p-md-4 position-relative overflow-y-auto" style={{ maxHeight: "600px" }}>
-                      {renderFormContent()}
-                    </div>
+
+  {renderFormContent()}
+</div>
 
                   </div>
                 </div>

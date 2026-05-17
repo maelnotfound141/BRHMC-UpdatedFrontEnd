@@ -89,7 +89,6 @@ const PatientSignsAndSymptoms = () => {
 
   useEffect(() => {
     const selectedPatientId = location.state?.selectedPatientId;
-
     if (selectedPatientId) {
       setTimeout(() => {}, 1500);
     }
@@ -109,31 +108,16 @@ const PatientSignsAndSymptoms = () => {
         setOpen(false);
       }
     };
-
     document.addEventListener("click", handleOutsideClick);
-
-    return () =>
-      document.removeEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
   }, []);
 
   // handlers
-  const handleAdd = () => {
-    setIsEditing(true);
-  };
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+  const handleAdd = () => setIsEditing(true);
+  const handleEdit = () => setIsEditing(true);
 
   const handleSave = () => {
-    setSavedState({
-      selectedSymptoms,
-      painChecked,
-      painValue,
-      otherChecked,
-      otherValue,
-    });
-
+    setSavedState({ selectedSymptoms, painChecked, painValue, otherChecked, otherValue });
     setHasSavedData(true);
     setIsEditing(false);
   };
@@ -152,21 +136,16 @@ const PatientSignsAndSymptoms = () => {
       setOtherChecked(false);
       setOtherValue("");
     }
-
     setIsEditing(false);
   };
 
   const handleSymptomToggle = (symptom: string) => {
     setSelectedSymptoms((prev) =>
-      prev.includes(symptom)
-        ? prev.filter((item) => item !== symptom)
-        : [...prev, symptom]
+      prev.includes(symptom) ? prev.filter((item) => item !== symptom) : [...prev, symptom]
     );
   };
 
-  const handleDeleteClick = () => {
-    setShowDeleteModal(true);
-  };
+  const handleDeleteClick = () => setShowDeleteModal(true);
 
   const confirmDelete = () => {
     setSelectedSymptoms([]);
@@ -317,7 +296,7 @@ const PatientSignsAndSymptoms = () => {
 
                     {/* ACTION BUTTONS */}
                     <div
-                      className="d-flex flex-wrap justify-content-end rounded-1"
+                      className="d-flex flex-wrap justify-content-center justify-content-lg-end rounded-1 w-100 w-lg-auto"
                       role="group"
                       style={{ gap: "4px" }}
                     >
@@ -333,13 +312,9 @@ const PatientSignsAndSymptoms = () => {
                           }`}
                           style={{
                             borderRadius: "3px",
-                            backgroundColor:
-                              "var(--primary, #0f763f)",
-                            border:
-                              "1px solid var(--primary, #0f763f)",
-                            cursor: isEditing
-                              ? "not-allowed"
-                              : "pointer",
+                            backgroundColor: "var(--primary, #0f763f)",
+                            border: "1px solid var(--primary, #0f763f)",
+                            cursor: isEditing ? "not-allowed" : "pointer",
                           }}
                         >
                           <i className="isax isax-add-square"></i>
@@ -350,17 +325,14 @@ const PatientSignsAndSymptoms = () => {
                       <button
                         onClick={handleEdit}
                         disabled={!hasSavedData || isEditing}
-                        className={`btn btn-sm border-secondary-subtle d-flex align-items-center justify-content-center gap-2 px-3 py-2 ${
+                        className={`btn btn-sm border border-secondary-subtle d-flex align-items-center justify-content-center gap-2 px-3 py-2 flex-grow-1 flex-lg-grow-0 ${
                           !hasSavedData || isEditing
                             ? "bg-light text-muted opacity-50"
                             : "bg-white text-dark fw-bold"
                         }`}
                         style={{
                           borderRadius: "3px",
-                          cursor:
-                            !hasSavedData || isEditing
-                              ? "not-allowed"
-                              : "pointer",
+                          cursor: !hasSavedData || isEditing ? "not-allowed" : "pointer",
                         }}
                       >
                         <i className="isax isax-edit"></i>
@@ -370,22 +342,16 @@ const PatientSignsAndSymptoms = () => {
                       <button
                         onClick={handleSave}
                         disabled={!isEditing}
-                        className={`btn btn-sm border-secondary-subtle d-flex align-items-center justify-content-center gap-2 px-3 py-2 ${
+                        className={`btn btn-sm border border-secondary-subtle d-flex align-items-center justify-content-center gap-2 px-3 py-2 flex-grow-1 flex-lg-grow-0 ${
                           !isEditing
                             ? "bg-light text-muted opacity-50"
                             : "text-white fw-bold shadow-sm"
                         }`}
                         style={{
                           borderRadius: "3px",
-                          cursor: !isEditing
-                            ? "not-allowed"
-                            : "pointer",
-                          backgroundColor: isEditing
-                            ? "var(--primary, #0f763f)"
-                            : undefined,
-                          borderColor: isEditing
-                            ? "var(--primary, #0f763f)"
-                            : undefined,
+                          cursor: !isEditing ? "not-allowed" : "pointer",
+                          backgroundColor: isEditing ? "var(--primary, #0f763f)" : undefined,
+                          borderColor: isEditing ? "var(--primary, #0f763f)" : undefined,
                         }}
                       >
                         <i className="isax isax-save-2"></i>
@@ -395,16 +361,14 @@ const PatientSignsAndSymptoms = () => {
                       <button
                         onClick={handleCancel}
                         disabled={!isEditing}
-                        className={`btn btn-sm border-secondary-subtle d-flex align-items-center justify-content-center gap-2 px-3 py-2 ${
+                        className={`btn btn-sm border border-secondary-subtle d-flex align-items-center justify-content-center gap-2 px-3 py-2 flex-grow-1 flex-lg-grow-0 ${
                           !isEditing
                             ? "bg-light text-muted opacity-50"
                             : "bg-white text-dark fw-bold"
                         }`}
                         style={{
                           borderRadius: "3px",
-                          cursor: !isEditing
-                            ? "not-allowed"
-                            : "pointer",
+                          cursor: !isEditing ? "not-allowed" : "pointer",
                         }}
                       >
                         <i className="isax isax-undo"></i>
@@ -414,17 +378,14 @@ const PatientSignsAndSymptoms = () => {
                       <button
                         onClick={handleDeleteClick}
                         disabled={!hasSavedData || isEditing}
-                        className={`btn btn-sm border-secondary-subtle d-flex align-items-center justify-content-center gap-2 px-3 py-2 ${
+                        className={`btn btn-sm border border-secondary-subtle d-flex align-items-center justify-content-center gap-2 px-3 py-2 flex-grow-1 flex-lg-grow-0 ${
                           !hasSavedData || isEditing
                             ? "bg-light text-muted opacity-50"
                             : "bg-white text-danger fw-bold"
                         }`}
                         style={{
                           borderRadius: "3px",
-                          cursor:
-                            !hasSavedData || isEditing
-                              ? "not-allowed"
-                              : "pointer",
+                          cursor: !hasSavedData || isEditing ? "not-allowed" : "pointer",
                         }}
                       >
                         <i className="isax isax-trash"></i>
@@ -443,10 +404,7 @@ const PatientSignsAndSymptoms = () => {
                         <tr>
                           <th
                             className="fw-semibold text-secondary py-3 ps-3 border-bottom text-nowrap"
-                            style={{
-                              color:
-                                "var(--primary, #0f763f)",
-                            }}
+                            style={{ color: "var(--primary, #0f763f)" }}
                           >
                             Signs and Symptoms Checklist
                           </th>
@@ -457,106 +415,65 @@ const PatientSignsAndSymptoms = () => {
                         <tr>
                           <td className="p-3 p-md-4 border-bottom-0">
                             {!isEditing && !hasSavedData ? (
-                              <div className="d-flex flex-column align-items-center justify-content-center text-muted py-5">
-                                
-
-
-                             
-                               {/* MOBILE ONLY ADD ICON BUTTON */}
-                                                                
-                                {/* EMPTY STATE */}
-                                <div className="d-flex flex-column align-items-center justify-content-center py-5 text-center">
-                                  {/* Add Button */}
-                                  <button
-                                    type="button"
-                                    onClick={handleAdd}
-                                    disabled={isEditing}
-                                    className="border-0 bg-transparent d-flex flex-column align-items-center"
+                              <div className="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+                                {/* Mobile circle add button */}
+                                <button
+                                  onClick={handleAdd}
+                                  disabled={isEditing}
+                                  className="btn border-0 d-flex d-lg-none align-items-center justify-content-center shadow"
+                                  style={{
+                                    backgroundColor: "var(--primary, #0f763f)",
+                                    width: "64px",
+                                    height: "64px",
+                                    minWidth: "64px",
+                                    minHeight: "64px",
+                                    borderRadius: "50%",
+                                    padding: 0,
+                                    cursor: isEditing ? "not-allowed" : "pointer",
+                                  }}
+                                >
+                                  <span
                                     style={{
-                                      cursor: isEditing ? "not-allowed" : "pointer",
+                                      fontSize: "1.8rem",
+                                      lineHeight: 1,
+                                      fontWeight: 300,
+                                      color: "#fff",
                                     }}
                                   >
-                                    <div
-                                      className="rounded-circle d-flex align-items-center justify-content-center"
-                                      style={{
-                                        width: "64px",
-                                        height: "64px",
-                                        border: "2px solid var(--primary, #0f763f)",
-                                        color: "var(--primary, #0f763f)",
-                                        backgroundColor: "#fff",
-                                      }}
-                                    >
-                                      <i
-                                        className="isax isax-add"
-                                        style={{
-                                          fontSize: "32px",
-                                          fontWeight: 700,
-                                        }}
-                                      />
-                                    </div>
+                                    +
+                                  </span>
+                                </button>
 
-                                    <span
-                                      className="mt-2"
-                                      style={{
-                                        fontSize: "14px",
-                                        color: "#6c757d",
-                                        fontWeight: 500,
-                                      }}
-                                    >
-                                      Add New
-                                    </span>
-                                  </button>
-
-                                  {/* Empty Message */}
-                                  <div
-                                    className="mt-3 fw-semibold"
-                                    style={{
-                                      fontSize: "15px",
-                                      color: "#212529",
-                                    }}
-                                  >
-                                    No signatory records found
-                                  </div>
+                                <div className="mt-3 fw-semibold text-muted">
+                                  No signatory records found
                                 </div>
                               </div>
                             ) : (
                               <div className="row g-2">
-                                {SYMPTOMS_LIST.map(
-                                  (symptom, index) => (
-                                    <div
-                                      className="col-12 col-sm-6 col-md-4 col-lg-3"
-                                      key={index}
-                                    >
-                                      <div className="form-check d-flex align-items-center gap-1">
-                                        <input
-                                          className="form-check-input mt-0 shadow-none"
-                                          type="checkbox"
-                                          id={`symptom-${index}`}
-                                          checked={selectedSymptoms.includes(
-                                            symptom
-                                          )}
-                                          onChange={() =>
-                                            handleSymptomToggle(
-                                              symptom
-                                            )
-                                          }
-                                          disabled={!isEditing}
-                                        />
-
-                                        <label
-                                          className="form-check-label text-dark pt-1"
-                                          htmlFor={`symptom-${index}`}
-                                          style={{
-                                            fontSize:
-                                              "0.85rem",
-                                          }}
-                                        >
-                                          {symptom}
-                                        </label>
-                                      </div>
+                                {SYMPTOMS_LIST.map((symptom, index) => (
+                                  <div
+                                    className="col-12 col-sm-6 col-md-4 col-lg-3"
+                                    key={index}
+                                  >
+                                    <div className="form-check d-flex align-items-center gap-1">
+                                      <input
+                                        className="form-check-input mt-0 shadow-none"
+                                        type="checkbox"
+                                        id={`symptom-${index}`}
+                                        checked={selectedSymptoms.includes(symptom)}
+                                        onChange={() => handleSymptomToggle(symptom)}
+                                        disabled={!isEditing}
+                                      />
+                                      <label
+                                        className="form-check-label text-dark pt-1"
+                                        htmlFor={`symptom-${index}`}
+                                        style={{ fontSize: "0.85rem" }}
+                                      >
+                                        {symptom}
+                                      </label>
                                     </div>
-                                  )
-                                )}
+                                  </div>
+                                ))}
 
                                 {/* PAIN */}
                                 <div className="col-12 mt-4">
@@ -567,18 +484,11 @@ const PatientSignsAndSymptoms = () => {
                                       id="check-pain"
                                       checked={painChecked}
                                       onChange={(e) => {
-                                        setPainChecked(
-                                          e.target.checked
-                                        );
-
-                                        if (
-                                          !e.target.checked
-                                        )
-                                          setPainValue("");
+                                        setPainChecked(e.target.checked);
+                                        if (!e.target.checked) setPainValue("");
                                       }}
                                       disabled={!isEditing}
                                     />
-
                                     <label
                                       className="form-check-label text-dark pt-1 fw-bold"
                                       htmlFor="check-pain"
@@ -586,20 +496,12 @@ const PatientSignsAndSymptoms = () => {
                                       Pain
                                     </label>
                                   </div>
-
                                   <input
                                     type="text"
                                     className="form-control rounded-1 shadow-none"
                                     value={painValue}
-                                    onChange={(e) =>
-                                      setPainValue(
-                                        e.target.value.toUpperCase()
-                                      )
-                                    }
-                                    disabled={
-                                      !painChecked ||
-                                      !isEditing
-                                    }
+                                    onChange={(e) => setPainValue(e.target.value.toUpperCase())}
+                                    disabled={!painChecked || !isEditing}
                                   />
                                 </div>
 
@@ -612,18 +514,11 @@ const PatientSignsAndSymptoms = () => {
                                       id="check-other"
                                       checked={otherChecked}
                                       onChange={(e) => {
-                                        setOtherChecked(
-                                          e.target.checked
-                                        );
-
-                                        if (
-                                          !e.target.checked
-                                        )
-                                          setOtherValue("");
+                                        setOtherChecked(e.target.checked);
+                                        if (!e.target.checked) setOtherValue("");
                                       }}
                                       disabled={!isEditing}
                                     />
-
                                     <label
                                       className="form-check-label text-dark pt-1 fw-bold"
                                       htmlFor="check-other"
@@ -631,20 +526,12 @@ const PatientSignsAndSymptoms = () => {
                                       Other
                                     </label>
                                   </div>
-
                                   <input
                                     type="text"
                                     className="form-control rounded-1 shadow-none"
                                     value={otherValue}
-                                    onChange={(e) =>
-                                      setOtherValue(
-                                        e.target.value.toUpperCase()
-                                      )
-                                    }
-                                    disabled={
-                                      !otherChecked ||
-                                      !isEditing
-                                    }
+                                    onChange={(e) => setOtherValue(e.target.value.toUpperCase())}
+                                    disabled={!otherChecked || !isEditing}
                                   />
                                 </div>
                               </div>
@@ -667,7 +554,6 @@ const PatientSignsAndSymptoms = () => {
           <div className="acc-info-box shadow-lg">
             <div className="acc-info-title">
               <span>Confirm Delete</span>
-
               <button
                 type="button"
                 className="btn-close btn-close-sm"
@@ -679,15 +565,10 @@ const PatientSignsAndSymptoms = () => {
               <div className="acc-info-icon acc-info-icon-danger">
                 <i className="isax isax-trash"></i>
               </div>
-
               <div>
-                <div className="fw-bold text-dark mb-1">
-                  Clear Form?
-                </div>
-
+                <div className="fw-bold text-dark mb-1">Clear Form?</div>
                 <div className="small fw-semibold text-muted">
-                  Are you sure you want to clear the current
-                  signs and symptoms form?
+                  Are you sure you want to clear the current signs and symptoms form?
                 </div>
               </div>
             </div>
@@ -700,7 +581,6 @@ const PatientSignsAndSymptoms = () => {
               >
                 Cancel
               </button>
-
               <button
                 type="button"
                 className="btn btn-sm btn-danger fw-bold px-4 acc-info-action-btn"

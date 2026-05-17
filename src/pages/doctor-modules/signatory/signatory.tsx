@@ -345,6 +345,82 @@ const SignatoryModule = () => {
     <>
       <style>
         {`
+
+
+
+.table-hover tbody tr {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.selected-row > td {
+  background-color: #e6f4ea !important;
+  color: #0b592f !important;
+}
+
+.selected-row > td:first-child {
+  border-left: 4px solid var(--primary, #0f763f) !important;
+}
+
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.table-fixed td,
+.table-fixed th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  vertical-align: top;
+}
+
+.text-wrap-custom {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+/* EMPTY TABLE STATE */
+.table-responsive table {
+  height: 100%;
+}
+
+.table-responsive tbody {
+  height: 100%;
+}
+
+.empty-table-cell {
+  height: 450px;
+  min-height: 450px;
+  background-color: #f3f3f3;
+  vertical-align: middle;
+}
+
+.empty-table-cell > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* MOBILE */
+@media (max-width: 575.98px) {
+  .modal-footer-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .modal-footer-actions button {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
           .table-hover tbody tr {
             cursor: pointer;
             transition: all 0.2s ease-in-out;
@@ -521,9 +597,9 @@ const SignatoryModule = () => {
   {paginatedRecords.length === 0 ? (
     <tr>
       <td
-        colSpan={3}
-        className="text-center text-muted py-5 border-0"
-      >
+  colSpan={3}
+  className="text-center text-muted border-0 empty-table-cell"
+>
         <div className="d-flex flex-column align-items-center justify-content-center gap-3">
 
           {/* DESKTOP ONLY DOCUMENT ICON */}

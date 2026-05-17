@@ -210,55 +210,99 @@ const PhysicianModule = () => {
 
   return (
     <>
-   <style>
+  <style>
 {`
+
+/* =========================================================
+   PHYSICIAN MODULE STYLES
+========================================================= */
+
+/* ===== TABLE INTERACTION ===== */
+
+.table-hover tbody tr {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover Effect */
+.table-hover tbody tr:hover > td {
+  background-color: #edf9f0 !important;
+  color: #0b592f;
+}
+
+/* Selected Row */
+.selected-row > td {
+  background-color: #e6f4ea !important;
+  color: #0b592f !important;
+}
+
+/* Left Border Highlight */
+.selected-row > td:first-child {
+  border-left: 4px solid var(--primary, #0f763f) !important;
+}
+
+/* Optional Zebra Rows */
+.table-hover tbody tr:nth-child(even) td {
+  background-color: #f8f9fa;
+}
+
+/* Preserve selected state */
+.selected-row > td {
+  background-color: #e6f4ea !important;
+}
+
+/* ===== TABLE LAYOUT ===== */
+
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-fixed td,
+.table-fixed th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  vertical-align: top;
+}
+
+/* Text Wrapping */
+.text-wrap-custom {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
 /* ===== ACTION BUTTON SYSTEM ===== */
 
 .action-btn-group {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
   flex-wrap: nowrap;
   white-space: nowrap;
-
   justify-content: flex-end;
-
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* hide scrollbar */
 .action-btn-group::-webkit-scrollbar {
   display: none;
 }
 
-/* MOBILE FIX */
-@media (max-width: 767px) {
-  .action-btn-group {
-    justify-content: center !important;
-  }
-}
-
-/* ===== ACTION BUTTON BASE ===== */
 .action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-
   padding: 0.4rem 0.75rem;
   font-weight: 600;
   font-size: 0.875rem;
-
   border-radius: 4px;
   border: 1px solid transparent;
-
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
-/* PRIMARY */
+/* Primary */
 .action-btn-primary {
   background: var(--primary, #0f763f);
   border-color: var(--primary, #0f763f);
@@ -271,7 +315,7 @@ const PhysicianModule = () => {
   color: #fff;
 }
 
-/* NEUTRAL */
+/* Neutral */
 .action-btn-neutral {
   background: #fff;
   border-color: #dee2e6;
@@ -282,7 +326,7 @@ const PhysicianModule = () => {
   background: #f8f9fa;
 }
 
-/* DANGER */
+/* Danger */
 .action-btn-danger {
   background: #fff;
   border-color: #dc3545;
@@ -294,45 +338,82 @@ const PhysicianModule = () => {
   color: #fff;
 }
 
-/* DISABLED */
+/* Disabled */
 .action-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* ===== REMOVE CUSTOM TABLE COLOR OVERRIDE (RESTORES ORIGINAL LOOK) ===== */
-/* ❌ removed forced row background color */
+/* ===== EMPTY TABLE STATE ===== */
+
+.physician-mobile-table {
+  min-height: 450px;
+}
+
+.physician-mobile-table table {
+  height: 100%;
+}
+
+.physician-mobile-table tbody {
+  height: 100%;
+}
+
+.empty-table-cell {
+  height: 450px;
+  min-height: 450px;
+  background-color: #f3f3f3;
+  vertical-align: middle;
+}
+
+.empty-table-cell > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
 /* ===== EMPTY STATE ===== */
+
 .custom-empty-state {
   min-height: 350px;
 }
 
 /* ===== MOBILE RESPONSIVE ===== */
+
 @media (max-width: 767px) {
 
+  /* Action Buttons */
+  .action-btn-group {
+    justify-content: center !important;
+  }
+
+  /* Patient Name */
   .physician-mobile-name {
     font-size: 1.5rem !important;
     line-height: 1.2;
   }
 
+  /* Section Title */
   .physician-mobile-title {
     font-size: 0.95rem !important;
     text-align: center;
     width: 100%;
   }
 
+  /* Remove Card Shadow On Mobile */
   .physician-mobile-table {
     border: none !important;
     box-shadow: none !important;
     background: transparent !important;
   }
 
+  /* Empty State */
   .physician-mobile-empty {
     min-height: 420px;
     border: 1px solid #dee2e6;
     border-radius: 14px;
-    background: #fff;
+    background: #f3f3f3;
     padding: 2rem 1rem;
   }
 
@@ -340,11 +421,13 @@ const PhysicianModule = () => {
     font-size: 14px;
   }
 
+  /* Profile Icon */
   .mobile-profile-icon {
     width: 85px !important;
     height: 85px !important;
   }
 
+  /* Add Circle Button */
   .mobile-add-circle {
     width: 72px !important;
     height: 72px !important;
@@ -354,14 +437,22 @@ const PhysicianModule = () => {
     cursor: pointer;
   }
 
+  /* Address */
   .mobile-address {
     font-size: 12px;
     justify-content: center;
     text-align: center;
   }
 
+  /* Badge */
   .mobile-badge {
     font-size: 11px;
+  }
+
+  /* Mobile Table Font */
+  .table td,
+  .table th {
+    font-size: 13px;
   }
 }
 `}
@@ -538,12 +629,7 @@ const PhysicianModule = () => {
 
                   {/* TABLE */}
                   <div className="border rounded-0 flex-grow-1 bg-white d-flex flex-column shadow-sm physician-mobile-table">
-                    <table
-                      className="table table-hover align-middle mb-0"
-                      style={{
-                        tableLayout: "auto",
-                      }}
-                    >
+                    <table className="table table-hover align-middle mb-0 table-fixed">
                       {hasRecords && (
                         <thead className="table-light">
                           <tr>
@@ -566,33 +652,37 @@ const PhysicianModule = () => {
   {hasRecords ? (
     physicians.map((record) => (
       <tr
-        key={record.id}
-        onClick={() => setSelectedRecordId(record.id)}
-        onDoubleClick={() => {
-          setSelectedRecordId(record.id);
-          openEditModalForRecord(record);
-        }}
-        className={
-          selectedRecordId === record.id ? "selected-row" : ""
-        }
-        style={{ cursor: "pointer" }}
-      >
-        <td className="ps-3 py-3 text-dark border-bottom-0">
-          {record.type}
-        </td>
+  key={record.id}
+  onClick={() => setSelectedRecordId(record.id)}
+  onDoubleClick={() => {
+    setSelectedRecordId(record.id);
+    openEditModalForRecord(record);
+  }}
+  className={
+    selectedRecordId === record.id
+      ? "selected-row"
+      : ""
+  }
+>
+        <td className="ps-3 py-3 text-dark border-bottom-0 text-wrap-custom">
+  {record.type}
+</td>
 
-        <td className="py-3 text-dark border-bottom-0 d-none d-md-table-cell">
-          {record.name}
-        </td>
+<td className="py-3 text-dark border-bottom-0 d-none d-md-table-cell text-wrap-custom">
+  {record.name}
+</td>
 
-        <td className="pe-3 py-3 text-dark border-bottom-0">
-          {record.accessStatus}
-        </td>
+<td className="pe-3 py-3 text-dark border-bottom-0 text-wrap-custom">
+  {record.accessStatus}
+</td>
       </tr>
     ))
   ) : (
     <tr>
-      <td colSpan={3} className="border-bottom-0">
+      <td
+  colSpan={3}
+  className="border-bottom-0 empty-table-cell"
+>
         <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted py-5 custom-empty-state physician-mobile-empty">
 
           {/* DOCUMENT ICON (same as SignatoryModule) */}

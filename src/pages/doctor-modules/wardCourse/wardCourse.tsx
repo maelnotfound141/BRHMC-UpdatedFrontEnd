@@ -455,9 +455,9 @@ letter-spacing: 0.2px;
 
                   {/* Table */}
                   <div
-                    className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden"
-                    style={{ minHeight: "450px" }}
-                  >
+  className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden position-relative"
+style={{ minHeight: "450px", position: "relative" }} 
+>
                     <div className="table-responsive flex-grow-1 bg-white p-0">
                       <table
   className="table table-hover align-middle mb-0"
@@ -502,59 +502,34 @@ letter-spacing: 0.2px;
 
                         <tbody>
                             {paginatedRecords.length === 0 ? (
-                              <tr>
-                                <td
-                                  colSpan={4}
-                                  className="text-center text-muted py-5 border-0"
-                                >
-                                  <div className="d-flex flex-column align-items-center justify-content-center gap-3">
+                              <td colSpan={4} className="text-center text-muted py-5 border-0">
+  <div className="d-flex flex-column align-items-center justify-content-center gap-3">
 
-                                    {/* DESKTOP ONLY DOCUMENT ICON */}
-                                    <i
-                                      className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
-                                      style={{
-                                        fontSize: "3rem",
-                                        color: "var(--primary, #0f763f)",
-                                      }}
-                                    ></i>
+    {/* <i className="isax isax-document-text fs-1 opacity-50" /> */}
+    <i className="isax isax-document-text fs-1 opacity-50 d-none d-lg-block" />
 
-                                    {/* MOBILE ONLY ADD BUTTON - CIRCULAR STYLE */}
-                                    <div
-                                      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
-                                      onClick={handleAdd}
-                                      style={{
-                                        width: "64px",
-                                        height: "64px",
-                                        border:
-                                          "2px solid var(--primary, #0f763f)",
-                                        backgroundColor: "#fff",
-                                        cursor: "pointer",
-                                      }}
-                                      title="Add New Course Record"
-                                    >
-                                      <i
-                                        className="isax isax-add fs-1 text-primary"
-                                        style={{ fontSize: "2rem" }}
-                                      />
-                                    </div>
+    <button
+      onClick={handleAdd}
+      className="btn d-lg-none shadow"
+      style={{
+        width: "64px",
+        height: "64px",
+        borderRadius: "50%",
+        backgroundColor: "var(--primary, #0f763f)",
+        color: "#fff",
+        border: "none",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+    </button>
 
-                                    {/* MOBILE ONLY ADD TEXT */}
-                                    <span
-                                      className="mt-2 fw-semibold text-muted d-lg-none"
-                                      style={{ fontSize: "14px" }}
-                                    >
-                                      Add New
-                                    </span>
 
-                                    {/* EMPTY STATE TEXT */}
-                                    <div className="text-center">
-                                      <h6 className="fw-bold mb-1">
-                                        No course records found.
-                                      </h6>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
+    <h6 className="fw-bold mb-1">No course records found.</h6>
+  </div>
+</td>
                             ) : (
                             paginatedRecords.map((record) => (
                               <tr

@@ -118,6 +118,9 @@ const DispositionModule = () => {
     JSON.parse(JSON.stringify(EMPTY_INSTRUCTION))
   );
 
+  // ── NEW: track selected row in the medicines view table ──
+  const [selectedMedicineIdx, setSelectedMedicineIdx] = useState<number | null>(null);
+
   useEffect(() => {
     if (location.state?.selectedPatientId) {
       setTimeout(() => {}, 1500);
@@ -265,6 +268,84 @@ const DispositionModule = () => {
     <>
       <style>
         {`
+
+        /* =========================================================
+   DRUG TABLE ODD EVEN ROW COLORS
+========================================================= */
+@media (max-width: 991.98px) {
+  .instruction-main-panel {
+    min-height: 65vh;
+  }
+}
+.drug-row:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.drug-row:nth-child(even) {
+  background-color: #f3f4f6;
+}
+
+/* keep inputs transparent so row color is visible */
+.drug-row input {
+  background-color: transparent !important;
+}
+
+/* hover effect */
+.drug-row:hover {
+  background-color: #d6f5e8 !important;
+  transition: background-color 0.2s ease;
+}
+
+/* keep cells inheriting hover color */
+.drug-row:hover td,
+.drug-row:hover input,
+.drug-row:hover button {
+  background-color: transparent !important;
+}
+
+/* =========================================================
+   SIGNATORYMODULE TABLE STYLES
+========================================================= */
+
+/* Hover + transition on all applicable tbody rows */
+.table-hover tbody tr {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.table-hover tbody tr:hover > td {
+  background-color: #edf9f0 !important;
+  color: #0b592f;
+}
+
+/* Selected row highlight */
+.selected-row > td {
+  background-color: #e6f4ea !important;
+  color: #0b592f !important;
+}
+
+.selected-row > td:first-child {
+  border-left: 4px solid var(--primary, #0f763f) !important;
+}
+
+/* Fixed layout with word-wrap */
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-fixed td,
+.table-fixed th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  vertical-align: top;
+}
+
+.text-wrap-custom {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
 /* =========================================================
    TEXT HOVER
 ========================================================= */
@@ -333,13 +414,23 @@ const DispositionModule = () => {
 }
 
 /* =========================================================
-   PHARMACY HOVER
+   PHARMACY LIST — SignatoryModule hover style
 ========================================================= */
 
-.pharmacy-item:hover {
-  background-color: #b5e4d3;
-  color: #000;
+.pharmacy-item {
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.pharmacy-item:hover {
+  background-color: #edf9f0 !important;
+  color: #0b592f !important;
+}
+
+.pharmacy-item.selected-pharmacy-item {
+  background-color: #e6f4ea !important;
+  color: #0b592f !important;
+  border-left: 4px solid var(--primary, #0f763f) !important;
 }
 
 /* =========================================================
@@ -485,51 +576,49 @@ const DispositionModule = () => {
                 }}
               >
                 {/* ================= PATIENT HEADER ================= */}
-{/* ================= PATIENT HEADER ================= */}
-{/* This is the HEADER section (Patient profile summary at top) */}
-<div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
+                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
 
-  {/* Avatar */}
-  <div
-    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
-    style={{
-      width: "90px",
-      height: "90px",
-      border: "2px solid var(--primary, #0f763f)",
-    }}
-  >
-    <i
-      className="isax isax-user fs-1"
-      style={{ color: "var(--primary, #0f763f)" }}
-    />
-  </div>
+                  {/* Avatar */}
+                  <div
+                    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
+                    style={{
+                      width: "90px",
+                      height: "90px",
+                      border: "2px solid var(--primary, #0f763f)",
+                    }}
+                  >
+                    <i
+                      className="isax isax-user fs-1"
+                      style={{ color: "var(--primary, #0f763f)" }}
+                    />
+                  </div>
 
-  {/* Patient Info */}
-  <div className="flex-grow-1">
+                  {/* Patient Info */}
+                  <div className="flex-grow-1">
 
-    {/* ID */}
-    <div className="d-flex justify-content-center justify-content-md-start mb-2">
-      <span className="badge bg-light text-secondary border px-2 py-1">
-        ID: {mockPatientProfile.hospitalNumber}
-      </span>
-    </div>
+                    {/* ID */}
+                    <div className="d-flex justify-content-center justify-content-md-start mb-2">
+                      <span className="badge bg-light text-secondary border px-2 py-1">
+                        ID: {mockPatientProfile.hospitalNumber}
+                      </span>
+                    </div>
 
-    {/* Name */}
-    <h3 className="fw-bold mb-2 text-dark discharge-mobile-name">
-      {mockPatientProfile.lastName}, {mockPatientProfile.firstName}{" "}
-      {mockPatientProfile.middleName}
-    </h3>
+                    {/* Name */}
+                    <h3 className="fw-bold mb-2 text-dark discharge-mobile-name">
+                      {mockPatientProfile.lastName}, {mockPatientProfile.firstName}{" "}
+                      {mockPatientProfile.middleName}
+                    </h3>
 
-    {/* Address */}
-    <div className="d-flex justify-content-center justify-content-md-start align-items-start text-muted small gap-2">
-      <i className="isax isax-location text-danger mt-1" />
-      <span style={{ maxWidth: "500px" }}>
-        {mockPatientProfile.address}
-      </span>
-    </div>
+                    {/* Address */}
+                    <div className="d-flex justify-content-center justify-content-md-start align-items-start text-muted small gap-2">
+                      <i className="isax isax-location text-danger mt-1" />
+                      <span style={{ maxWidth: "500px" }}>
+                        {mockPatientProfile.address}
+                      </span>
+                    </div>
 
-  </div>
-</div>
+                  </div>
+                </div>
 
                 <div className="d-flex flex-column flex-md-row flex-wrap justify-content-center justify-content-md-between align-items-center mb-3 gap-2 text-center text-md-start">
                   
@@ -540,25 +629,25 @@ const DispositionModule = () => {
                     Discharge Instructions
                   </h5>
 
-                 <div
-  className={`instruction-action-buttons gap-2 ${
-    instructionData.length === 0 ? "hide-mobile-empty" : ""
-  }`}
->
+                  <div
+                    className={`instruction-action-buttons gap-2 ${
+                      instructionData.length === 0 ? "hide-mobile-empty" : ""
+                    }`}
+                  >
                     <button
-  type="button"
-  onClick={handleOpenAddInstruction}
-  className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white instruction-action-btn"
-  style={{
-    borderRadius: "4px",
-    cursor: "pointer",
-    backgroundColor: "#0f763f",
-    border: "1px solid #0f763f",
-  }}
->
-  <i className="isax isax-add"></i>
-  <span>Add Instr</span>
-</button>
+                      type="button"
+                      onClick={handleOpenAddInstruction}
+                      className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white instruction-action-btn"
+                      style={{
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        backgroundColor: "#0f763f",
+                        border: "1px solid #0f763f",
+                      }}
+                    >
+                      <i className="isax isax-add"></i>
+                      <span>Add Instr</span>
+                    </button>
 
                     <button
                       type="button"
@@ -582,48 +671,66 @@ const DispositionModule = () => {
 
                 <div className="border rounded bg-white instruction-main-panel overflow-hidden overflow-y-auto">
                   {!viewedInstruction ? (
-  <div className="text-center text-muted py-5 px-3 d-flex flex-column align-items-center justify-content-center h-100">
 
-    {/* DESKTOP ICON */}
-    <i
-      className="isax isax-folder-open mb-3 opacity-50 d-none d-lg-block"
-      style={{ fontSize: "3rem" }}
-    ></i>
+                    <div
+                      className="d-flex flex-column align-items-center justify-content-center text-center px-3"
+                      style={{
+                        minHeight: "420px",
+                        width: "100%",
+                        gap: "0",
+                      }}
+                    >
+                      {/* DESKTOP ICON — shown only on lg+ */}
+                      <i
+                        className="isax isax-folder-open opacity-50 d-none d-lg-block"
+                        style={{ fontSize: "3rem", marginBottom: "12px" }}
+                      ></i>
 
-    {/* MOBILE ADD BUTTON */}
-    <div
-      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
-      onClick={handleOpenAddInstruction}
-      style={{
-        width: "64px",
-        height: "64px",
-        border: "2px solid var(--primary, #0f763f)",
-        backgroundColor: "#fff",
-        cursor: "pointer",
-      }}
-    >
-      <i
-        className="isax isax-add text-primary"
-        style={{ fontSize: "2rem" }}
-      />
-    </div>
+                      {/* ADD BUTTON — shown on mobile only, sits inline with the text below */}
+                      <div
+                        className="rounded-circle d-flex d-lg-none align-items-center justify-content-center shadow-sm"
+                        onClick={handleOpenAddInstruction}
+                        style={{
+                          width: "72px",
+                          height: "72px",
+                          border: "2px solid var(--primary, #0f763f)",
+                          backgroundColor: "#fff",
+                          cursor: "pointer",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <i
+                          className="isax isax-add"
+                          style={{
+                            fontSize: "2.2rem",
+                            color: "var(--primary, #0f763f)",
+                          }}
+                        />
+                      </div>
 
-    {/* MOBILE LABEL */}
-    <span
-      className="mt-2 fw-semibold text-muted d-lg-none"
-      style={{ fontSize: "14px" }}
-    >
-      Add New
-    </span>
+                      {/* "Add New" label — mobile only */}
+                      <span
+                        className="d-lg-none fw-semibold text-muted"
+                        style={{ fontSize: "14px", marginTop: "12px" }}
+                      >
+                        Add New
+                      </span>
 
-    {/* EMPTY TEXT */}
-    <h5 className="fw-bold mb-2 text-dark">
-      No discharge instructions recorded.
-    </h5>
+                      {/* EMPTY TEXT — always shown, tight below the button */}
+                      <p
+                        className="fw-bold text-dark mb-0"
+                        style={{
+                          marginTop: "14px",
+                          fontSize: "15px",
+                          lineHeight: "1.4",
+                          maxWidth: "240px",
+                        }}
+                      >
+                        No discharge instructions recorded.
+                      </p>
+                    </div>
 
-    
-  </div>
-) : (
+                  ) : (
                     <div className="p-3 p-md-4" style={{ fontSize: "0.95rem", lineHeight: "1.9" }}>
                       <div className="d-flex mb-3 flex-column flex-sm-row">
                         <div className="inst-label me-sm-4">Diet</div>
@@ -685,8 +792,13 @@ const DispositionModule = () => {
                             </div>
 
                             <div className="table-responsive">
+                              {/*
+                                ── CHANGE: added table-hover + table-fixed classes.
+                                   Rows get cursor:pointer, smooth transition, green hover,
+                                   and selected-row highlight — identical to SignatoryModule.
+                              */}
                               <table
-                                className="table table-sm mb-0"
+                                className="table table-hover table-sm table-fixed mb-0"
                                 style={{ fontSize: "0.9rem", minWidth: "600px" }}
                               >
                                 <thead>
@@ -729,8 +841,23 @@ const DispositionModule = () => {
 
                                 <tbody>
                                   {filled.map((drug, idx) => (
-                                    <tr key={idx}>
-                                      <td className="border py-1 px-2 text-wrap">{drug.name}</td>
+                                    /*
+                                      ── CHANGE: onClick toggles selectedMedicineIdx,
+                                         className applies "selected-row" when this row
+                                         is selected — same conditional pattern as SignatoryModule.
+                                    */
+                                    <tr
+                                      key={idx}
+                                      onClick={() =>
+                                        setSelectedMedicineIdx((prev) =>
+                                          prev === idx ? null : idx
+                                        )
+                                      }
+                                      className={
+                                        selectedMedicineIdx === idx ? "selected-row" : ""
+                                      }
+                                    >
+                                      <td className="border py-1 px-2 text-wrap-custom">{drug.name}</td>
                                       <td className="border py-1 px-2 text-center">
                                         {drug.morning || ""}
                                       </td>
@@ -1211,8 +1338,14 @@ const DispositionModule = () => {
                       </div>
 
                       <div className="table-responsive flex-grow-1">
+                        {/*
+                          ── CHANGE: added table-hover so modal drug rows also get
+                             the SignatoryModule green hover transition. The existing
+                             .drug-row CSS (odd/even + hover) is preserved and works
+                             alongside table-hover without conflict.
+                        */}
                         <table
-                          className="table modal-table bg-white mb-0 w-100 border-0"
+                          className="table table-hover modal-table bg-white mb-0 w-100 border-0"
                           style={{ tableLayout: "auto", minWidth: "880px" }}
                         >
                           <thead
@@ -1275,7 +1408,11 @@ const DispositionModule = () => {
 
                           <tbody>
                             {instForm.drugs.map((drug, idx) => (
-                              <tr key={idx} style={{ height: "32px" }}>
+                              <tr
+                                key={idx}
+                                className="drug-row"
+                                style={{ height: "32px" }}
+                              >
                                 <td className="p-0 border align-middle min-w-drug">
                                   <div className="d-flex h-100 align-items-stretch">
                                     <input
@@ -1461,6 +1598,12 @@ const DispositionModule = () => {
                 {filteredPharmacyDrugs.length > 0 ? (
                   <ul className="list-group list-group-flush">
                     {filteredPharmacyDrugs.map((drug, index) => (
+                      /*
+                        ── CHANGE: added "pharmacy-item" class (already existed) — its
+                           CSS now matches SignatoryModule hover style: green background
+                           + smooth transition on hover, green left-border on active/focus.
+                           selectPharmacyDrug() is untouched.
+                      */
                       <li
                         key={index}
                         className="list-group-item list-group-item-action border-bottom-0 py-2 px-3 pharmacy-item text-dark"
