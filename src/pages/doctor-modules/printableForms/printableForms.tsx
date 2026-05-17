@@ -1,150 +1,588 @@
-import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import PatientHistoryAndPhysicalExamination from "./patientHistoryForms";
+import PatientHistoryFormPage2 from "./patientHistoryFormsPage2";
+import DischargeSummary from "./dischargeSummary";
 
-// printable forms component
+type PrintableFormKey =
+  | "patient-history"
+  | "discharge-instruction"
+  | "discharge-summary"
+  | "medical-abstract"
+  | "claim-form-4"
+  | "archive-file";
+
+type PrintableForm = {
+  key: PrintableFormKey;
+  label: string;
+  icon: string;
+  defaultHeight: number;
+};
+
+const printableForms: PrintableForm[] = [
+  {
+    key: "patient-history",
+    label: "Patient History",
+    icon: "isax isax-document-text",
+    defaultHeight: 2320,
+  },
+  {
+    key: "discharge-instruction",
+    label: "Discharge Instruction",
+    icon: "isax isax-document-forward",
+    defaultHeight: 620,
+  },
+  {
+    key: "discharge-summary",
+    label: "Discharge Summary",
+    icon: "isax isax-clipboard-text",
+    defaultHeight: 1180,
+  },
+  {
+    key: "medical-abstract",
+    label: "Medical Abstract",
+    icon: "isax isax-document-copy",
+    defaultHeight: 620,
+  },
+  {
+    key: "claim-form-4",
+    label: "Claim Form 4",
+    icon: "isax isax-document-normal",
+    defaultHeight: 620,
+  },
+  {
+    key: "archive-file",
+    label: "Archive File",
+    icon: "isax isax-archive-book",
+    defaultHeight: 620,
+  },
+];
+
+const clampZoom = (value: number) => Math.min(160, Math.max(50, value));
+
+const BlankPreview = ({ title }: { title: string }) => (
+  <div className="doctor-print-blank-preview">
+    <div>
+      <i className="isax isax-document-text" />
+      <h6>{title}</h6>
+      <p>Preview is not available yet.</p>
+    </div>
+  </div>
+);
+
 const PrintableForms = () => {
-  const [activeForm, setActiveForm] = useState("Patient History");
+  const previewContentRef = useRef<HTMLDivElement | null>(null);
+  const [activeFormKey, setActiveFormKey] =
+    useState<PrintableFormKey>("patient-history");
   const [zoom, setZoom] = useState(100);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  
-  // hook to navigate back to the previous page
-  const navigate = useNavigate();
+  const [previewHeight, setPreviewHeight] = useState(
+    printableForms[0].defaultHeight
+  );
 
-  const forms = [
-    "Please wait . . .",
-    "Patient History",
-    "Discharge Instruction",
-    "Discharge Summary",
-    "Medical Abstract",
-    "Claim Form 4",
-    "Archive File"
-  ];
+  const [mockPatientProfile] = useState({
+    hospitalNumber: "000000000777288",
+    lastName: "DO",
+    firstName: "REA",
+    middleName: "MON",
+    address: "111 Legazpi City, Albay 4500",
+  });
 
-  // handle print current iframe page
-  const handlePrintCurrent = () => {
-    if (iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.print();
+  const activeForm =
+    printableForms.find((form) => form.key === activeFormKey) ||
+    printableForms[0];
+
+  const previewContent = useMemo<ReactNode>(() => {
+    switch (activeFormKey) {
+      case "patient-history":
+        return (
+          <>
+            <PatientHistoryAndPhysicalExamination embedded />
+            <PatientHistoryFormPage2 embedded />
+          </>
+        );
+      case "discharge-summary":
+        return <DischargeSummary embedded />;
+      case "discharge-instruction":
+      case "medical-abstract":
+      case "claim-form-4":
+      case "archive-file":
+      default:
+        return <BlankPreview title={activeForm.label} />;
     }
+  }, [activeForm.label, activeFormKey]);
+
+  useEffect(() => {
+    setPreviewHeight(activeForm.defaultHeight);
+
+    const frame = window.requestAnimationFrame(() => {
+      const measuredHeight = Math.max(
+        previewContentRef.current?.scrollHeight || 0,
+        activeForm.defaultHeight
+      );
+
+      setPreviewHeight(measuredHeight);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeForm.defaultHeight, activeFormKey]);
+
+  const handleZoomChange = (value: string) => {
+    const numericValue = Number(value);
+
+    if (Number.isNaN(numericValue)) return;
+
+    setZoom(clampZoom(numericValue));
   };
 
-  // handle print all
-  const handlePrintAll = () => {
+  const handlePrintCurrent = () => {
     window.print();
   };
 
   return (
-    <div className="d-flex vh-100 w-100 bg-secondary bg-opacity-10">
-      {/* dark sidebar */}
-      <div 
-        className="text-white d-flex flex-column flex-shrink-0" 
-        style={{ width: "230px", backgroundColor: "#000" }}
+    <>
+      <style>{`
+        .doctor-print-card {
+          border-top: 4px solid var(--primary, #0f763f);
+        }
+
+        .doctor-print-avatar {
+          width: 90px;
+          height: 90px;
+          border: 2px solid var(--primary, #0f763f);
+          color: var(--primary, #0f763f);
+        }
+
+        .doctor-print-toolbar {
+          background: #fff;
+          border-bottom: 1px solid #e9ecef;
+        }
+
+        .doctor-print-toolbar-main {
+          display: grid;
+          grid-template-columns: minmax(190px, auto) minmax(0, 1fr) auto;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .doctor-print-toolbar-controls {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .doctor-print-zoom-input {
+          width: 78px;
+          min-height: 38px;
+          border: 1px solid #dee2e6;
+          border-radius: 5px;
+          text-align: center;
+          font-weight: 800;
+          color: #172033;
+        }
+
+        .doctor-print-zoom-input:focus {
+          border-color: var(--primary, #0f763f);
+          box-shadow: 0 0 0 0.15rem rgba(15, 118, 63, 0.16);
+          outline: none;
+        }
+
+        .doctor-print-action-btn {
+          min-height: 38px;
+          border: 1px solid #dee2e6;
+          border-radius: 5px;
+          background: #fff;
+          color: #172033;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 8px 14px;
+          font-weight: 800;
+          transition: all 0.2s ease;
+        }
+
+        .doctor-print-action-btn:hover,
+        .doctor-print-action-btn:focus {
+          border-color: var(--primary, #0f763f);
+          color: var(--primary, #0f763f);
+        }
+
+        .doctor-print-action-btn.primary {
+          background: var(--primary, #0f763f);
+          border-color: var(--primary, #0f763f);
+          color: #fff;
+        }
+
+        .doctor-print-action-btn.primary:hover,
+        .doctor-print-action-btn.primary:focus,
+        .doctor-print-action-btn.primary:active {
+          background: var(--primary, #0f763f);
+          border-color: var(--primary, #0f763f);
+          color: #fff;
+        }
+
+        .doctor-print-tabs {
+          display: flex;
+          gap: 8px;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          min-width: 0;
+        }
+
+        .doctor-print-tabs::-webkit-scrollbar {
+          display: none;
+        }
+
+        .doctor-print-tab {
+          min-height: 38px;
+          border: 1px solid #e9ecef;
+          border-radius: 5px;
+          background: #fff;
+          color: #495057;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 8px 12px;
+          font-weight: 800;
+          white-space: nowrap;
+          text-align: center;
+          transition: all 0.2s ease;
+        }
+
+        .doctor-print-tab:hover {
+          border-color: var(--primary, #0f763f);
+          color: var(--primary, #0f763f);
+        }
+
+        .doctor-print-tab.active {
+          background: var(--primary, #0f763f);
+          border-color: var(--primary, #0f763f);
+          color: #fff;
+          box-shadow: 0 8px 20px rgba(15, 118, 63, 0.18);
+        }
+
+        .doctor-print-tab i {
+          font-size: 1rem;
+        }
+
+        .doctor-print-preview-section {
+          min-height: 620px;
+          background: #eef2f4;
+        }
+
+        .doctor-print-preview-scroll {
+          min-height: 620px;
+          max-height: calc(100dvh - 320px);
+          overflow: auto;
+          padding: 24px;
+        }
+
+        .doctor-print-preview-stage {
+          width: 860px;
+          margin: 0 auto;
+          transform-origin: top center;
+          transition: width 0.18s ease, height 0.18s ease;
+        }
+
+        .doctor-print-preview-page {
+          width: 860px;
+          transform-origin: top left;
+          transition: transform 0.18s ease;
+        }
+
+        .doctor-print-preview-form-render > div {
+          margin-left: auto !important;
+          margin-right: auto !important;
+        }
+
+        .doctor-print-blank-preview {
+          width: 794px;
+          min-height: 520px;
+          margin: 0 auto;
+          background: #fff;
+          box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          color: #6c757d;
+        }
+
+        .doctor-print-blank-preview i {
+          color: var(--primary, #0f763f);
+          display: block;
+          font-size: 2.8rem;
+          margin-bottom: 10px;
+        }
+
+        .doctor-print-blank-preview h6 {
+          color: #172033;
+          font-weight: 900;
+          margin-bottom: 4px;
+        }
+
+        .doctor-print-blank-preview p {
+          font-size: 0.88rem;
+          font-weight: 700;
+          margin: 0;
+        }
+
+        @media (max-width: 991.98px) {
+          .doctor-print-toolbar-main {
+            grid-template-columns: 1fr;
+            align-items: stretch;
+          }
+
+          .doctor-print-toolbar-controls {
+            justify-content: flex-start;
+          }
+
+          .doctor-print-preview-scroll {
+            max-height: calc(100dvh - 360px);
+            padding: 18px;
+          }
+        }
+
+        @media (max-width: 575.98px) {
+          .content.doctor-content {
+            margin-top: -1rem !important;
+          }
+
+          .container-fluid {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+          }
+
+          .doctor-print-avatar {
+            width: 74px !important;
+            height: 74px !important;
+          }
+
+          .doctor-print-patient-name {
+            font-size: 1.25rem !important;
+          }
+
+          .doctor-print-toolbar {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+          }
+
+          .doctor-print-action-btn,
+          .doctor-print-zoom-input {
+            width: 100%;
+          }
+
+          .doctor-print-toolbar-controls {
+            display: grid;
+            grid-template-columns: 1fr;
+          }
+
+          .doctor-print-tabs {
+            gap: 6px;
+          }
+
+          .doctor-print-tab {
+            min-width: 150px;
+          }
+
+          .doctor-print-preview-section {
+            min-height: 520px;
+          }
+
+          .doctor-print-preview-scroll {
+            min-height: 520px;
+            max-height: calc(100dvh - 420px);
+            padding: 12px;
+          }
+        }
+
+        @media print {
+          body * {
+            visibility: hidden !important;
+          }
+
+          .doctor-print-preview-print-area,
+          .doctor-print-preview-print-area * {
+            visibility: visible !important;
+          }
+
+          .doctor-print-preview-print-area {
+            position: absolute !important;
+            inset: 0 auto auto 0 !important;
+            width: 100% !important;
+            background: #fff !important;
+          }
+
+          .doctor-print-preview-scroll {
+            overflow: visible !important;
+            max-height: none !important;
+            min-height: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
+          }
+
+          .doctor-print-preview-stage,
+          .doctor-print-preview-page {
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            transform: none !important;
+          }
+
+          .doctor-print-preview-form-render > div {
+            break-after: page;
+            page-break-after: always;
+          }
+
+          .doctor-print-preview-form-render > div:last-child {
+            break-after: auto;
+            page-break-after: auto;
+          }
+
+          .doctor-print-blank-preview {
+            box-shadow: none !important;
+          }
+        }
+      `}</style>
+
+      <div
+        className="content doctor-content bg-light mt-n4"
+        style={{ minHeight: "100vh" }}
       >
-        <div className="p-4 mb-2 text-end">
-          <h4 className="mb-0 text-white" style={{ fontStyle: "italic", fontWeight: "300" }}>
-            <span className="fw-bold">i</span>HOMIS
-          </h4>
-          <small className="text-muted d-block mt-n1" style={{ fontSize: "0.75rem" }}>
-            Doctor's Module
-          </small>
-        </div>
+        <div className="container-fluid px-3 px-lg-5 pt-0">
+          <div className="doctor-dashboard-layout">
+            <DoctorSidebar />
 
-        <div className="flex-grow-1 mt-2">
-          <ul className="nav flex-column text-end">
-            {forms.map((form) => (
-              <li key={form} className="nav-item">
-                <button
-                  className={`btn btn-link text-white text-decoration-none w-100 text-end pe-4 py-2 rounded-0 ${
-                    activeForm === form ? "bg-secondary bg-opacity-50 border-start border-4 border-info" : ""
-                  }`}
-                  style={{ fontSize: "0.85rem", opacity: activeForm === form ? 1 : 0.7 }}
-                  onClick={() => setActiveForm(form)}
-                >
-                  {form}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+            <div className="doctor-dashboard-main mt-4 mt-lg-0">
+              <div className="card border-0 shadow-sm rounded-3 overflow-hidden mb-4 doctor-print-card">
+                <div className="bg-white px-3 px-md-4 pt-4">
+                  <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 pb-4 border-bottom text-center text-md-start">
+                    <div className="doctor-print-avatar rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0">
+                      <i
+                        className="isax isax-user fs-1"
+                        style={{ color: "var(--primary, #0f763f)" }}
+                      />
+                    </div>
 
-        <div className="p-4 d-flex flex-column align-items-center gap-4 mt-auto">
-          <button
-            className="btn btn-link text-white text-decoration-none d-flex flex-column align-items-center p-0"
-            onClick={handlePrintCurrent}
-            style={{ opacity: 0.8 }}
-          >
-            <i className="isax isax-printer fs-2 mb-2" />
-            <span style={{ fontSize: "0.75rem" }}>Print Current Page</span>
-          </button>
-          
-          <button
-            className="btn btn-link text-white text-decoration-none d-flex flex-column align-items-center p-0"
-            onClick={handlePrintAll}
-            style={{ opacity: 0.8 }}
-          >
-            <i className="isax isax-document-copy fs-2 mb-2" />
-            <span style={{ fontSize: "0.75rem" }}>Print All</span>
-          </button>
+                    <div className="w-100">
+                      <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
+                        ID: {mockPatientProfile.hospitalNumber}
+                      </div>
 
-          <div className="w-100 border-top border-secondary my-2 opacity-50"></div>
-          
-        
+                      <h3 className="doctor-print-patient-name fw-bold mb-1 text-dark fs-3 fs-md-2">
+                        {mockPatientProfile.lastName},{" "}
+                        {mockPatientProfile.firstName}{" "}
+                        {mockPatientProfile.middleName}
+                      </h3>
+
+                      <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2 flex-wrap">
+                        <i className="isax isax-location text-danger" />
+                        <span>{mockPatientProfile.address}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="doctor-print-toolbar px-3 px-md-4 py-3">
+                  <div className="doctor-print-toolbar-main">
+                    <div className="min-width-0">
+                      <h5 className="fw-bold text-dark mb-1 text-uppercase">
+                        Forms Print Preview
+                      </h5>
+                      <p className="text-muted small mb-0">
+                        Preview and print the selected patient form.
+                      </p>
+                    </div>
+
+                    <div className="doctor-print-tabs" role="tablist">
+                      {printableForms.map((form) => (
+                        <button
+                          type="button"
+                          key={form.key}
+                          className={`doctor-print-tab ${
+                            activeFormKey === form.key ? "active" : ""
+                          }`}
+                          role="tab"
+                          aria-selected={activeFormKey === form.key}
+                          onClick={() => setActiveFormKey(form.key)}
+                        >
+                          <i className={form.icon} />
+                          <span>{form.label}</span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="doctor-print-toolbar-controls">
+                      <div className="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2">
+                        <input
+                          type="number"
+                          className="doctor-print-zoom-input"
+                          value={zoom}
+                          min={50}
+                          max={160}
+                          step={10}
+                          aria-label="Preview zoom percentage"
+                          onChange={(event) => handleZoomChange(event.target.value)}
+                        />
+                        <span className="small text-muted fw-bold align-self-center text-nowrap">
+                          Zoom
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="doctor-print-action-btn"
+                        onClick={() => setZoom(100)}
+                      >
+                        <i className="isax isax-refresh" />
+                        Reset
+                      </button>
+
+                      <button
+                        type="button"
+                        className="doctor-print-action-btn primary"
+                        onClick={handlePrintCurrent}
+                      >
+                        <i className="isax isax-printer" />
+                        Print
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="doctor-print-preview-section doctor-print-preview-print-area">
+                  <div className="doctor-print-preview-scroll">
+                    <div
+                      className="doctor-print-preview-stage"
+                      style={{
+                        width: `${860 * (zoom / 100)}px`,
+                        height: `${previewHeight * (zoom / 100)}px`,
+                      }}
+                    >
+                      <div
+                        className="doctor-print-preview-page"
+                        style={{ transform: `scale(${zoom / 100})` }}
+                      >
+                        <div
+                          ref={previewContentRef}
+                          className="doctor-print-preview-form-render"
+                        >
+                          {previewContent}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* main preview area */}
-      <div className="flex-grow-1 d-flex flex-column bg-light" style={{ overflow: "hidden" }}>
-        
-        {/* toolbar */}
-        <div className="bg-white px-3 py-2 border-bottom d-flex align-items-center shadow-sm">
-          <div className="d-flex align-items-center gap-2">
-            <input
-              type="number"
-              className="form-control form-control-sm text-center"
-              style={{ width: "70px" }}
-              value={zoom}
-              onChange={(e) => setZoom(Number(e.target.value))}
-              min="10"
-              max="200"
-            />
-            <span className="small text-muted" style={{ fontSize: "0.8rem" }}>Page Zoom</span>
-              {/* exit button to go back to last page */}\
-              
-          <button
-            className="btn btn-link text-danger text-decoration-none d-flex flex-column align-items-left p-0"
-            onClick={() => navigate(-1)}
-            style={{ opacity: 0.9 }}
-          >
-            <i className="isax isax-arrow-left-2 fs-2 mb-2" />
-            <span style={{ fontSize: "0.75rem" }}>Exit</span>
-          </button>
-          </div>
-          
-        </div>
-
-        {/* document preview container */}
-        <div className="flex-grow-1 p-4 overflow-auto d-flex justify-content-center">
-          <div
-            className="bg-white shadow-sm transition-transform"
-            style={{
-              width: "21cm",
-              minHeight: "29.7cm",
-              transform: `scale(${zoom / 100})`,
-              transformOrigin: "top center",
-              transition: "transform 0.2s ease",
-            }}
-          >
-            {/* iframe loading the specific html printable */}
-            <iframe
-              ref={iframeRef}
-              src="/src/pages/doctor-modules/printableForms/testprint.html"
-              title="Print Preview"
-              className="w-100 h-100 border-0"
-              style={{ minHeight: "29.7cm" }}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

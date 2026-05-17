@@ -34,6 +34,7 @@ const NursePatientLog = lazy(() => import("@/pages/nurse-modules/patientLog/pati
 const NurseUtility = lazy(() => import("@/pages/nurse-modules/utility/utility"));
 const NurseRequestTemplate = lazy(() => import("@/pages/nurse-modules/utility/requestTemplate"));
 const NurseRequisition = lazy(() => import("@/pages/nurse-modules/utility/requisition"));
+const NurseSupplyRequisition = lazy(() => import("@/pages/nurse-modules/utility/supplyRequisition"));
 const NurseReport = lazy(() => import("@/pages/nurse-modules/report/report"));
 
 //Auth Components
@@ -413,6 +414,17 @@ export const customLayout = [
     element: (
       <Suspense fallback={suspenseFallback}>
         <NurseRequisition />
+      </Suspense>
+    ),
+    route: Route,
+    meta_title: "BRHMC",
+  },
+  {
+    id: "nurse-utility-supply-requisition",
+    path: route.nurseSupplyRequisition,
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <NurseSupplyRequisition />
       </Suspense>
     ),
     route: Route,

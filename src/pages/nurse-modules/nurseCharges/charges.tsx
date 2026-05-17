@@ -769,7 +769,7 @@ const RegDetails = () => {
                   </div>
                 </div>
 
-                <SectionHeader title="Patient Charges" />
+           
 
                 <div className="charges-card-body">
                   <div className="charges-table-area">

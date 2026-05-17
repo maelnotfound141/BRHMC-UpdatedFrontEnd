@@ -32,6 +32,7 @@ doctorReports: "/reports",
   nurseUtility: "/nurse-utility",
   nurseRequestTemplate: "/nurse-utility/request-template",
   nurseRequisition: "/nurse-utility/requisition",
+  nurseSupplyRequisition: "/nurse-utility/supply-requisition",
   nurseReport: "/nurse-report",
 
   // Other Pages routes

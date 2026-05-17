@@ -20,13 +20,13 @@ const utilityMenuItems = [
 const requisitionOptions = [
   {
     title: "Request Template",
-    desc: "Create and manage ward request templates",
+    desc: "Reference library of commonly used item",
     icon: "isax isax-document-text",
     path: all_routes.nurseRequestTemplate,
   },
   {
     title: "Requisition",
-    desc: "Prepare and submit ward requisitions",
+    desc: "Requisition Utility",
     icon: "isax isax-receipt-item",
     path: all_routes.nurseRequisition,
   },

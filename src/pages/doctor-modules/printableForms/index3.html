@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BRHMC – Watcher ID / Discharge Clearance / Labels</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #e8e8e8;
+    padding: 16px;
+  }
+
+  .page {
+    width: 794px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+  }
+
+  .sec1 {
+    display: flex;
+    gap: 20px; 
+    margin-bottom: 24px; 
+  }
+
+  .watcher-photo {
+    flex: 1;
+    min-height: 320px;
+    border: 1.5px solid #000; 
+  }
+
+  /* Kanan — panel ng impormasyon sa ID */
+  .watcher-info {
+    width: 250px;
+    border: 1.5px solid #000; 
+    padding: 10px 14px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hosp-mini {
+    font-size: 8.5px;
+    text-align: center;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    color: #000;
+  }
+
+  .barcode-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .hosp-num-bc {
+    font-weight: bold;
+    font-size: 11px;
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .watcher-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 22px;
+    letter-spacing: 0.5px;
+  }
+
+  .watcher-id-num {
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .watcher-date {
+    margin-top: 28px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .watcher-date-label {
+    font-size: 11px;
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  .sec2 {
+    display: flex;
+    border: 1.5px solid #000;
+    margin-bottom: 24px;
+  }
+
+  .dc-left {
+    width: 280px;
+    border-right: 1.5px solid #000;
+    padding: 10px 12px 12px;
+  }
+
+  .dc-hosp-header {
+    font-size: 8.5px;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .dc-title {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .dc-hospnum {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  .dc-name {
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 1.8px solid #000;
+    text-align: center;
+    padding-bottom: 4px;
+    margin: 0 auto 12px auto; 
+    display: block; 
+    width: max-content; 
+    min-width: 200px;
+  }
+
+  .dc-info-row {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .dc-info-row span { font-weight: bold; }
+
+  /* bug sa lefft panel */
+  .dc-right {
+    flex: 1;
+    padding: 14px 18px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .dc-field {
+    font-size: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+  }
+
+  .dc-field-label {
+    white-space: nowrap;
+    min-width: 90px;
+  }
+
+  .dc-field-line {
+    flex: 1;
+    border-bottom: 1px solid #000;
+    height: 16px;
+  }
+
+  .dc-note {
+    font-size: 10px;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  .sec3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1.5px solid #000;
+  }
+
+  .label-card {
+    padding: 10px 14px 12px;
+    border-right: 1.5px solid #000;
+    border-bottom: 1.5px solid #000;
+  }
+
+  .label-card:nth-child(2n) { border-right: none; }
+  .label-card:nth-child(3),
+  .label-card:nth-child(4) { border-bottom: none; }
+
+  .lc-name {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .lc-hospnum {
+    font-size: 11.5px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .lc-fields {
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+  }
+
+  .lc-field-group {
+    display: flex;
+    flex-direction: column;
+    margin-right: 18px;
+  }
+
+  .lc-field-group:last-child { margin-right: 0; }
+
+  .lc-flabel {
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
+
+  .lc-fval {
+    font-size: 13px;
+    font-weight: bold;
+    border-bottom: 1.5px solid #000;
+    min-width: 55px;
+    padding-bottom: 1px;
+  }
+
+  .lc-fval-plain {
+    font-size: 14px;
+    font-weight: bold;
+    min-width: 30px;
+  }
+
+  @media print {
+
+    @page {
+      margin: 10mm; 
+    }
+
+    body {
+      background: none; 
+      padding: 0;
+    }
+
+    .page {
+      width: 100%; 
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    /*exct color pag prnt */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* gaps*/
+    .sec1, .sec2, .sec3 {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- sec 1  WATCHER'S ID -->
+  <div class="sec1">
+
+    <div class="watcher-photo"></div>
+
+  
+    <div class="watcher-info">
+
+      <!-- small headers nung ospital -->
+      <div class="hosp-mini">
+        Department of Health<br>
+        <strong>BICOL REGIONAL TRAINING AND TEACHING HOSPITAL</strong><br>
+        Tel No : 480-0016 | 480-1080 | 480-1060
+      </div>
+
+      <!-- Barcode -->
+      <div class="barcode-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="260" height="46" viewBox="0 0 260 46">
+          <rect x="13"  y="0" width="2"  height="46" fill="#000"/>
+          <rect x="17"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="20"  y="0" width="3"  height="46" fill="#000"/>
+          <rect x="25"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="28"  y="0" width="2"  height="46" fill="#000"/>
+          <rect x="32"  y="0" width="3"  height="46" fill="#000"/>
+          <rect x="37"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="40"  y="0" width="2"  height="46" fill="#000"/>
+          <rect x="44"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="47"  y="0" width="3"  height="46" fill="#000"/>
+          <rect x="52"  y="0" width="2"  height="46" fill="#000"/>
+          <rect x="56"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="59"  y="0" width="3"  height="46" fill="#000"/>
+          <rect x="64"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="67"  y="0" width="2"  height="46" fill="#000"/>
+          <rect x="71"  y="0" width="3"  height="46" fill="#000"/>
+          <rect x="76"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="79"  y="0" width="2"  height="46" fill="#000"/>
+          <rect x="83"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="86"  y="0" width="3"  height="46" fill="#000"/>
+          <rect x="91"  y="0" width="2"  height="46" fill="#000"/>
+          <rect x="95"  y="0" width="1"  height="46" fill="#000"/>
+          <rect x="98"  y="0" width="3"  height="46" fill="#000"/>
+          <rect x="103" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="106" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="110" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="115" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="118" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="122" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="125" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="130" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="134" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="137" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="142" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="145" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="149" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="152" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="157" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="161" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="164" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="169" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="172" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="176" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="181" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="184" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="188" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="191" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="196" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="200" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="203" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="208" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="211" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="215" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="220" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="223" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="227" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="230" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="235" y="0" width="2"  height="46" fill="#000"/>
+          <rect x="239" y="0" width="1"  height="46" fill="#000"/>
+          <rect x="242" y="0" width="3"  height="46" fill="#000"/>
+          <rect x="247" y="0" width="1"  height="46" fill="#000"/>
+        </svg>
+        <div class="hosp-num-bc">000000000777288</div>
+      </div>
+
+      <div class="watcher-label">WATCHER'S ID</div>
+      <div class="watcher-id-num">260321-039</div>
+
+      <div class="watcher-date">Mar 21 2026 02:45 PM</div>
+      <div class="watcher-date-label">Date Generated</div>
+
+    </div>
+  </div><!-- /sec1 -->
+
+
+  <!-- sec 2 — DISCHARGE CLEARANCE -->
+  <div class="sec2">
+
+    <!-- left: header + info ng pasyente + barcode -->
+    <div class="dc-left">
+
+      <div class="dc-hosp-header">
+        Department of Health<br>
+        <strong>BICOL REGIONAL TRAINING AND TEACHING HOSPITAL</strong><br>
+        Tel No : 480-0016 | 480-1080 | 480-1060
+      </div>
+
+      <div class="dc-title" style="text-align: center;">DISCHARGE CLEARANCE</div>
+
+      <div class="dc-hospnum">000000000777288</div>
+      <div style="margin-bottom:12px;">
+        <span class="dc-name">DO, REA MON</span>
+      </div>
+
+      <div class="dc-info-row">Age: <span>26</span> &nbsp; Sex: <span>Male</span> &nbsp; C/S: &nbsp;<span>M</span></div>
+      <div class="dc-info-row">Date of Admission: &nbsp;<span>Mar 21, 2026 02:45 PM</span></div>
+
+      <!-- Barcode -->
+      <div style="margin-top:14px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="290" height="44" viewBox="0 0 290 44">
+          <rect x="0"   y="0" width="3"  height="44" fill="#000"/>
+          <rect x="5"   y="0" width="1"  height="44" fill="#000"/>
+          <rect x="8"   y="0" width="3"  height="44" fill="#000"/>
+          <rect x="13"  y="0" width="2"  height="44" fill="#000"/>
+          <rect x="17"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="20"  y="0" width="3"  height="44" fill="#000"/>
+          <rect x="25"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="28"  y="0" width="2"  height="44" fill="#000"/>
+          <rect x="32"  y="0" width="3"  height="44" fill="#000"/>
+          <rect x="37"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="40"  y="0" width="2"  height="44" fill="#000"/>
+          <rect x="44"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="47"  y="0" width="3"  height="44" fill="#000"/>
+          <rect x="52"  y="0" width="2"  height="44" fill="#000"/>
+          <rect x="56"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="59"  y="0" width="3"  height="44" fill="#000"/>
+          <rect x="64"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="67"  y="0" width="2"  height="44" fill="#000"/>
+          <rect x="71"  y="0" width="3"  height="44" fill="#000"/>
+          <rect x="76"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="79"  y="0" width="2"  height="44" fill="#000"/>
+          <rect x="83"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="86"  y="0" width="3"  height="44" fill="#000"/>
+          <rect x="91"  y="0" width="2"  height="44" fill="#000"/>
+          <rect x="95"  y="0" width="1"  height="44" fill="#000"/>
+          <rect x="98"  y="0" width="3"  height="44" fill="#000"/>
+          <rect x="103" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="106" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="110" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="115" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="118" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="122" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="125" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="130" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="134" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="137" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="142" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="145" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="149" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="152" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="157" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="161" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="164" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="169" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="172" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="176" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="181" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="184" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="188" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="191" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="196" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="200" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="203" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="208" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="211" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="215" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="220" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="223" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="227" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="230" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="235" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="239" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="242" y="0" width="3"  height="44" fill="#000"/>
+          <rect x="247" y="0" width="1"  height="44" fill="#000"/>
+          <rect x="250" y="0" width="2"  height="44" fill="#000"/>
+          <rect x="254" y="0" width="2"  height="44" fill="#000"/>
+        </svg>
+      </div>
+
+    </div><!-- /dc-left -->
+
+    <!--  right: mga para sa clearance left -->
+    <div class="dc-right">
+
+      <div>
+        <div class="dc-field">
+          <span class="dc-field-label">Nurse on Duty:</span>
+          <span class="dc-field-line"></span>
+        </div>
+        <div class="dc-field">
+          <span class="dc-field-label">Laboratory:</span>
+          <span class="dc-field-line"></span>
+        </div>
+        <div class="dc-field">
+          <span class="dc-field-label">Billing:</span>
+          <span class="dc-field-line"></span>
+        </div>
+        <div class="dc-field">
+          <span class="dc-field-label">Linen:</span>
+          <span class="dc-field-line"></span>
+        </div>
+        <div class="dc-field">
+          <span class="dc-field-label">Pharmacy:</span>
+          <span class="dc-field-line"></span>
+        </div>
+        <div class="dc-field">
+          <span class="dc-field-label">Cashier:</span>
+          <span class="dc-field-line"></span>
+        </div>
+        <div class="dc-field">
+          <span class="dc-field-label">Guard:</span>
+          <span class="dc-field-line"></span>
+        </div>
+      </div>
+
+      <div class="dc-note">NOTE: Signature over Printed Name or Trodat is required.</div>
+
+    </div><!-- /dc-right -->
+
+  </div><!-- /sec2 -->
+
+
+  <!-- section 3 — mga label kang patiens (2 x 2) -->
+  <div class="sec3">
+
+    <!-- Card 1 (itaas sa left) -->
+    <div class="label-card">
+      <div class="lc-name">DO, REA MON</div>
+      <div class="lc-hospnum">000000000777288</div>
+      <div class="lc-fields">
+        <div class="lc-field-group">
+          <div class="lc-flabel">Room</div>
+          <div class="lc-fval">&nbsp;</div>
+        </div>
+        <div class="lc-field-group">
+          <div class="lc-flabel">Bed</div>
+          <div class="lc-fval">&nbsp;</div>
+        </div>
+        <div style="flex:1;"></div>
+        <div class="lc-field-group" style="margin-right:12px;">
+          <div class="lc-flabel">Age</div>
+          <div class="lc-fval-plain">26</div>
+        </div>
+        <div class="lc-field-group">
+          <div class="lc-flabel">Sex</div>
+          <div class="lc-fval-plain">Male</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 (itaas sa right) -->
+    <div class="label-card">
+      <div class="lc-name">DO, REA MON</div>
+      <div class="lc-hospnum">000000000777288</div>
+      <div class="lc-fields">
+        <div class="lc-field-group">
+          <div class="lc-flabel">Room</div>
+          <div class="lc-fval">&nbsp;</div>
+        </div>
+        <div class="lc-field-group">
+          <div class="lc-flabel">Bed</div>
+          <div class="lc-fval">&nbsp;</div>
+        </div>
+        <div style="flex:1;"></div>
+        <div class="lc-field-group" style="margin-right:12px;">
+          <div class="lc-flabel">Age</div>
+          <div class="lc-fval-plain">26</div>
+        </div>
+        <div class="lc-field-group">
+          <div class="lc-flabel">Sex</div>
+          <div class="lc-fval-plain">Male</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 (ibaba sa left) -->
+    <div class="label-card">
+      <div class="lc-name">DO, REA MON</div>
+      <div class="lc-hospnum">000000000777288</div>
+      <div class="lc-fields">
+        <div class="lc-field-group">
+          <div class="lc-flabel">Room</div>
+          <div class="lc-fval">&nbsp;</div>
+        </div>
+        <div class="lc-field-group">
+          <div class="lc-flabel">Bed</div>
+          <div class="lc-fval">&nbsp;</div>
+        </div>
+        <div style="flex:1;"></div>
+        <div class="lc-field-group" style="margin-right:12px;">
+          <div class="lc-flabel">Age</div>
+          <div class="lc-fval-plain">26</div>
+        </div>
+        <div class="lc-field-group">
+          <div class="lc-flabel">Sex</div>
+          <div class="lc-fval-plain">Male</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 (ibaba sa kanan) -->
+    <div class="label-card">
+      <div class="lc-name">DO, REA MON</div>
+      <div class="lc-hospnum">000000000777288</div>
+      <div class="lc-fields">
+        <div class="lc-field-group">
+          <div class="lc-flabel">Room</div>
+          <div class="lc-fval">&nbsp;</div>
+        </div>
+        <div class="lc-field-group">
+          <div class="lc-flabel">Bed</div>
+          <div class="lc-fval">&nbsp;</div>
+        </div>
+        <div style="flex:1;"></div>
+        <div class="lc-field-group" style="margin-right:12px;">
+          <div class="lc-flabel">Age</div>
+          <div class="lc-fval-plain">26</div>
+        </div>
+        <div class="lc-field-group">
+          <div class="lc-flabel">Sex</div>
+          <div class="lc-fval-plain">Male</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sec3 -->
+
+</div><!-- /page -->
+</body>
+</html>

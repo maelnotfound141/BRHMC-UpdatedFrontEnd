@@ -781,8 +781,7 @@ const RegDetails = () => {
                 </div>
 
                 {/* accomodation table */}
-                <SectionHeader title="Ward and Room Accomodation" />
-
+             
                 <div className="p-2 p-md-3">
                   <div className="acc-table-wrap">
                     <table className="table table-sm align-middle mb-0 acc-table">

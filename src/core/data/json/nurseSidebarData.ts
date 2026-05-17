@@ -25,6 +25,11 @@ export const nurseSidebarData: nurseSidebarItem[] = [
     icon: "isax isax-clock",
   },
   {
+    label: "Discharge",
+    path: all_routes.nurseDischarge,
+    icon: "isax isax-export-1",
+  },
+  {
     label: "Forms",
     path: all_routes.nurseForms,
     icon: "isax isax-calendar-1",

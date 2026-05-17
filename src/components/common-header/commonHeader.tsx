@@ -17,6 +17,7 @@ const nurseUtilityRoutes = [
   all_routes.nurseUtility,
   all_routes.nurseRequestTemplate,
   all_routes.nurseRequisition,
+  all_routes.nurseSupplyRequisition,
   all_routes.nurseReport,
 ];
 

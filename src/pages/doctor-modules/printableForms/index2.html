@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BRHMC Forms</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 10px;
+        }
+
+        .page {
+            width: 794px;
+            background-color: white;
+            margin: 20px auto;
+            padding: 30px 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: stretch;
+            border: 1.5px solid #555;
+            margin-bottom: 18px;
+        }
+
+        .logo-wrap {
+            flex: 0 0 95px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+     
+        }
+
+        .logo-wrap img { 
+            width: 85px;  
+            height: 85px; 
+            object-fit: contain; 
+        }
+
+        .hospital-info {
+            flex: 1;
+            padding: 6px 10px;
+            color: #004d40;
+            font-size: 11px;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hospital-info strong { font-size: 12.5px; }
+
+        .form-code-table {
+            border-collapse: collapse;
+            font-size: 11px;
+            flex: 0 0 auto;
+            border-left: 1px solid #555; 
+        }
+
+        .form-code-table td {
+            padding: 5px 8px;
+            white-space: nowrap;
+        }
+
+        .form-code-table tr:not(:last-child) td {
+            border-bottom: 1px solid #555;
+        }
+
+        .form-code-table td:first-child {
+            border-right: 1px solid #555;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 19px;
+            font-weight: bold;
+            margin-bottom: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .id-section { font-size: 12px; }
+
+        .field-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .field-table td { vertical-align: baseline; padding: 0; }
+
+        .lbl {
+            white-space: nowrap;
+            width: 140px;
+            padding-right: 4px;
+        }
+
+        .colon { width: 10px; }
+
+        .val {
+            border-bottom: 1px solid #000;
+            font-weight: bold;
+            padding: 0 3px 1px;
+        }
+
+        .val-noLine {
+            font-weight: bold;
+            padding: 0 3px 1px;
+        }
+
+        .hosp-num-row {
+            text-align: right;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        /* Mga Checkbox */
+        .checkbox-area {
+            margin-top: 6px;
+            margin-left: 195px;   /*code para i-align sa column kang value */
+        }
+
+        .checkbox-row-line {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .cb-item { white-space: nowrap; }
+
+        /* Putol-putol na Linya */
+        .dotted-line {
+            border-top: 1.5px dashed #555;
+            margin: 28px 0;
+        }
+
+        .consent-section { font-size: 12px; line-height: 1.6; }
+
+        .cval {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            font-weight: bold;
+            min-width: 180px;
+            padding: 0 4px 1px;
+            text-align: center;
+        }
+
+        .cval-wide {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            font-weight: bold;
+            min-width: 300px;
+            padding: 0 4px 1px;
+            text-align: center;
+        }
+
+        .italic { font-style: italic; }
+
+        .sub-label {
+            font-size: 10px;
+            text-align: center;
+            display: block;
+            margin-top: 1px;
+        }
+
+        .consent-row1 {
+            display: flex;
+            align-items: flex-end;
+            gap: 0;
+            margin-bottom: 2px;
+        }
+
+        .consent-part { display: flex; flex-direction: column; }
+
+        .date-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-top: 22px;
+            font-size: 12px;
+        }
+
+        .day-field {
+            border-bottom: 1px solid #000;
+            font-weight: bold;
+            width: 50px;
+            text-align: center;
+            display: inline-block;
+            padding: 0 2px;
+        }
+
+        .month-field {
+            border-bottom: 1px solid #000;
+            font-weight: bold;
+            width: 140px;
+            text-align: center;
+            display: inline-block;
+            padding: 0 2px;
+        }
+
+        sup { font-size: 9px; }
+
+        /* Lagda */
+        .signature-area {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 40px;
+        }
+
+        .signature-field { text-align: center; width: 300px; }
+
+        .sig-line {
+            border-top: 1px solid #000;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .sig-label { font-size: 11px; font-style: italic; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .page { margin: 0; padding: 20px 30px; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <div class="page-header">
+        <div class="logo-wrap">
+       
+            <img src="/logo/brhmclogo.jpg" alt="BRHMC Logo">
+        </div>
+        <div class="hospital-info">
+            <strong>BICOL REGIONAL HOSPITAL AND MEDICAL CENTER</strong>
+            Daraga, Albay<br>
+            Trunkline: (052) 732-5555&nbsp;&nbsp; Telehealth Hotline: (052) 732-5596<br>
+            Website: http://www.brhth.doh.gov.ph&nbsp;&nbsp; Email: brhmc.cares@gmail.com<br>
+            Facebook Page: http://www.facebook.com/brhth
+        </div>
+
+        <table class="form-code-table">
+            <tr><td>Form Code</td><td>FM-NRS-GEN-01</td></tr>
+            <tr><td>Effectivity</td><td>May 1, 2017</td></tr>
+            <tr><td>Revision</td><td style="text-align:center;">0</td></tr>
+        </table>
+    </div>
+
+    <h1>PATIENT'S IDENTIFICATION CARD</h1>
+
+    <div class="id-section">
+
+        <div class="hosp-num-row">
+            HOSPITAL NUMBER :&nbsp;&nbsp;<strong style="font-size:15px;">000000000777288</strong>
+        </div>
+
+        <table class="field-table">
+            <tr>
+                <td class="lbl">NAME OF PATIENT</td>
+                <td class="colon">:</td>
+                <td class="val" style="width:310px;">DO, REA MON</td>
+                <td style="width:12px;"></td>
+                <td style="white-space:nowrap;">AGE :&nbsp;<span class="val-noLine" style="border-bottom:1px solid #000; display:inline-block; min-width:30px; text-align:center;">26</span></td>
+                <td style="width:10px;"></td>
+                <td style="white-space:nowrap;">SEX :&nbsp;<span class="val-noLine" style="border-bottom:1px solid #000; display:inline-block; min-width:25px; text-align:center;">M</span></td>
+                <td style="width:10px;"></td>
+                <td style="white-space:nowrap;">CS :&nbsp;<span class="val-noLine" style="border-bottom:1px solid #000; display:inline-block; min-width:60px; text-align:center;">Married</span></td>
+            </tr>
+        </table>
+
+        <table class="field-table">
+            <tr>
+                <td class="lbl">PERMANENT ADDRESS</td>
+                <td class="colon">:</td>
+                <td class="val">111, ESTANZA, LEGAZPI CITY, ALBAY</td>
+            </tr>
+        </table>
+
+        <table class="field-table">
+            <tr>
+                <td class="lbl">DATE ADMITTED</td>
+                <td class="colon">:</td>
+                <td class="val" style="width:195px;">Mar/21/2026 02:45 PM</td>
+                <td style="width:16px;"></td>
+                <td style="white-space:nowrap;">DATE DISCHARGED</td>
+                <td class="colon">&nbsp;:</td>
+                <td class="val" style="width:180px;">&nbsp;</td>
+            </tr>
+        </table>
+
+        <table class="field-table">
+            <tr>
+                <td class="lbl">SERVICE/DEPARTMENT</td>
+                <td class="colon">:</td>
+                <td class="val" style="width:195px;">Medicine</td>
+                <td style="width:16px;"></td>
+                <td style="white-space:nowrap;">ATTENDING PHYSICIAN</td>
+                <td class="colon">&nbsp;:</td>
+                <td class="val" style="width:180px;">&nbsp;</td>
+            </tr>
+        </table>
+
+        <table class="field-table" style="margin-bottom:2px;">
+            <tr>
+      
+                <td class="lbl" style="width: 185px;">CONDITION UPON DISCHARGE</td>
+                <td class="colon">:</td>
+                
+                <!-- change px value para sa width nung underline -->
+                <td class="val" style="width: 250px;">&nbsp;</td>
+
+                <td></td>
+            </tr>
+        </table>
+
+        <div class="checkbox-area">
+            <div class="checkbox-row-line">
+                <span class="cb-item">[ &nbsp;&nbsp;]&nbsp;FAIR</span>
+                <span class="cb-item">[ &nbsp;&nbsp;]&nbsp;UNIMPROVED</span>
+                <span class="cb-item">[ &nbsp;&nbsp;]&nbsp;TRANSFERRED</span>
+            </div>
+            <div class="checkbox-row-line">
+                <span class="cb-item">[ &nbsp;&nbsp;]&nbsp;IMPROVED</span>
+                <span class="cb-item">[ &nbsp;&nbsp;]&nbsp;ABSCONDED</span>
+                <span class="cb-item">[ &nbsp;&nbsp;]&nbsp;DIED</span>
+            </div>
+        </div>
+
+    </div><!-- end nung id section -->
+
+    <div class="dotted-line"></div>
+
+    <div class="page-header">
+        <div class="logo-wrap">
+            <img src="/logo/brhmclogo.jpg" alt="BRHMC Logo">
+        </div>
+        <div class="hospital-info">
+            <strong>BICOL REGIONAL HOSPITAL AND MEDICAL CENTER</strong>
+            Daraga, Albay<br>
+            Trunkline: (052) 732-5555&nbsp;&nbsp; Telehealth Hotline: (052) 732-5596<br>
+            Website: http://www.brhth.doh.gov.ph&nbsp;&nbsp; Email: brhmc.cares@gmail.com<br>
+            Facebook Page: http://www.facebook.com/brhth
+        </div>
+        <table class="form-code-table">
+            <tr><td>Form Code</td><td>FM-ADM-AMT-07</td></tr>
+            <tr><td>Effectivity</td><td>May 1, 2017</td></tr>
+            <tr><td>Revision</td><td style="text-align:center;">1</td></tr>
+        </table>
+    </div>
+
+    <h1>CONSENT FOR ADMISSION AND TREATMENT</h1>
+
+    <div class="consent-section">
+
+        <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:16px;">
+
+            <tr>
+                <td style="vertical-align:bottom; white-space:nowrap; width:55px; padding-right:6px;">
+                    I,
+                </td>
+                <td style="vertical-align:bottom; border-bottom:1px solid #000;
+                            font-weight:bold; text-align:center; padding-bottom:2px;">
+                    SHI SU KA
+                </td>
+                <td style="vertical-align:bottom; white-space:nowrap; width:195px; padding-left:14px;">
+                    hereby consent
+                </td>
+            </tr>
+
+            <tr>
+                <td style="font-style:italic; font-size:11px; padding-right:6px; vertical-align:top;">
+                    ( Ako si )
+                </td>
+                <td style="font-size:11px; vertical-align:top;">
+                    <div style="display:flex; justify-content:space-around; padding-top:2px;">
+                        <span>Given Name &nbsp;<span class="italic">( Pangalan )</span></span>
+                        <span>Surname &nbsp;<span class="italic">( Apelyedo )</span></span>
+                    </div>
+                </td>
+                <td style="font-style:italic; font-size:11px; vertical-align:top; padding-left:14px;">
+                    ( ay sumasang-ayon na si )
+                </td>
+            </tr>
+
+            <!-- para sa spaces -->
+            <tr><td colspan="3" style="height:14px;"></td></tr>
+
+            <tr>
+                <td style="vertical-align:bottom;"></td>
+                <td style="vertical-align:bottom; border-bottom:1px solid #000;
+                            font-weight:bold; text-align:center; padding-bottom:2px;">
+                    DO, REA MON
+                </td>
+                <td style="vertical-align:bottom; padding-left:14px; white-space:nowrap;">
+                    to be admitted in this hospital and thereby
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td style="font-size:11px; text-align:center; vertical-align:top; padding-top:2px;">
+                    Patient's Name &nbsp;<span class="italic">( Pangalan ng Pasyente )</span>
+                </td>
+                <td style="font-style:italic; font-size:11px; vertical-align:top;
+                            padding-left:14px; padding-top:2px;">
+                    ( ay ipapasok sa ospital na ito at ako ay )
+                </td>
+            </tr>
+
+        </table>
+
+        <div style="margin-bottom:4px; font-size:12px;">
+            will abide to all hospital rules and regulations.<br>
+            <span class="italic" style="font-size:11px;">( na susunod sa mga patakaran at alituntunin ng ospital )</span>
+        </div>
+
+        <!-- date -->
+        <div class="date-row">
+            <span>Date this</span>
+            <span class="day-field">21<sup>st</sup></span>
+            <span>day of</span>
+            <span class="month-field">March, 2026</span>
+        </div>
+
+        <!-- pirma -->
+        <div class="signature-area">
+            <div class="signature-field">
+                <span class="sig-line">&nbsp;</span>
+                <div class="sig-label">
+                    Signature of Patient/Relative<br>
+                    <span class="italic">( Lagda ng pasyente/Kamag-anak )</span>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end kang section -->
+
+</div><!-- /page -->
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Cover Sheet - FM-ADM-AMT-12</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10.5px;
+            background: #fff;
+            color: #000;
+            padding: 10px;
+        }
+
+        .page {
+            width: 780px;
+            margin: 0 auto;
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            border: 1px solid #000;
+            padding: 2px 4px;
+            vertical-align: top;
+            font-size: 10.5px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .no-border {
+            border: none !important;
+        }
+        .border-top {
+            border-top: 1px solid #000 !important;
+        }
+        .border-bottom {
+            border-bottom: 1px solid #000 !important;
+        }
+        .border-left {
+            border-left: 1px solid #000 !important;
+        }
+        .border-right {
+            border-right: 1px solid #000 !important;
+        }
+        .bt-none {
+            border-top: none !important;
+        }
+        .bb-none {
+            border-bottom: none !important;
+        }
+        .bl-none {
+            border-left: none !important;
+        }
+        .br-none {
+            border-right: none !important;
+        }
+
+        .header-table td {
+            border: none;
+            padding: 1px 3px;
+        }
+
+        .center {
+            text-align: center;
+        }
+        .right {
+            text-align: right;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .small {
+            font-size: 9px;
+        }
+        .smaller {
+            font-size: 8.5px;
+        }
+        .label {
+            font-size: 9.5px;
+            font-weight: normal;
+        }
+        .value {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* Para sa header */
+        .main-header {
+            border: 1px solid #000;
+            border-bottom: none;
+        }
+
+        /* Row para sa titulo */
+        .title-row td {
+            border: 1px solid #000;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 4px;
+            letter-spacing: 1px;
+        }
+
+        .section-label {
+            font-size: 9.5px;
+            font-weight: normal;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .field-value {
+            font-size: 11px;
+            font-weight: bold;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .sub-label {
+            font-size: 8.5px;
+            color: #000;
+            display: block;
+        }
+
+        .checkbox-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            margin-right: 6px;
+            font-size: 10px;
+        }
+
+        .cb {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            text-align: center;
+            font-size: 10px;
+            line-height: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin: 0 1px;
+        }
+
+        .cb.checked::after {
+            content: 'X';
+        }
+
+        .row-h {
+            height: 22px;
+        }
+        .row-h2 {
+            height: 30px;
+        }
+        .row-h3 {
+            height: 40px;
+        }
+        .row-h4 {
+            height: 55px;
+        }
+
+        .diag-row {
+            height: 48px;
+        }
+        .op-row {
+            height: 28px;
+        }
+
+        .barcode {
+            font-family: 'Libre Barcode 128', 'Libre Barcode 39', monospace;
+            font-size: 40px;
+            letter-spacing: -1px;
+            line-height: 1;
+            display: block;
+            padding: 4px 0;
+        }
+
+        .disposition-table td {
+            border: none;
+            padding: 1px 4px;
+            font-size: 11px;
+            vertical-align: top;
+        }
+
+        .outer {
+            border: 1px solid #000;
+        }
+
+        .form-code-table {
+            border-collapse: collapse;
+        }
+        .form-code-table td {
+            border: 1px solid #000;
+            padding: 2px 5px;
+            font-size: 10px;
+        }
+
+        .checkbox-item {
+            font-size: 11px;
+            white-space: nowrap;
+            margin: 0 3px;
+            display: inline-block;
+        }
+        .checkbox-item-large {
+            font-size: 11.5px;
+            white-space: nowrap;
+            margin: 0 4px;
+            display: inline-block;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+            }
+            .page {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <table style="border-collapse:collapse; width:100%;">
+
+            <tr>
+                <td colspan="10" style="border:1px solid #000; border-bottom:none; padding:0;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr>
+                            <td rowspan="3" style="border:none; width:95px; text-align:center; padding:5px; padding-left: 25px; vertical-align:middle;">
+                                <img src="/logo/brhmclogo.jpg" alt="BRHMC Logo" style="width: 85px; height: 85px; object-fit: contain;">
+                            </td>
+                            <td rowspan="3" style="border:none; border-right:1px solid #000; text-align:center; padding:19px 5px; vertical-align:top;">
+                                <div style="font-size:12px; line-height:1.4;">Republic of the Philippines</div>
+                                <div style="font-size:12px; line-height:1.4;">Department of Health</div>
+                                <div style="font-size:14px; font-weight:bold; line-height:1.4;">BICOL REGIONAL HOSPITAL AND MEDICAL CENTER</div>
+                                <div style="font-size:12px; line-height:1.4;">Daraga Albay</div>
+                            </td>
+                            
+                            <td style="border:none; border-bottom:1px solid #000; border-right:1px solid #000; padding:2px 5px; font-size:10px; width:75px; vertical-align:middle;">Form Code</td>
+                            <td style="border:none; border-bottom:1px solid #000; padding:2px 5px; font-size:10px; width:120px; vertical-align:middle;">FM-ADM-AMT-12</td>
+                        </tr>
+                        
+                        <tr>
+                            <td style="border:none; border-bottom:1px solid #000; border-right:1px solid #000; padding:2px 5px; font-size:10px; vertical-align:middle;">Effectivity</td>
+                            <td style="border:none; border-bottom:1px solid #000; padding:2px 5px; font-size:10px; vertical-align:middle;">September 30, 2013</td>
+                        </tr>
+                        
+                        <tr>
+                            <td style="border:none; border-right:1px solid #000; padding:2px 5px; font-size:10px; vertical-align:middle;">Revision</td>
+                            <td style="border:none; padding:2px 5px; font-size:10px; text-align:center; vertical-align:middle;">0</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="10" style="border:1px solid #000; border-top:1px solid #000; text-align:center; font-size:16px; font-weight:bold; padding:5px; letter-spacing:1px;">
+                    CLINICAL COVER SHEET
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3" style="border:1px solid #000; border-top:none; padding:2px 4px; width:33%;">
+                    <span style="font-size:9.5px;">SR CITIZEN NO. :</span>
+                </td>
+                <td colspan="4" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px;">
+                    <span style="font-size:9.5px;">OLD HOSPITAL NUMBER :</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px;">
+                    <span style="font-size:9.5px;">HOSPITAL NUMBER :</span><br>
+                    <span style="font-size:12px; font-weight:bold; display:block; text-align:center;">000000000777288</span>
+                </td>
+            </tr>
+
+         
+            <tr>
+                <td colspan="7" style="border:1px solid #000; border-top:none; padding:2px 4px; vertical-align:top;">
+                    <span style="font-size:9.5px;">PATIENT'S NAME :</span><br>
+                    <table style="width:100%; border-collapse:collapse; margin-top:1px;">
+                        <tr>
+                            <td style="border:none; padding:0 2px; width:30%;">
+                                <div style="font-size:13px; font-weight:bold;">DO</div>
+                                <div style="font-size:8px; text-align:center; border-top:1px solid #000; margin-top:1px;">Lastname</div>
+                            </td>
+                            <td style="border:none; padding:0 2px; width:30%;">
+                                <div style="font-size:13px; font-weight:bold;">REA</div>
+                                <div style="font-size:8px; text-align:center; border-top:1px solid #000; margin-top:1px;">Firstname</div>
+                            </td>
+                            <td style="border:none; padding:0 2px; width:40%;">
+                                <div style="font-size:13px; font-weight:bold;">MON</div>
+                                <div style="font-size:8px; text-align:center; border-top:1px solid #000; margin-top:1px;">Middlename</div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; font-size:10px;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr>
+                            <td style="border:none; padding:1px 2px; font-size:9.5px;">WARD</td>
+                            <td style="border:none; padding:1px 2px;">|</td>
+                            <td style="border:none; padding:1px 2px; font-size:9.5px;">ROOM</td>
+                            <td style="border:none; padding:1px 2px;">|</td>
+                            <td style="border:none; padding:1px 2px; font-size:9.5px;">BED</td>
+                            <td style="border:none; padding:1px 2px;">|</td>
+                            <td style="border:none; padding:1px 2px; font-size:9.5px;">SERVICE</td>
+                        </tr>
+                        <tr>
+                            <td style="border:none; padding:1px 2px; font-size:10.5px; font-weight:bold;">Ph Med</td>
+                            <td style="border:none; padding:1px 2px;">|</td>
+                            <td style="border:none; padding:1px 2px; font-size:10.5px; font-weight:bold;">6104</td>
+                            <td style="border:none; padding:1px 2px;">|</td>
+                            <td style="border:none; padding:1px 2px; font-size:10.5px; font-weight:bold;">000</td>
+                            <td style="border:none; padding:1px 2px;">|</td>
+                            <td style="border:none; padding:1px 2px; font-size:10.5px; font-weight:bold;">Medicine</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="5" style="border:1px solid #000; border-top:none; padding:2px 4px;">
+                    <span style="font-size:9.5px;">PERMANENT ADDRESS :</span><br>
+                    <span style="font-size:11px; font-weight:bold;">111 ESTANZA, LEGAZPI CITY, ALBAY</span>
+                </td>
+                <td colspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top;">
+                    <span style="font-size:9.5px;">TEL. NO.</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:0;">
+                    <table style="width:100%; border-collapse:collapse; height:100%;">
+                        <tr>
+                            <td style="border:none; padding:2px 4px; width:38%; vertical-align:top;">
+                                <div style="font-size:9.5px; font-weight:normal; margin-bottom:2px;">SEX</div>
+                                <span style="font-size:10.5px; white-space:nowrap;">[&nbsp;<b>X</b>&nbsp;]&nbsp;M &nbsp; &nbsp; &nbsp; &nbsp;[&nbsp;&nbsp; ]&nbsp;F</span>
+                            </td>
+                            <td style="border:none; border-left:1px solid #000; padding:2px 4px; vertical-align:top;">
+                                <div style="font-size:9.5px; font-weight:normal; margin-bottom:2px;">CIVIL STATUS</div>
+                                <span style="font-size:10.5px; line-height:1.6;">
+                                    [&nbsp;&nbsp; ]S &nbsp;&nbsp; [&nbsp;&nbsp; ]D &nbsp;&nbsp; [&nbsp;&nbsp; ]SEP &nbsp;&nbsp;[&nbsp;&nbsp; ]C<br>
+                                    [&nbsp;&nbsp; ]W &nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;<b>X</b>&nbsp;]&nbsp;M &nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp; ]N
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="border:1px solid #000; border-top:none; padding:2px 4px; white-space:nowrap; width:10%;">
+                    <span style="font-size:9.5px;">BIRTHDATE</span><br>
+                    <span style="font-size:11px; font-weight:bold;">01/01/2000</span>
+                </td>
+                <td style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; white-space:nowrap; width:8%;">
+                    <span style="font-size:9.5px;">AGE</span><br>
+                    <span style="font-size:11px; font-weight:bold;">26 yr(s)</span>
+                </td>
+                <td colspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; width:18%;">
+                    <span style="font-size:9.5px;">BIRTH PLACE</span>
+                </td>
+                <td colspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; width:14%;">
+                    <span style="font-size:9.5px;">NATIONALITY</span><br>
+                    <span style="font-size:11px; font-weight:bold;">Filipino</span>
+                </td>
+                <td style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; width:14%;">
+                    <span style="font-size:9.5px;">RELIGION</span><br>
+                    <span style="font-size:11px; font-weight:bold;">Catholic</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px;">
+                    <span style="font-size:9.5px;">OCCUPATION</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3" style="border:1px solid #000; border-top:none; padding:2px 4px; height:30px;">
+                    <span style="font-size:9.5px;">EMPLOYER (Type of Business)</span>
+                </td>
+                <td colspan="4" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; text-align:center;">
+                    <span style="font-size:9.5px;">ADDRESS</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px;">
+                    <span style="font-size:9.5px;">TEL. NO.</span>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td colspan="3" style="border:1px solid #000; border-top:none; padding:2px 4px; height:30px;">
+                    <span style="font-size:9.5px;">FATHER'S NAME</span>
+                </td>
+                <td colspan="4" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; text-align:center;">
+                    <span style="font-size:9.5px;">ADDRESS</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px;">
+                    <span style="font-size:9.5px;">TEL. NO.</span>
+                </td>
+            </tr>
+
+      
+            <tr>
+                <td colspan="3" style="border:1px solid #000; border-top:none; padding:2px 4px; height:30px;">
+                    <span style="font-size:9.5px;">MOTHER'S (MAIDEN) NAME</span>
+                </td>
+                <td colspan="4" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; text-align:center;">
+                    <span style="font-size:9.5px;">ADDRESS</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px;">
+                    <span style="font-size:9.5px;">TEL. NO.</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3" style="border:1px solid #000; border-top:none; padding:2px 4px; height:30px;">
+                    <span style="font-size:9.5px;">SPOUSE NAME</span>
+                </td>
+                <td colspan="4" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; text-align:center;">
+                    <span style="font-size:9.5px;">ADDRESS</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px;">
+                    <span style="font-size:9.5px;">TEL. NO.</span>
+                </td>
+            </tr>
+
+        
+     <tr>
+                <td colspan="2" style="border:1px solid #000; border-top:none; padding:2px 4px; vertical-align:top; width:17%;">
+                    <span style="font-size:9.5px;">ADMISSION</span><br>
+                    <br>
+                    <span style="font-size:9.5px;">DATE : </span><span style="font-size:10.5px; font-weight:bold;">03/21/2026</span><br>
+                    <span style="font-size:9.5px;">TIME : </span><span style="font-size:10.5px; font-weight:bold;">02:45 PM</span>
+                </td>
+                <td colspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top; width:17%;">
+                    <span style="font-size:9.5px;">DISCHARGE</span><br>
+                    <span style="font-size:9.5px;">DATE :</span><br>
+                    <span style="font-size:9.5px;">TIME :</span>
+                </td>
+                
+                <td rowspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; text-align:center; vertical-align:middle; width:9%;">
+                    <span style="font-size:9px;">TOTAL NO<br>OF DAYS</span><br>
+                    <span style="font-size:16px; font-weight:bold;">1</span>
+                </td>
+                
+                <td colspan="5" rowspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top; height:72px;">
+                    <table style="width:100%; border-collapse:collapse; height:100%;">
+                        <tr>
+                            <td style="border:none; padding:2px 4px; vertical-align:top; height:50%;">
+                                <span style="font-size:9.5px;">ADMITTING PHYSICIAN</span><br>
+                                <span style="font-size:10.5px; font-weight:bold; display:block; text-align:center; padding-right:15px;">-- -. --, MD</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border:none; border-top:1px solid #000; padding:2px 4px; vertical-align:top; height:50%;">
+                                <span style="font-size:9.5px;">ATTENDING PHYSICIAN/SIGNATURE</span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="4" style="border:1px solid #000; border-top:none; padding:2px 4px; vertical-align:top;">
+                    <span style="font-size:9.5px;">ADMITTING CLERK</span><br>
+                    <span style="font-size:11px; font-weight:bold;">ROWAN M. LIQUE</span>
+                </td>
+                </tr>
+
+           <tr>
+                <td colspan="4" style="border:1px solid #000; border-top:none; padding:3px 6px;">
+                    <span style="font-size:9.5px;">TYPE OF ADMISSION :</span><br>
+<div style="display: flex; gap: 30px; margin-top: 4px;">
+    <span class="checkbox-item-large">[<b>X</b>] NEW</span>
+    <span class="checkbox-item-large">[ ] OLD</span>
+    <span class="checkbox-item-large">[ ] FORMER OPD</span>
+</div>
+                </td>
+                <td colspan="6" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top;">
+                    <span style="font-size:9.5px;">REFERRED BY :</span><br>
+                    <span style="font-size:9.5px;">(Physician/Agency)</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="10" style="border:1px solid #000; border-top:none; padding:3px 8px;">
+                    <span style="font-size:9.5px;">SOCIAL SERVICE CLASSIFICATION :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span style="margin-left:8px;">
+                        <span class="checkbox-item-large">[ &nbsp;&nbsp;&nbsp;]A</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span class="checkbox-item-large">[ &nbsp;&nbsp;&nbsp;]B</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span class="checkbox-item-large">[ &nbsp;&nbsp;&nbsp;]C1</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span class="checkbox-item-large">[ &nbsp;&nbsp;&nbsp;]C2</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span class="checkbox-item-large">[ &nbsp;&nbsp;&nbsp;]C3</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span class="checkbox-item-large">[ &nbsp;&nbsp;&nbsp;]D</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td colspan="2" style="border:1px solid #000; border-top:none; padding:2px 4px; vertical-align:top; width:18%;">
+                    <span style="font-size:9.5px;">ALERT :<br>ALLERGIC TO</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; text-align:left;">
+                    <span style="font-size:9.5px;">HOSPITALIZATION PLAN<br>COMPANY/INDUSTRIAL NAME</span>
+                    <span style="font-size:11px; font-weight:bold; text-align:center; display:block; margin-top:6px;">N/A</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; text-align:left;">
+                    <span style="font-size:9.5px;">HEALTH INSURANCE NAME</span>
+                    <span style="font-size:11px; font-weight:bold; text-align:center; display:block; margin-top:17px;">N/A</span>
+                </td>
+                <td colspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; text-align:left;">
+                    <span style="font-size:9.5px;">TYPE OF INSURANCE<br>COVERAGE</span>
+                    <span style="font-size:11px; font-weight:bold; text-align:center; display:block; margin-top:6px;">N/A</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3" style="border:1px solid #000; border-top:none; padding:2px 4px; height:48px; vertical-align:top;">
+                    <span style="font-size:9.5px;">DATA FURNISHED BY : (signature over printed name)</span>
+                    <div style="margin-top:4px; font-size:11px; font-weight:bold;">SHI SU KA</div>
+                </td>
+                <td colspan="4" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top;">
+                    <span style="font-size:9.5px;">ADDRESS OF INFORMANT</span>
+                </td>
+                <td colspan="3" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top;">
+                    <span style="font-size:9.5px;">RELATION TO PATIENT</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="10" style="border:1px solid #000; border-top:none; padding:3px 6px; height:38px; vertical-align:top;">
+                    <span style="font-size:9.5px;">ADMISSION DIAGNOSIS : </span>
+                    <span style="font-size:10.5px; font-weight:bold;">TEST ADMITTING DIAGNOSIS. FOR SYSTEM MAINTENANCE PURPOSE. PLEASE IGNORE THIS RECORD</span>
+                </td>
+            </tr>
+
+         <tr>
+                <td colspan="3" style="border:1px solid #000; border-top:none; padding:2px 4px; height:55px; vertical-align:top; width:105px; min-width:105px; max-width:105px;">
+                    <span style="font-size:9.5px;">PRINCIPAL DIAGNOSIS :</span>
+                </td>
+                
+                <td colspan="5" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top;">
+                    &nbsp;
+                </td>
+                
+                <td colspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top; width:18%;">
+                    <span style="font-size:9.5px;">ICD CODE NO.</span>
+                </td>
+            </tr>
+    
+            <tr>
+                <td colspan="10" style="border:1px solid #000; border-top:none; padding:2px 6px; height:36px; vertical-align:top;">
+                    <span style="font-size:9.5px;">OTHER DIAGNOSES :</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="8" style="border:1px solid #000; border-top:none; padding:2px 4px; height:26px; vertical-align:top;">
+                    <span style="font-size:9.5px;">PRINCIPAL OPERATION/PROCEDURE :</span>
+                </td>
+                <td colspan="2" style="border:1px solid #000; border-top:none; border-left:none; padding:2px 4px; vertical-align:top;">
+                    <span style="font-size:9.5px;">ICPM CODE</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="10" style="border:1px solid #000; border-top:none; padding:2px 6px; height:26px; vertical-align:top;">
+                    <span style="font-size:9.5px;">OTHER OPERATION(S) PROCEDURE(S) :</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="10" style="border:1px solid #000; border-top:none; padding:0; height:54px;">
+                    <table style="width:100%; border-collapse:collapse; height:100%;">
+                        <tr>
+                            <td style="border:none; padding:4px 6px; text-align:center; vertical-align:middle; width:50%;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="220" height="42" viewBox="0 0 220 42">
+                                    <rect x="0" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="4" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="7" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="12" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="15" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="19" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="22" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="27" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="30" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="34" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="37" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="42" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="46" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="49" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="54" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="57" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="61" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="66" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="69" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="73" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="76" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="81" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="85" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="88" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="92" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="97" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="100" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="104" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="107" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="112" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="115" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="119" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="124" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="127" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="131" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="134" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="139" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="143" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="146" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="151" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="154" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="158" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="161" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="166" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="170" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="173" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="177" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="182" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="185" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="189" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="192" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="197" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="200" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="204" y="0" width="3" height="42" fill="#000" />
+                                    <rect x="209" y="0" width="1" height="42" fill="#000" />
+                                    <rect x="212" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="216" y="0" width="2" height="42" fill="#000" />
+                                    <rect x="219" y="0" width="1" height="42" fill="#000" />
+                                </svg>
+                            </td>
+                            <td style="border:none; border-left:1px solid #000; padding:4px 6px; vertical-align:middle; width:50%;">
+                                &nbsp;
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+         
+                <td colspan="10" style="border:1px solid #000; border-top:none; border-bottom:none; padding:4px 8px;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr>
+                            <td style="border:none; padding:0; vertical-align:top; width:50%;">
+                                <div style="font-size:9.5px; font-weight:normal; margin-bottom:4px;">DISPOSITION</div>
+                                <table style="border-collapse:collapse;">
+                                    <tr>
+                                        <td style="border:none; padding:2px 6px 2px 0; font-size:11px; white-space:nowrap;">[ ] DISCHARGED</td>
+                                        <td style="border:none; padding:2px 14px; font-size:11px; white-space:nowrap;">[ ] DAMA</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border:none; padding:2px 6px 2px 0; font-size:11px; white-space:nowrap;">[ ] TRANSFERRED</td>
+                                        <td style="border:none; padding:2px 14px; font-size:11px; white-space:nowrap;">[ ] ABSCONDED</td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="border:none; padding:0; vertical-align:top;">
+                                <div style="font-size:9.5px; font-weight:normal; margin-bottom:4px;">RESULTS</div>
+                                <table style="border-collapse:collapse;">
+                                    <tr>
+                                        <td style="border:none; padding:2px 6px 2px 0; font-size:11px; white-space:nowrap;">[ ] RECOVERED</td>
+                                        <td style="border:none; padding:2px 10px; font-size:11px; white-space:nowrap;">[ ] DIED</td>
+                                        <td style="border:none; padding:2px 10px; font-size:11px; white-space:nowrap;">[ ] AUTOPSY</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border:none; padding:2px 6px 2px 0; font-size:11px; white-space:nowrap;">[ ] IMPROVED</td>
+                                        <td style="border:none; padding:2px 10px; font-size:11px; white-space:nowrap;">[ ] -48 HOURS</td>
+                                        <td style="border:none; padding:2px 10px; font-size:11px; white-space:nowrap;">[ ] NO AUTOPSY</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border:none; padding:2px 6px 2px 0; font-size:11px; white-space:nowrap;">[ ] UNIMPROVED</td>
+                                        <td style="border:none; padding:2px 10px; font-size:11px; white-space:nowrap;">[ ] +48 HOURS</td>
+                                        <td style="border:none; padding:2px 10px; font-size:11px;"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+    
+            <tr>
+                <td colspan="10" style="border:1px solid #000; border-top:none; padding:3px 8px; text-align:right;">
+                    <span style="font-size:10px;">Hospital Number: &nbsp;&nbsp;</span>
+                    <span style="font-size:12px; font-weight:bold;">000000000777288</span>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+</body>
+</html>
