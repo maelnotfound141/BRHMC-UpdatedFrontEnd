@@ -343,57 +343,108 @@ const SignatoryModule = () => {
 
   return (
     <>
-      <style>
-        {`
-          .table-hover tbody tr {
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-          }
+    <style>
+{`
+/* =========================
+   REMOVE HOVER COMPLETELY
+========================= */
+.table-hover tbody tr:hover > td {
+  background-color: transparent !important;
+  color: inherit !important;
+}
 
-          .selected-row > td {
-            background-color: #e6f4ea !important;
-            color: #0b592f !important;
-          }
+.table-hover tbody tr {
+  cursor: default !important;
+}
 
-          .selected-row > td:first-child {
-            border-left: 4px solid var(--primary, #0f763f) !important;
-          }
+/* =========================
+   SELECTED ROW (MATCHES UI GREEN THEME)
+========================= */
+.selected-row > td {
+  background-color: #e9f7ef !important; /* soft clinical green */
+  color: #0f763f !important;
+}
 
-          .table-fixed {
-            table-layout: fixed;
-            width: 100%;
-          }
+/* left accent bar like your UI theme */
+.selected-row > td:first-child {
+  border-left: 4px solid #0f763f !important;
+}
 
-          .table-fixed td,
-          .table-fixed th {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            vertical-align: top;
-          }
+/* =========================
+   TABLE BASE STYLE (CLEAN CLINICAL LOOK)
+========================= */
+.table {
+  background-color: #ffffff;
+}
 
-          .text-wrap-custom {
-            white-space: normal !important;
-            word-break: break-word;
-          }
+.table td,
+.table th {
+  border-color: #f1f1f1 !important;
+}
 
-          @media (max-width: 575.98px) {
-            .modal-footer-actions {
-              flex-direction: column-reverse;
-              width: 100%;
-            }
+/* optional subtle row separation (medical UI style) */
+.table tbody tr {
+  border-bottom: 1px solid #f3f3f3;
+}
 
-            .modal-footer-actions button {
-              width: 100%;
-              margin-top: 8px;
-            }
+/* =========================
+   FIXED TABLE LAYOUT
+========================= */
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
 
-            .pagination-controls {
-              flex-direction: column;
-              gap: 12px;
-            }
-          }
-        `}
-      </style>
+.table-fixed td,
+.table-fixed th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  vertical-align: top;
+}
+
+/* =========================
+   TEXT WRAP
+========================= */
+.text-wrap-custom {
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+.empty-table-cell {
+  height: 450px;
+  min-height: 450px;
+  background-color: #f8faf9;
+  vertical-align: middle;
+}
+
+.empty-table-cell > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* =========================
+   MOBILE CLEANUP
+========================= */
+@media (max-width: 575.98px) {
+  .modal-footer-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .modal-footer-actions button {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+`}
+</style>
+`
 
       <div
         className="content doctor-content bg-light mt-n4 d-flex flex-column"
@@ -521,9 +572,9 @@ const SignatoryModule = () => {
   {paginatedRecords.length === 0 ? (
     <tr>
       <td
-        colSpan={3}
-        className="text-center text-muted py-5 border-0"
-      >
+  colSpan={3}
+  className="text-center text-muted border-0 empty-table-cell"
+>
         <div className="d-flex flex-column align-items-center justify-content-center gap-3">
 
           {/* DESKTOP ONLY DOCUMENT ICON */}
@@ -535,32 +586,36 @@ const SignatoryModule = () => {
             }}
           ></i>
 
-          {/* MOBILE ONLY ADD BUTTON - CIRCULAR STYLE */}
-          <div
-            className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
-            onClick={handleAdd}
-            style={{
-              width: "64px",
-              height: "64px",
-              border:
-                "2px solid var(--primary, #0f763f)",
-              backgroundColor: "#fff",
-              cursor: "pointer",
-            }}
-            title="Add New Signatory"
-          >
-            <i
-              className="isax isax-add fs-1 text-primary"
-              style={{ fontSize: "2rem" }}
-            />
-          </div>
+{/* MOBILE FLOATING ADD BUTTON */}
+{isMobile && (
+  <div
+    className="d-flex d-lg-none justify-content-center mb-3"
+    onClick={handleAdd}
+  >
+    <div
+      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+      style={{
+        width: "60px",
+        height: "60px",
+        border: "2px solid var(--primary, #0f763f)",
+        backgroundColor: "var(--primary, #0f763f)",
+        cursor: "pointer",
+        transition: "0.2s ease-in-out",
+      }}
+    >
+      <i
+        className="isax isax-add fs-3 text-white"
+      />
+    </div>
+  </div>
+)}
 
           {/* MOBILE ONLY ADD TEXT */}
           <span
             className="mt-2 fw-semibold text-muted d-lg-none"
             style={{ fontSize: "14px" }}
           >
-            Add New
+            
           </span>
 
           {/* EMPTY STATE TEXT */}

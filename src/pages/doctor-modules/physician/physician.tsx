@@ -210,158 +210,111 @@ const PhysicianModule = () => {
 
   return (
     <>
-   <style>
+  <style>
 {`
-/* ===== ACTION BUTTON SYSTEM ===== */
 
-.action-btn-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 
-  flex-wrap: nowrap;
-  white-space: nowrap;
+/* =========================================================
+   CLEAN WHITE TABLE UI (NO HOVER - MEDICAL STYLE)
+========================================================= */
 
-  justify-content: flex-end;
-
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+/* ===== TABLE BASE LOOK ===== */
+.table {
+  background-color: #ffffff !important;
 }
 
-/* hide scrollbar */
-.action-btn-group::-webkit-scrollbar {
-  display: none;
+/* Force white rows */
+.table tbody tr {
+  background-color: #ffffff !important;
 }
 
-/* MOBILE FIX */
-@media (max-width: 767px) {
-  .action-btn-group {
-    justify-content: center !important;
-  }
+/* Remove ALL hover effects completely */
+.table-hover tbody tr:hover,
+.table-hover tbody tr:hover > td {
+  background-color: #ffffff !important;
+  color: inherit !important;
 }
 
-/* ===== ACTION BUTTON BASE ===== */
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
+/* Keep click behavior but no hover styling */
+.table-hover tbody tr {
+  cursor: pointer;
+  transition: none !important;
+}
 
-  padding: 0.4rem 0.75rem;
+/* ===== SELECTED ROW (GREEN MEDICAL HIGHLIGHT) ===== */
+.selected-row > td {
+  background-color: #e6f4ea !important; /* soft green like your UI */
+  color: #0b592f !important;
+}
+
+/* left border accent */
+.selected-row > td:first-child {
+  border-left: 4px solid var(--primary, #0f763f) !important;
+}
+
+/* ===== TABLE HEADER (CLEAN WHITE HEADER) ===== */
+.table thead th {
+  background-color: #ffffff !important;
+  color: #6c757d !important;
   font-weight: 600;
-  font-size: 0.875rem;
-
-  border-radius: 4px;
-  border: 1px solid transparent;
-
-  transition: all 0.2s ease;
-  white-space: nowrap;
+  border-bottom: 1px solid #e9ecef !important;
 }
 
-/* PRIMARY */
-.action-btn-primary {
-  background: var(--primary, #0f763f);
-  border-color: var(--primary, #0f763f);
-  color: #fff;
+/* ===== TABLE CELLS ===== */
+.table td {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f1f3f5 !important;
 }
 
-.action-btn-primary:hover {
-  background: #0d6a39;
-  border-color: #0d6a39;
-  color: #fff;
+/* ===== REMOVE STRIPING IF ANY ===== */
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #ffffff !important;
 }
 
-/* NEUTRAL */
-.action-btn-neutral {
-  background: #fff;
-  border-color: #dee2e6;
-  color: #212529;
+/* ===== TABLE LAYOUT ===== */
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
 }
 
-.action-btn-neutral:hover {
-  background: #f8f9fa;
+.table-fixed td,
+.table-fixed th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  vertical-align: top;
 }
 
-/* DANGER */
-.action-btn-danger {
-  background: #fff;
-  border-color: #dc3545;
-  color: #dc3545;
+/* ===== TEXT WRAP ===== */
+.text-wrap-custom {
+  white-space: normal !important;
+  word-break: break-word;
 }
 
-.action-btn-danger:hover {
-  background: #dc3545;
-  color: #fff;
+/* ===== EMPTY TABLE STATE ===== */
+.empty-table-cell {
+  height: 450px;
+  min-height: 450px;
+  background-color: #ffffff !important;
+  vertical-align: middle;
 }
 
-/* DISABLED */
-.action-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.empty-table-cell > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-/* ===== REMOVE CUSTOM TABLE COLOR OVERRIDE (RESTORES ORIGINAL LOOK) ===== */
-/* ❌ removed forced row background color */
-
-/* ===== EMPTY STATE ===== */
-.custom-empty-state {
-  min-height: 350px;
-}
-
-/* ===== MOBILE RESPONSIVE ===== */
+/* ===== MOBILE CLEANUP ===== */
 @media (max-width: 767px) {
-
-  .physician-mobile-name {
-    font-size: 1.5rem !important;
-    line-height: 1.2;
+  .table td,
+  .table th {
+    font-size: 13px;
   }
 
-  .physician-mobile-title {
-    font-size: 0.95rem !important;
-    text-align: center;
-    width: 100%;
-  }
-
-  .physician-mobile-table {
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-  }
-
-  .physician-mobile-empty {
-    min-height: 420px;
-    border: 1px solid #dee2e6;
-    border-radius: 14px;
-    background: #fff;
-    padding: 2rem 1rem;
-  }
-
-  .physician-mobile-empty p {
-    font-size: 14px;
-  }
-
-  .mobile-profile-icon {
-    width: 85px !important;
-    height: 85px !important;
-  }
-
-  .mobile-add-circle {
-    width: 72px !important;
-    height: 72px !important;
-    border-radius: 50%;
-    border: 2px solid #0f763f;
-    background: white;
-    cursor: pointer;
-  }
-
-  .mobile-address {
+  .table thead th {
     font-size: 12px;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .mobile-badge {
-    font-size: 11px;
   }
 }
 `}
@@ -538,12 +491,7 @@ const PhysicianModule = () => {
 
                   {/* TABLE */}
                   <div className="border rounded-0 flex-grow-1 bg-white d-flex flex-column shadow-sm physician-mobile-table">
-                    <table
-                      className="table table-hover align-middle mb-0"
-                      style={{
-                        tableLayout: "auto",
-                      }}
-                    >
+                    <table className="table table-hover align-middle mb-0 table-fixed">
                       {hasRecords && (
                         <thead className="table-light">
                           <tr>
@@ -566,33 +514,37 @@ const PhysicianModule = () => {
   {hasRecords ? (
     physicians.map((record) => (
       <tr
-        key={record.id}
-        onClick={() => setSelectedRecordId(record.id)}
-        onDoubleClick={() => {
-          setSelectedRecordId(record.id);
-          openEditModalForRecord(record);
-        }}
-        className={
-          selectedRecordId === record.id ? "selected-row" : ""
-        }
-        style={{ cursor: "pointer" }}
-      >
-        <td className="ps-3 py-3 text-dark border-bottom-0">
-          {record.type}
-        </td>
+  key={record.id}
+  onClick={() => setSelectedRecordId(record.id)}
+  onDoubleClick={() => {
+    setSelectedRecordId(record.id);
+    openEditModalForRecord(record);
+  }}
+  className={
+    selectedRecordId === record.id
+      ? "selected-row"
+      : ""
+  }
+>
+        <td className="ps-3 py-3 text-dark border-bottom-0 text-wrap-custom">
+  {record.type}
+</td>
 
-        <td className="py-3 text-dark border-bottom-0 d-none d-md-table-cell">
-          {record.name}
-        </td>
+<td className="py-3 text-dark border-bottom-0 d-none d-md-table-cell text-wrap-custom">
+  {record.name}
+</td>
 
-        <td className="pe-3 py-3 text-dark border-bottom-0">
-          {record.accessStatus}
-        </td>
+<td className="pe-3 py-3 text-dark border-bottom-0 text-wrap-custom">
+  {record.accessStatus}
+</td>
       </tr>
     ))
   ) : (
     <tr>
-      <td colSpan={3} className="border-bottom-0">
+      <td
+  colSpan={3}
+  className="border-bottom-0 empty-table-cell"
+>
         <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted py-5 custom-empty-state physician-mobile-empty">
 
           {/* DOCUMENT ICON (same as SignatoryModule) */}
@@ -605,29 +557,32 @@ const PhysicianModule = () => {
           ></i>
 
           {/* MOBILE ADD BUTTON */}
-          <div
-            className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
-            onClick={handleAdd}
-            style={{
-              width: "64px",
-              height: "64px",
-              border: "2px solid var(--primary, #0f763f)",
-              backgroundColor: "#fff",
-              cursor: "pointer",
-            }}
-          >
-            <i
-              className="isax isax-add fs-1 text-primary"
-              style={{ fontSize: "2rem" }}
-            />
-          </div>
+          {/* MOBILE ADD BUTTON */}
+<div
+  className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mobile-add-circle"
+  onClick={handleAdd}
+  style={{
+    width: "64px",
+    height: "64px",
+    backgroundColor: "var(--primary, #0f763f)",
+    cursor: "pointer",
+  }}
+>
+  <i
+    className="isax isax-add"
+    style={{
+      fontSize: "2rem",
+      color: "#fff",
+    }}
+  />
+</div>
 
           {/* MOBILE LABEL */}
           <span
             className="mt-2 fw-semibold text-muted d-lg-none"
             style={{ fontSize: "14px" }}
           >
-            Add New
+            
           </span>
 
           {/* EMPTY TEXT */}

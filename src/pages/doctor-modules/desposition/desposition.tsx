@@ -110,6 +110,23 @@ const DispositionModule = () => {
             min-height: 460px;
           }
 
+          /* Desktop: empty-state fills the panel so content stays centered */
+          .disposition-empty-state {
+            min-height: 460px;
+          }
+
+          /* Mobile: collapse both the panel and the empty-state to content height
+             — no more hanging blank space below "No disposition set." */
+          @media (max-width: 767.98px) {
+            .disposition-main-panel {
+              min-height: unset !important;
+            }
+            .disposition-empty-state {
+              min-height: unset !important;
+              height: auto !important;
+            }
+          }
+
           .disposition-empty-icon {
             font-size: 3.25rem;
           }
@@ -123,15 +140,46 @@ const DispositionModule = () => {
             font-size: 0.85rem;
           }
 
+          /* FIX 2: Reduced row height from 42px to 36px for compactness. */
           .disposition-value {
             font-size: 0.95rem;
-            min-height: 42px;
+            min-height: 36px;
+          }
+
+          /* Hover/tap effect on the whole table panel */
+          .disposition-main-panel {
+            transition: background-color 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer;
+          }
+
+          .disposition-main-panel:hover {
+            background-color: #f3f3f3 !important;
+          }
+
+          .disposition-main-panel:active {
+            background-color: #e8e8e8 !important;
           }
 
           .disposition-note {
             font-size: 0.95rem;
             line-height: 1.7;
           }
+
+          /* FIX 3: Mobile add button — zero out margin and add tap feedback */
+          .disposition-mobile-add-btn {
+              margin: 0 !important;
+              transition: all 0.15s ease;
+              -webkit-tap-highlight-color: transparent;
+            }
+
+            .disposition-mobile-add-btn:hover {
+              transform: scale(1.05);
+            }
+
+            .disposition-mobile-add-btn:active {
+              transform: scale(0.95);
+            }
 
           @media (max-width: 575.98px) {
             .modal-footer-actions {
@@ -164,118 +212,120 @@ const DispositionModule = () => {
                 }}
               >
                 {/* Patient Profile Header */}
-                {/* Patient Profile Header */}
-<div className="d-flex flex-column flex-md-row align-items-center align-items-md-start text-center text-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom">
+                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start text-center text-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom">
 
-  {/* Avatar */}
-  <div
-    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
-    style={{
-      width: "90px",
-      height: "90px",
-      border: "2px solid var(--primary, #0f763f)",
-    }}
-  >
-    <i
-      className="isax isax-user fs-1 text-primary"
-      style={{ color: "var(--primary, #0f763f)" }}
-    />
-  </div>
+                  {/* Avatar */}
+                  <div
+                    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
+                    style={{
+                      width: "90px",
+                      height: "90px",
+                      border: "2px solid var(--primary, #0f763f)",
+                    }}
+                  >
+                    <i
+                      className="isax isax-user fs-1 text-primary"
+                      style={{ color: "var(--primary, #0f763f)" }}
+                    />
+                  </div>
 
-  {/* Patient Info */}
-  <div className="d-flex flex-column align-items-center align-items-md-start text-center text-md-start">
+                  {/* Patient Info */}
+                  <div className="d-flex flex-column align-items-center align-items-md-start text-center text-md-start">
 
-    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
-      ID: {mockPatientProfile.hospitalNumber}
-    </div>
+                    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
+                      ID: {mockPatientProfile.hospitalNumber}
+                    </div>
 
-    <h3 className="fw-bold mb-1 text-dark">
-      {mockPatientProfile.lastName},{" "}
-      {mockPatientProfile.firstName}{" "}
-      {mockPatientProfile.middleName}
-    </h3>
+                    <h3 className="fw-bold mb-1 text-dark">
+                      {mockPatientProfile.lastName},{" "}
+                      {mockPatientProfile.firstName}{" "}
+                      {mockPatientProfile.middleName}
+                    </h3>
 
-    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-      <i className="isax isax-location text-danger" />
-      {mockPatientProfile.address}
-    </div>
+                    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                      <i className="isax isax-location text-danger" />
+                      {mockPatientProfile.address}
+                    </div>
 
-  </div>
-</div>
-
-
+                  </div>
+                </div>
 
                 {/* Toolbar */}
-                {/* Toolbar */}
-<div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
 
-  <h5 className="fw-bold text-uppercase mb-0 text-center text-md-start">
-    Disposition
-  </h5>
-  
-  <div
-  className={`d-flex justify-content-center justify-content-md-end gap-2 flex-wrap w-100 w-md-auto ${
-    !dispositionData ? "d-none d-md-flex" : ""
-  }`}
->
+                  <h5 className="fw-bold text-uppercase mb-0 text-center text-md-start">
+                    Disposition
+                  </h5>
 
-    <button
-      type="button"
-      onClick={handleOpenAddDisposition}
-      className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white disposition-action-btn"
-      style={{
-        borderRadius: "4px",
-        backgroundColor: "#0f763f",
-        border: "1px solid #0f763f",
-      }}
-    >
-      <i className="isax isax-add"></i>
-      <span>Dispose</span>
-    </button>
+                  <div
+                    className={`d-flex justify-content-center justify-content-md-end gap-2 flex-wrap w-100 w-md-auto ${
+                      !dispositionData ? "d-none d-md-flex" : ""
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={handleOpenAddDisposition}
+                      className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white disposition-action-btn"
+                      style={{
+                        borderRadius: "4px",
+                        backgroundColor: "#0f763f",
+                        border: "1px solid #0f763f",
+                      }}
+                    >
+                      <i className="isax isax-add"></i>
+                      <span>Dispose</span>
+                    </button>
 
-    <button
-      type="button"
-      disabled={!dispositionData}
-      onClick={handleOpenEditDisposition}
-      className={`btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold disposition-action-btn ${
-        dispositionData
-          ? "bg-white text-dark text-hover-primary"
-          : "bg-light text-muted opacity-50"
-      }`}
-      style={{
-        borderRadius: "4px",
-        cursor: dispositionData ? "pointer" : "not-allowed",
-      }}
-    >
-      <i className="isax isax-edit-2"></i>
-      <span>Edit</span>
-    </button>
+                    <button
+                      type="button"
+                      disabled={!dispositionData}
+                      onClick={handleOpenEditDisposition}
+                      className={`btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold disposition-action-btn ${
+                        dispositionData
+                          ? "bg-white text-dark text-hover-primary"
+                          : "bg-light text-muted opacity-50"
+                      }`}
+                      style={{
+                        borderRadius: "4px",
+                        cursor: dispositionData ? "pointer" : "not-allowed",
+                      }}
+                    >
+                      <i className="isax isax-edit-2"></i>
+                      <span>Edit</span>
+                    </button>
+                  </div>
+                </div>
 
-  </div>
-</div>
                 {/* Main Content */}
                 <div className="border rounded bg-white disposition-main-panel">
-                 {!dispositionData ? (
-  <div className="text-center text-muted py-5 px-3 d-flex flex-column align-items-center justify-content-center h-100">
+                  {!dispositionData ? (
+  <div className="text-center text-muted py-4 px-3 d-flex flex-column align-items-center justify-content-center disposition-empty-state">
 
-    {/* DESKTOP ICON */}
-    <i className="isax isax-folder-open mb-3 opacity-50 d-none d-lg-block disposition-empty-icon"></i>
+    {/* DESKTOP EMPTY ICON */}
+    <i
+      className="isax isax-folder-open mb-3 opacity-50 d-none d-lg-block disposition-empty-icon"
+      style={{
+        color: "var(--primary, #0f763f)",
+      }}
+    ></i>
 
-    {/* MOBILE ADD BUTTON */}
+    {/* MOBILE CIRCLE ADD BUTTON */}
     <div
-      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
+      className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none disposition-mobile-add-btn"
       onClick={handleOpenAddDisposition}
       style={{
         width: "64px",
         height: "64px",
-        border: "2px solid var(--primary, #0f763f)",
-        backgroundColor: "#fff",
+        backgroundColor: "var(--primary, #0f763f)",
         cursor: "pointer",
       }}
     >
       <i
-        className="isax isax-add text-primary"
-        style={{ fontSize: "2rem" }}
+        className="isax isax-add"
+        style={{
+          fontSize: "2rem",
+          color: "#fff",
+        }}
       />
     </div>
 
@@ -284,15 +334,14 @@ const DispositionModule = () => {
       className="mt-2 fw-semibold text-muted d-lg-none"
       style={{ fontSize: "14px" }}
     >
-      Add New
+     
     </span>
 
     {/* EMPTY TEXT */}
-    <h5 className="fw-bold mb-2 text-dark">
+    <h5 className="fw-bold mb-0 text-dark mt-3">
       No disposition set.
     </h5>
 
-    
   </div>
 ) : (
                     <div className="p-3 p-md-4">
@@ -359,8 +408,11 @@ const DispositionModule = () => {
           tabIndex={-1}
           style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}
         >
-          <div className="modal-dialog modal-lg modal-fullscreen-md-down modal-dialog-centered px-0 px-md-2">
-            <div className="modal-content shadow-lg border-0 rounded-1 overflow-hidden bg-white h-100">
+          {/* FIX 5: Removed modal-fullscreen-md-down and h-100 from modal-content
+              and form — prevents the modal stretching to full viewport height on
+              mobile and leaving empty space below the content. */}
+          <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable px-0 px-md-2">
+            <div className="modal-content shadow-lg border-0 rounded-1 overflow-hidden bg-white">
               <div
                 className="modal-header border-0 py-3 d-flex align-items-center"
                 style={{ backgroundColor: "#333b45" }}
@@ -380,7 +432,7 @@ const DispositionModule = () => {
                 ></button>
               </div>
 
-              <form onSubmit={handleSaveDisposition} className="d-flex flex-column h-100 mb-0">
+              <form onSubmit={handleSaveDisposition} className="d-flex flex-column mb-0">
                 <div className="modal-body p-3 p-md-4 bg-light">
                   <div className="card border-0 shadow-sm mb-0">
                     <div className="card-body p-3 p-md-4">
@@ -490,12 +542,12 @@ const DispositionModule = () => {
                 >
                   <div className="d-flex modal-footer-actions gap-2 w-100 justify-content-sm-end">
                     <button
-  type="button"
-  className="btn rounded-1 px-5 py-2 fw-medium shadow-sm bg-white border text-black"
-  onClick={() => setShowDisposeModal(false)}
->
-  CANCEL
-</button>
+                      type="button"
+                      className="btn rounded-1 px-5 py-2 fw-medium shadow-sm bg-white border text-black"
+                      onClick={() => setShowDisposeModal(false)}
+                    >
+                      CANCEL
+                    </button>
 
                     <button
                       type="submit"

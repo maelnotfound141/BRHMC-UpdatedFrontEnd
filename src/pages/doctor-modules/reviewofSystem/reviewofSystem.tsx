@@ -238,7 +238,7 @@ const ReviewOfSystem = () => {
         <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted py-5 px-3 text-center">
           <i className="isax isax-document-text fs-1 mb-3 opacity-50" style={{ fontSize: '3rem' }}></i>
           <h5 className="text-dark fw-bold mb-1">No system review data recorded.</h5>
-          <p className="small">Click <strong className="text-dark">Add</strong> in the toolbar above to begin editing <strong className="text-dark">{activeCategory}</strong>.</p>
+          <p></p>
         </div>
       );
     }
@@ -398,9 +398,73 @@ const ReviewOfSystem = () => {
                       </div>
                     </div>
 
-                    <div className="flex-grow-1 d-flex flex-column p-3 p-md-4 position-relative overflow-y-auto" style={{ maxHeight: "600px" }}>
-                      {renderFormContent()}
-                    </div>
+                    <div
+  className="flex-grow-1 d-flex flex-column p-3 p-md-4 position-relative overflow-y-auto"
+  style={{ maxHeight: "600px" }}
+>
+  {/* Mobile Floating Add/Edit Button */}
+  {/* <button
+    onClick={() => {
+      if (catHasData) {
+        handleEdit();
+      } else {
+        handleAdd();
+      }
+    }}
+    className="btn d-lg-none position-absolute shadow"
+    style={{
+      bottom: "20px",
+      right: "20px",
+      width: "50px",
+      height: "50px",
+      borderRadius: "50%",
+      backgroundColor: "var(--primary, #0f763f)",
+      color: "#fff",
+      zIndex: 10,
+      display: isUnlocked ? "none" : "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "none"
+    }}
+  >
+    <i
+      className={`isax ${
+        catHasData ? "isax-edit" : "isax-add"
+      }`}
+      style={{ fontSize: "1.3rem" }}
+    ></i>
+  </button> */}
+
+{!catHasData && !isUnlocked && (
+  <button
+    onClick={handleAdd}
+    className="btn d-lg-none position-absolute shadow"
+    style={{
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "64px",
+      height: "64px",
+      borderRadius: "50%",
+      backgroundColor: "var(--primary, #0f763f)",
+      color: "#fff",
+      zIndex: 10,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "none"
+    }}
+  >
+    <i
+      className="isax isax-add"
+      style={{ fontSize: "1.6rem" }}
+    ></i>
+  </button>
+)}
+
+
+  {renderFormContent()}
+</div>
 
                   </div>
                 </div>

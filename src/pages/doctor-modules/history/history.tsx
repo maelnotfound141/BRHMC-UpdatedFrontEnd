@@ -330,89 +330,207 @@ const PatientHistory = () => {
 
   return (
     <>
-      <style>{`
-        .selected-row td {
-          background-color: rgba(15, 118, 63, 0.15) !important;
-        }
+    <style>{`
+.selected-row td {
+  background-color: rgba(15, 118, 63, 0.15) !important;
+}
 
-        .history-action-bar {
-          min-width: 0;
-          white-space: nowrap;
-        }
+/* =========================
+   ACTION BAR (ADD / EDIT / DELETE / INFORMANT)
+========================= */
+.history-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+  white-space: nowrap;
+}
 
-        .history-action-btn {
-          min-width: 72px;
-        }
+/* Shared button style */
+.history-action-btn {
+  min-width: 72px;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  padding: 0.45rem 0.75rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 6px;
+}
 
-        .history-empty-tablet-box {
-          min-height: 180px;
-        }
+/* Hover effect */
+.history-action-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
 
-        .acc-info-backdrop {
-          position: fixed;
-          inset: 0;
-          z-index: 1080;
-          background: rgba(0, 0, 0, 0.35);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 16px;
-        }
+/* Icon sizing consistency */
+.history-action-btn i {
+  font-size: 1rem;
+}
 
-        .acc-info-box {
-          width: 360px;
-          max-width: 100%;
-          background: #fff;
-          border-radius: 8px;
-          overflow: hidden;
-        }
+/* Empty state container */
+.history-empty-tablet-box {
+  min-height: 180px;
+}
 
-        .acc-info-title {
-          height: 40px;
-          background: #f8f9fa;
-          border-bottom: 1px solid #dee2e6;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 12px;
-          font-size: 14px;
-          font-weight: 700;
-        }
+/* =========================
+   MODAL / INFO BOX
+========================= */
+.acc-info-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1080;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
 
-        .acc-info-icon {
-          width: 42px;
-          height: 42px;
-          background: var(--primary, #0f763f);
-          color: #fff;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 22px;
-          flex-shrink: 0;
-        }
+.acc-info-box {
+  width: 360px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
 
-        .acc-info-icon-danger {
-          background: #dc3545;
-        }
+.acc-info-title {
+  height: 42px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
 
-        .acc-info-action-btn {
-          border-radius: 4px;
-          font-size: 0.82rem;
-        }
+.acc-info-icon {
+  width: 42px;
+  height: 42px;
+  background: var(--primary, #0f763f);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
 
-        @media (max-width: 767.98px) {
-          .history-action-bar {
-            width: 100%;
-            justify-content: flex-end;
-            overflow-x: auto;
-          }
+.acc-info-icon-danger {
+  background: #dc3545;
+}
 
-          .history-action-btn {
-            min-width: 62px;
-          }
-        }
-      `}</style>
+.acc-info-action-btn {
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+/* =========================
+   TABLE RESPONSIVENESS
+========================= */
+table {
+  width: 100%;
+}
+
+td,
+th {
+  vertical-align: middle;
+  word-break: break-word;
+}
+
+/* =========================
+   TABLET (≤ 992px)
+========================= */
+@media (max-width: 991.98px) {
+  .history-action-bar {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .history-action-btn {
+    flex: 1 1 calc(50% - 8px);
+    min-width: unset;
+    font-size: 0.82rem;
+    padding: 0.5rem 0.6rem !important;
+  }
+
+  .history-action-btn i {
+    font-size: 0.95rem;
+  }
+
+  .acc-info-box {
+    width: 90%;
+  }
+}
+
+/* =========================
+   MOBILE (≤ 768px)
+========================= */
+@media (max-width: 767.98px) {
+  .history-action-bar {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .history-action-btn {
+    width: 100%;
+    flex: 1 1 100%;
+    font-size: 0.8rem;
+    padding: 0.55rem 0.7rem !important;
+  }
+
+  .history-action-btn span {
+    display: inline;
+  }
+
+  .history-empty-tablet-box {
+    min-height: auto;
+  }
+
+  .acc-info-title {
+    font-size: 13px;
+    padding: 0 10px;
+  }
+
+  .acc-info-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .acc-info-action-btn {
+    width: 100%;
+  }
+}
+
+/* =========================
+   EXTRA SMALL (≤ 420px)
+========================= */
+@media (max-width: 420px) {
+  .history-action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .history-action-btn {
+    width: 100%;
+    font-size: 0.78rem;
+  }
+
+  .history-action-btn i {
+    font-size: 0.9rem;
+  }
+}
+`}</style>  
 
       <div
         className="content doctor-content bg-light mt-n4 d-flex flex-column"
@@ -471,10 +589,10 @@ const PatientHistory = () => {
                       PATIENT HISTORY
                     </h5>
 
-                    <div className="history-action-bar d-flex flex-row align-items-center justify-content-end gap-2 ms-lg-auto">
+                    <div className="history-action-bar ms-lg-auto">
                      <button
   onClick={() => setShowInformantModal(true)}
-  className="btn btn-sm text-white fw-semibold rounded-1 shadow-sm px-4 border-0 history-action-btn d-flex align-items-center justify-content-center gap-1"
+  className="btn btn-sm text-white fw-semibold rounded-1 shadow-sm border-0 history-action-btn d-flex align-items-center justify-content-center gap-1"
   style={{ backgroundColor: "var(--primary, #0f763f)" }}
 >
   <i className="isax isax-profile-2user"></i>
@@ -546,7 +664,16 @@ const PatientHistory = () => {
                   </div>
 
                   {/* table area */}
-                  <div className="border rounded-0 flex-grow-1 bg-white">
+                  {/* table area */}
+<div
+  className="border rounded-0 flex-grow-1 bg-white position-relative"
+  style={{
+    minHeight: "400px",
+    overflow: "auto",
+  }}
+>
+  {/* MOBILE CENTER FAB */}
+  
                     <table
                       className="table table-hover align-middle mb-0"
                       style={{ tableLayout: "auto" }}
@@ -577,42 +704,67 @@ const PatientHistory = () => {
 
                       <tbody>
                         {isTableEmpty && (
-                          <tr>
-                            <td colSpan={5} className="py-5 text-center">
-                              <div className="history-empty-tablet-box d-none d-md-flex d-lg-none flex-column align-items-center justify-content-center gap-3">
-                                <div className="text-muted fw-semibold">
-                                  No history records added yet.
-                                </div>
+  <tr>
+    <td colSpan={5} className="py-5 text-center">
 
-                                <button
-                                  onClick={handleOpenAddHistory}
-                                  className={`btn btn-sm text-white fw-semibold rounded-1 shadow-sm px-4 border-0 d-flex align-items-center justify-content-center gap-2 ${
-                                    availableHistoryTypes.length === 0 &&
-                                    !isEditing
-                                      ? "opacity-50"
-                                      : ""
-                                  }`}
-                                  style={{
-                                    backgroundColor:
-                                      "var(--primary, #0f763f)",
-                                    cursor:
-                                      availableHistoryTypes.length === 0 &&
-                                      !isEditing
-                                        ? "not-allowed"
-                                        : "pointer",
-                                  }}
-                                >
-                                  <i className="isax isax-add-square"></i>
-                                  <span>Add History</span>
-                                </button>
-                              </div>
+      {/* Tablet: md to lg */}
+      <div className="history-empty-tablet-box d-none d-md-flex d-lg-none flex-column align-items-center justify-content-center gap-3">
+        <button
+          onClick={handleOpenAddHistory}
+          className={`btn border-0 d-flex align-items-center justify-content-center shadow ${
+            availableHistoryTypes.length === 0 && !isEditing ? "opacity-50" : ""
+          }`}
+          style={{
+            backgroundColor: "var(--primary, #0f763f)",
+            width: "64px",
+            height: "64px",
+            minWidth: "64px",
+            minHeight: "64px",
+            borderRadius: "50%",
+            padding: 0,
+            cursor: availableHistoryTypes.length === 0 && !isEditing ? "not-allowed" : "pointer",
+          }}
+        >
+          <span style={{ fontSize: "1.8rem", lineHeight: 1, fontWeight: 300, color: "#fff" }}>+</span>
+        </button>
+        <div className="text-muted fw-semibold">
+          No history records added yet.
+        </div>
+      </div>
 
-                              <div className="d-md-none d-lg-block text-muted fw-semibold">
-                                No history records added yet.
-                              </div>
-                            </td>
-                          </tr>
-                        )}
+      {/* Mobile: below md */}
+      <div className="d-flex d-md-none flex-column align-items-center justify-content-center gap-3 py-3">
+        <button
+          onClick={handleOpenAddHistory}
+          className={`btn border-0 d-flex align-items-center justify-content-center shadow ${
+            availableHistoryTypes.length === 0 && !isEditing ? "opacity-50" : ""
+          }`}
+          style={{
+            backgroundColor: "var(--primary, #0f763f)",
+            width: "64px",
+            height: "64px",
+            minWidth: "64px",
+            minHeight: "64px",
+            borderRadius: "50%",
+            padding: 0,
+            cursor: availableHistoryTypes.length === 0 && !isEditing ? "not-allowed" : "pointer",
+          }}
+        >
+          <span style={{ fontSize: "1.8rem", lineHeight: 1, fontWeight: 300, color: "#fff" }}>+</span>
+        </button>
+        <div className="text-muted fw-semibold">
+          No history records added yet.
+        </div>
+      </div>
+
+      {/* Desktop: lg and up */}
+      <div className="d-none d-lg-block text-muted fw-semibold">
+        No history records added yet.
+      </div>
+
+    </td>
+  </tr>
+)}
 
                         {historyRecords.map((record) => (
                           <tr
@@ -1198,3 +1350,6 @@ const PatientHistory = () => {
 };
 
 export default PatientHistory;
+
+
+

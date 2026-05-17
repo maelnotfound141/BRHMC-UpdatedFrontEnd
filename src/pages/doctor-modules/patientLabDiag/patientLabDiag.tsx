@@ -206,6 +206,53 @@ const PertinentLabDiagnostic = () => {
             background: #f5f7fa;
             color: #1f2937;
           }
+            /* Empty State Floating Add Button */
+.empty-state-add-btn {
+  width: 64px;
+  height: 64px;
+  border: none;
+  border-radius: 50%;
+  background: #0f763f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  box-shadow:
+    0 10px 20px rgba(15,118,63,0.25),
+    0 4px 8px rgba(0,0,0,0.12);
+}
+
+.empty-state-add-btn i {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Soft Glow */
+.empty-state-add-btn::after {
+  content: "";
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: rgba(15,118,63,0.10);
+  z-index: -1;
+}
+
+/* Hover */
+.empty-state-add-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: #0c5f33;
+}
+
+/* Click */
+.empty-state-add-btn:active {
+  transform: scale(0.96);
+}
 
           .selected-row > td {
             background-color: #e6f4ea !important;
@@ -464,30 +511,15 @@ const PertinentLabDiagnostic = () => {
                       ></i>
 
                       {/* Mobile Add */}
-                      <div
-                        className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
-                        onClick={handleAdd}
-                        style={{
-                          width: "64px",
-                          height: "64px",
-                          border:
-                            "2px solid var(--primary, #0f763f)",
-                          backgroundColor: "#fff",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <i
-                          className="isax isax-add fs-1 text-primary"
-                          style={{ fontSize: "2rem" }}
-                        />
-                      </div>
+                      <button
+  type="button"
+  onClick={handleAdd}
+  className="empty-state-add-btn d-lg-none"
+>
+  <i className="isax isax-add"></i>
+</button>
 
-                      <span
-                        className="mt-2 fw-semibold text-muted d-lg-none"
-                        style={{ fontSize: "14px" }}
-                      >
-                        Add New
-                      </span>
+                      
 
                       <p className="mb-0 fw-bold text-dark">
                         No lab/diagnostic findings found
