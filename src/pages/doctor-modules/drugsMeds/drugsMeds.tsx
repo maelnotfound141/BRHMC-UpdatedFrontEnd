@@ -79,6 +79,21 @@ const DrugsAndMedicine = () => {
   const [issuableDrugs, setIssuableDrugs] = useState<IssuableDrug[]>([]);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
+
+
+  const [isMobile, setIsMobile] = useState(false);
+
+useEffect(() => {
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 992);
+  };
+
+  handleResize(); // run once on mount
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
   //pagination and sorting state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10); 
@@ -229,6 +244,83 @@ const DrugsAndMedicine = () => {
     <>
       <style>
         {`
+
+        .table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-fixed td,
+.table-fixed th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+
+.table-fixed {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table-fixed th,
+.table-fixed td {
+  vertical-align: top;
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.table td {
+  padding: 12px !important;
+}
+
+.safe-text {
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  display: block;
+  line-height: 1.4;
+}
+
+/* prevent horizontal overflow issues */
+.table-responsive {
+  overflow-x: auto;
+}
+
+          .mobile-empty-add-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid var(--primary, #0f763f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(15, 118, 63, 0.15);
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+          }
+
+          .mobile-empty-add-btn:hover,
+          .mobile-empty-add-btn:active {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 10px 24px rgba(15, 118, 63, 0.22);
+            background-color: #f8fffb;
+          }
+
+          .mobile-empty-add-btn i {
+            font-size: 2rem;
+            color: var(--primary, #0f763f);
+          }
+
+          .mobile-empty-add-label {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6c757d;
+            letter-spacing: 0.2px;
+          }
           .hide-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
           .hide-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
           .hide-scrollbar { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
@@ -283,50 +375,80 @@ const DrugsAndMedicine = () => {
 
                 {/* main data scetion */}
                 <div className="d-flex flex-column flex-grow-1 mb-4">
-                  
+                
                   {/* toolbar */}
-                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
-                    <h5 className="fw-bold text-dark mb-0 text-center text-md-start text-uppercase">Drugs and Medicine</h5>
-            
-                    <div className="d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto" style={{ gap: "6px" }}>
-                      <button 
-                        onClick={openDmListModal} 
-                        className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0"
-                        style={{ borderRadius: "4px", cursor: "pointer" }}
-                      >
-                        <i className="isax isax-menu-board"></i> <span>DM List</span>
-                      </button>
-                      
-                      {/* srt by date btn */}
-                      <button 
-                        onClick={() => handleSort('date')}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${sortConfig.field === 'date' ? 'bg-light text-primary border-primary' : 'bg-white text-dark'} fw-bold text-hover-primary`}
-                        style={{ borderRadius: "4px", cursor: "pointer" }}
-                      >
-                        <i className={`isax ${sortConfig.field === 'date' && sortConfig.order === 'asc' ? 'isax-arrow-up-2' : 'isax-arrow-down-1'}`}></i> 
-                        <span className="d-none d-sm-inline">Sort by Date</span>
-                      </button>
+                 
+<div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
+  <h5 className="fw-bold text-dark mb-0 text-center text-md-start text-uppercase">
+    Drugs and Medicine
+  </h5>
 
-                      {/* sort by item btn */}
-                      <button 
-                        onClick={() => handleSort('item')}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${sortConfig.field === 'item' ? 'bg-light text-primary border-primary' : 'bg-white text-dark'} fw-bold text-hover-primary`}
-                        style={{ borderRadius: "4px", cursor: "pointer" }}
-                      >
-                        {sortConfig.field === 'item' ? (
-                          <i className={`isax ${sortConfig.order === 'asc' ? 'isax-arrow-up-2' : 'isax-arrow-down-1'}`}></i>
-                        ) : (
-                          <i className="isax isax-sort"></i>
-                        )}
-                        <span className="d-none d-sm-inline">Sort by Item</span>
-                      </button>
-                    </div>
-                  </div>
+  <div
+    className="d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto"
+    style={{ gap: "6px" }}
+  >
+    {/* ✅ DM LIST BUTTON (hidden ONLY on mobile empty state) */}
+    {!(isMobile && sortedRecords.length === 0) && (
+      <button
+        onClick={openDmListModal}
+        className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0"
+        style={{ borderRadius: "4px", cursor: "pointer" }}
+      >
+        <i className="isax isax-menu-board"></i>
+        <span>DM List</span>
+      </button>
+    )}
+
+    {/* sort by date btn */}
+    <button
+      onClick={() => handleSort("date")}
+      className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+        sortConfig.field === "date"
+          ? "bg-light text-primary border-primary"
+          : "bg-white text-dark"
+      } fw-bold text-hover-primary`}
+      style={{ borderRadius: "4px", cursor: "pointer" }}
+    >
+      <i
+        className={`isax ${
+          sortConfig.field === "date" && sortConfig.order === "asc"
+            ? "isax-arrow-up-2"
+            : "isax-arrow-down-1"
+        }`}
+      ></i>
+      <span className="d-none d-sm-inline">Sort by Date</span>
+    </button>
+
+    {/* sort by item btn */}
+    <button
+      onClick={() => handleSort("item")}
+      className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+        sortConfig.field === "item"
+          ? "bg-light text-primary border-primary"
+          : "bg-white text-dark"
+      } fw-bold text-hover-primary`}
+      style={{ borderRadius: "4px", cursor: "pointer" }}
+    >
+      {sortConfig.field === "item" ? (
+        <i
+          className={`isax ${
+            sortConfig.order === "asc"
+              ? "isax-arrow-up-2"
+              : "isax-arrow-down-1"
+          }`}
+        ></i>
+      ) : (
+        <i className="isax isax-sort"></i>
+      )}
+      <span className="d-none d-sm-inline">Sort by Item</span>
+    </button>
+  </div>
+</div>
 
                   {/* table layout */}
                   <div className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden" style={{ minHeight: "450px" }}>
                     <div className="table-responsive flex-grow-1 bg-white p-0">
-                      <table className="table table-hover align-middle mb-0" style={{ fontSize: "0.85rem", minWidth: "750px" }}>
+                      <table className="table table-hover table-fixed mb-0 align-middle"> 
                         <thead style={{ backgroundColor: "#f8f9fa" }}>
                           <tr>
                             <th className="border-bottom py-3 px-4 text-dark fw-bold" style={{ width: "60%" }}>Drug/Medicine Description</th>
@@ -336,22 +458,73 @@ const DrugsAndMedicine = () => {
                         </thead>
                         <tbody>
                           {paginatedRecords.length === 0 ? (
-                            <tr>
-                              <td colSpan={3} className="text-center text-muted py-5 border-0">
-                                <i className="isax isax-folder-open fs-1 mb-3 opacity-50 d-block" style={{ fontSize: '3rem' }}></i>
-                                <h6 className="fw-bold mb-1">No drugs and medicine recorded yet.</h6>
-                                <p className="small mb-0">Click <strong className="text-dark">DM List</strong> in the toolbar above to issue a drug.</p>
-                              </td>
-                            </tr>
-                          ) : (
+  <tr>
+    <td
+  colSpan={3}
+  className="text-center text-muted border-0"
+  style={{ height: "280px", verticalAlign: "middle" }}
+>
+      <div
+  className="d-flex flex-column align-items-center justify-content-center h-100"
+  style={{ marginTop: isMobile ? "-10px" : "0px" }}
+>
+
+        {/* DESKTOP / TABLET ONLY CONTENT */}
+        {!isMobile && (
+          <>
+            {/* ICON */}
+            <i
+              className="isax isax-folder-open fs-1 mb-3 opacity-50 d-block"
+              style={{ fontSize: "3rem" }}
+            ></i>
+
+            {/* TEXT */}
+            <h6 className="fw-bold mb-1">
+              No drugs and medicine recorded yet.
+            </h6>
+
+           
+          </>
+        )}
+
+        {/* MOBILE ONLY CTA */}
+        {isMobile && (
+          <div className="d-flex flex-column align-items-center justify-content-center">
+            <div
+              onClick={openDmListModal}
+              className="mobile-empty-add-btn"
+              title="Open DM List"
+            >
+              <i className="isax isax-menu-board"></i>
+            </div>
+
+            <div className="mobile-empty-add-label">
+              DM List
+            </div>
+          </div>
+        )}
+
+      </div>
+    </td>
+  </tr>
+) : (
                             paginatedRecords.map((record) => (
                               <tr key={record.id} style={{ transition: "background-color 0.2s" }}>
-                                <td className="py-3 px-4">
-                                  <div className="fw-bold text-primary mb-1" style={{ color: "var(--primary, #0f763f)" }}>{record.name}</div>
-                                  <div className="text-dark">{record.description}</div>
-                                </td>
-                                <td className="py-3 px-4 align-top pt-4">P {record.cost.toFixed(2)}</td>
-                                <td className="py-3 px-4 text-muted align-top pt-4">{record.dateDispensed}</td>
+                                <td className="align-top">
+  <div className="fw-bold text-primary safe-text">
+    {record.name}
+  </div>
+
+  <div className="text-dark small safe-text mt-1">
+    {record.description}
+  </div>
+</td>
+                                <td className="align-top">
+  P {record.cost.toFixed(2)}
+</td>
+                                <td className="align-top text-muted">
+  {record.dateDispensed}
+</td>
                               </tr>
                             ))
                           )}

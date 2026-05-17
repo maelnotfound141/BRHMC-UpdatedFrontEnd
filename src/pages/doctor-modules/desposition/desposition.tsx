@@ -292,9 +292,7 @@ const DispositionModule = () => {
       No disposition set.
     </h5>
 
-    <p className="mb-0" style={{ fontSize: "0.95rem" }}>
-      Click <strong className="text-dark">Dispose</strong> in the toolbar above to set one.
-    </p>
+    
   </div>
 ) : (
                     <div className="p-3 p-md-4">
