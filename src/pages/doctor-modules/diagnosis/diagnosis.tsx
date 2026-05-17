@@ -379,15 +379,13 @@ const DiagnosisModule = () => {
             transition: all 0.2s ease;
           }
 
-          .badge {
-            border-radius: 999px !important;
-            padding: 0.55rem 0.9rem;
-            font-weight: 600;
-            font-size: 0.75rem;
-            background: #e6f4ea !important;
-            color: #0f763f !important;
-            border: 1px solid rgba(15,118,63,0.15) !important;
-          }
+          /* ONLY for special badges, NOT all badges */
+.patient-badge {
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
 
           .patient-avatar {
             width: 90px;
@@ -456,34 +454,100 @@ const DiagnosisModule = () => {
                   background: "#ffffff",
                 }}
               >
-                {/* Header */}
-                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom">
-                  <div className="rounded-circle d-flex align-items-center justify-content-center patient-avatar">
-                    <i className="isax isax-user fs-1 text-success"></i>
-                  </div>
+              
+               
+{/* Header - RESPONSIVE PROFILE */}
+<div
+  className="
+    d-flex
+    flex-column
+    flex-md-row
+    align-items-center
+    align-items-md-start
+    gap-3
+    gap-md-4
+    mb-4
+    pb-4
+    border-bottom
+    text-center
+    text-md-start
+  "
+>
 
-                  <div>
-                    <div className="badge mb-2">
-                      ID: {mockPatientProfile.hospitalNumber}
-                    </div>
+  {/* Avatar */}
+  <div
+    className="
+      rounded-circle
+      d-flex
+      align-items-center
+      justify-content-center
+      bg-light
+      shadow-sm
+      flex-shrink-0
+      mx-auto
+      mx-md-0
+    "
+    style={{
+      width: "90px",
+      height: "90px",
+      border: "2px solid var(--primary, #0f763f)",
+    }}
+  >
+    <i
+      className="isax isax-user"
+      style={{
+        color: "var(--primary, #0f763f)",
+        fontSize: "42px",
+      }}
+    />
+  </div>
 
-                    <h3 className="fw-bold patient-name">
-                      {mockPatientProfile.lastName},{" "}
-                      {mockPatientProfile.firstName}{" "}
-                      {mockPatientProfile.middleName}
-                    </h3>
+  {/* Patient Info */}
+  <div
+    className="
+      d-flex
+      flex-column
+      align-items-center
+      align-items-md-start
+    "
+  >
 
-                    <div className="small patient-address">
-                      {mockPatientProfile.address}
-                    </div>
-                  </div>
-                </div>
+    {/* ID Badge */}
+    <div className="patient-badge bg-light text-secondary border mb-2 px-2 py-1 d-inline-flex align-items-center">
+      ID: {mockPatientProfile.hospitalNumber}
+    </div>
+
+    {/* Name */}
+    <h3 className="fw-bold mb-1 text-dark">
+      {mockPatientProfile.lastName},{" "}
+      {mockPatientProfile.firstName}{" "}
+      {mockPatientProfile.middleName}
+    </h3>
+
+    {/* Address */}
+    <div
+      className="
+        text-muted
+        small
+        d-flex
+        align-items-center
+        justify-content-center
+        justify-content-md-start
+        gap-2
+      "
+    >
+      <i className="isax isax-location text-danger" />
+      {mockPatientProfile.address}
+    </div>
+
+  </div>
+</div>
 
                 {/* Toolbar */}
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
-                  <h5 className="fw-bold text-uppercase mb-0">
-                    Diagnosis
-                  </h5>
+                 <h5 className="fw-bold text-uppercase mb-0 flex-grow-1 text-center text-md-start">
+  Diagnosis
+</h5>
 
                   {(!isMobile || hasRecords) && (
                     <div className="d-flex gap-2 toolbar-mobile-stack">

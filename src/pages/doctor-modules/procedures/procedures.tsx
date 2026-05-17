@@ -35,6 +35,7 @@ const ProcedureAndComplication = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [tempText, setTempText] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showMobileActions, setShowMobileActions] = useState(false);
 
   useEffect(() => {
     if (location.state?.selectedPatientId) {
@@ -42,7 +43,9 @@ const ProcedureAndComplication = () => {
     }
   }, [location.state]);
 
-  const hasData = savedData[activeTab].trim().length > 0;
+const currentData = savedData[activeTab];
+const hasData = currentData.trim().length > 0;
+const isEmpty = !hasData;
   
   // --- Handlers ---
   const handleTabSwitch = (tab: "procedure" | "complication") => {
@@ -61,17 +64,26 @@ const ProcedureAndComplication = () => {
   };
 
   const handleSave = () => {
-    setSavedData((prev) => ({
-      ...prev,
-      [activeTab]: tempText,
-    }));
-    setIsEditing(false);
-  };
+  setSavedData((prev) => ({
+    ...prev,
+    [activeTab]: tempText,
+  }));
+
+  setIsEditing(false);
+
+  if (window.innerWidth < 992) {
+    setShowMobileActions(false);
+  }
+};
 
   const handleCancel = () => {
-    setTempText("");
-    setIsEditing(false);
-  };
+  setTempText("");
+  setIsEditing(false);
+
+  if (window.innerWidth < 992) {
+    setShowMobileActions(false);
+  }
+};
 
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
@@ -193,70 +205,110 @@ const ProcedureAndComplication = () => {
                 {/* main content area */}
                 <div className="d-flex flex-column flex-grow-1 mb-4">
                   
-                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
-                    <h5 className="fw-bold text-dark mb-0 text-center text-md-start text-uppercase">
-                      Procedure Done | Complication
-                    </h5>
-            
-                    <div className="d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto" style={{ gap: "6px" }}>
-                      <button 
-                        onClick={handleAdd} 
-                        disabled={isEditing || hasData}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                          (isEditing || hasData) ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold text-hover-primary'
-                        }`}
-                        style={{ borderRadius: "4px", cursor: (isEditing || hasData) ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-add-square"></i> <span>Add</span>
-                      </button>
-                      
-                      <button 
-                        onClick={handleEdit} 
-                        disabled={isEditing || !hasData}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                          (isEditing || !hasData) ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold text-hover-primary'
-                        }`}
-                        style={{ borderRadius: "4px", cursor: (isEditing || !hasData) ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-edit"></i> <span>Edit</span>
-                      </button>
+                  <div
+  className={`
+    flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto
+    d-lg-flex
+    ${showMobileActions ? "d-flex" : "d-none d-lg-flex"}
+    ${isEmpty && !showMobileActions ? "d-none d-lg-flex" : ""}
+  `}
+  style={{ gap: "6px" }}
+>
+  <button 
+    onClick={handleAdd} 
+    disabled={isEditing || hasData}
+    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+      (isEditing || hasData)
+        ? 'bg-light text-muted opacity-50'
+        : 'bg-white text-dark fw-bold text-hover-primary'
+    }`}
+    style={{
+      borderRadius: "4px",
+      cursor: (isEditing || hasData) ? "not-allowed" : "pointer"
+    }}
+  >
+    <i className="isax isax-add-square"></i>
+    <span>Add</span>
+  </button>
 
-                      <button 
-                        onClick={handleSave} 
-                        disabled={!isEditing}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                          !isEditing ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold text-hover-primary'
-                        }`}
-                        style={{ borderRadius: "4px", cursor: !isEditing ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-save-2"></i> <span>Save</span>
-                      </button>
+  <button 
+    onClick={handleEdit} 
+    disabled={isEditing || !hasData}
+    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+      (isEditing || !hasData)
+        ? 'bg-light text-muted opacity-50'
+        : 'bg-white text-dark fw-bold text-hover-primary'
+    }`}
+    style={{
+      borderRadius: "4px",
+      cursor: (isEditing || !hasData) ? "not-allowed" : "pointer"
+    }}
+  >
+    <i className="isax isax-edit"></i>
+    <span>Edit</span>
+  </button>
 
-                      <button 
-                        onClick={handleCancel} 
-                        disabled={!isEditing}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                          !isEditing ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold text-hover-primary'
-                        }`}
-                        style={{ borderRadius: "4px", cursor: !isEditing ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-undo"></i> <span>Cancel</span>
-                      </button>
+  <button 
+    onClick={handleSave} 
+    disabled={!isEditing}
+    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+      !isEditing
+        ? 'bg-light text-muted opacity-50'
+        : 'bg-white text-dark fw-bold text-hover-primary'
+    }`}
+    style={{
+      borderRadius: "4px",
+      cursor: !isEditing ? "not-allowed" : "pointer"
+    }}
+  >
+    <i className="isax isax-save-2"></i>
+    <span>Save</span>
+  </button>
 
-                      <button 
-                        onClick={handleDeleteClick} 
-                        disabled={isEditing || !hasData}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                          (isEditing || !hasData) ? 'bg-light text-muted opacity-50' : 'bg-white text-danger fw-bold'
-                        }`}
-                        style={{ borderRadius: "4px", cursor: (isEditing || !hasData) ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-trash"></i> <span>Del</span>
-                      </button>
-                    </div>
-                  </div>
+  <button 
+    onClick={handleCancel} 
+    disabled={!isEditing}
+    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+      !isEditing
+        ? 'bg-light text-muted opacity-50'
+        : 'bg-white text-dark fw-bold text-hover-primary'
+    }`}
+    style={{
+      borderRadius: "4px",
+      cursor: !isEditing ? "not-allowed" : "pointer"
+    }}
+  >
+    <i className="isax isax-undo"></i>
+    <span>Cancel</span>
+  </button>
 
-                  <div className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden" style={{ minHeight: "450px" }}>
+  <button 
+    onClick={handleDeleteClick} 
+    disabled={isEditing || !hasData}
+    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+      (isEditing || !hasData)
+        ? 'bg-light text-muted opacity-50'
+        : 'bg-white text-danger fw-bold'
+    }`}
+    style={{
+      borderRadius: "4px",
+      cursor: (isEditing || !hasData) ? "not-allowed" : "pointer"
+    }}
+  >
+    <i className="isax isax-trash"></i>
+    <span>Del</span>
+  </button>
+</div>
+
+                  <div
+  className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden"
+  style={{ minHeight: "450px" }}
+  onClick={() => {
+    if (window.innerWidth < 992) {
+      setShowMobileActions(true);
+    }
+  }}
+>
                     
                     <div className="d-flex border-bottom" style={{ backgroundColor: "#f8f9fa" }}>
                       <button 
@@ -279,10 +331,42 @@ const ProcedureAndComplication = () => {
                     <div className="d-flex flex-column flex-grow-1 p-3 p-md-4" style={{ backgroundColor: "#ffffff" }}>
                       {!isEditing && !hasData ? (
                         <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted py-5 text-center">
-                          <i className="isax isax-document-text fs-1 mb-3 opacity-50" style={{ fontSize: '3rem' }}></i>
-                          <h6 className="fw-bold mb-1">No {activeTab} data recorded.</h6>
-                          <p className="small mb-0">Click <strong className="text-dark">Add</strong> in the toolbar above to begin typing.</p>
-                        </div>
+
+  {/* DESKTOP ICON */}
+  <i className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block" style={{ fontSize: '3rem' }}></i>
+
+  {/* MOBILE ADD BUTTON */}
+  <div
+    className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none mb-2"
+    onClick={handleAdd}
+    style={{
+      width: "64px",
+      height: "64px",
+      border: "2px solid var(--primary, #0f763f)",
+      backgroundColor: "#fff",
+      cursor: "pointer",
+    }}
+  >
+    <i
+      className="isax isax-add-square text-primary"
+      style={{ fontSize: "2rem" }}
+    />
+  </div>
+
+  {/* MOBILE LABEL */}
+  <span className="mt-2 fw-semibold text-muted d-lg-none" style={{ fontSize: "14px" }}>
+    Add New
+  </span>
+
+  <h6 className="fw-bold mb-1">
+    No {activeTab} data recorded.
+  </h6>
+
+  <p className="small mb-0">
+    Click <strong className="text-dark">Add</strong> or tap the icon above to begin.
+  </p>
+
+</div>
                       ) : (
                         <div className="d-flex flex-column flex-grow-1 fade-in">
                           <label className="fw-bold mb-2 text-dark" style={{ fontSize: "0.9rem", color: "var(--primary, #0f763f)" }}>

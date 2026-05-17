@@ -265,119 +265,207 @@ const DispositionModule = () => {
     <>
       <style>
         {`
-          .text-hover-primary:hover {
-            color: var(--primary, #0f763f) !important;
-          }
+/* =========================================================
+   TEXT HOVER
+========================================================= */
 
-          .modal-table th,
-          .modal-table td {
-            vertical-align: middle;
-          }
+.text-hover-primary:hover {
+  color: var(--primary, #0f763f) !important;
+}
 
-          .modal-sub-tabs {
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            white-space: nowrap;
-          }
+/* =========================================================
+   MODAL TABLE
+========================================================= */
 
-          .modal-sub-tabs .nav-link {
-            border-radius: 0;
-            color: #6c757d;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-          }
+.modal-table th,
+.modal-table td {
+  vertical-align: middle;
+}
 
-          .modal-sub-tabs .nav-link.active {
-            color: #212529;
-            border-bottom: 2px solid var(--primary, #0f763f);
-            background: transparent;
-          }
+/* =========================================================
+   MODAL TABS
+========================================================= */
 
-          .inst-label {
-            min-width: 140px;
-            font-weight: 700;
-            color: #212529;
-            font-size: 0.95rem;
-          }
+.modal-sub-tabs {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  white-space: nowrap;
+}
 
-          .inst-value-green {
-            color: var(--primary, #0f763f);
-            font-weight: 600;
-          }
+.modal-sub-tabs .nav-link {
+  border-radius: 0;
+  color: #6c757d;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
 
-          .inst-checkbox {
-            width: 15px;
-            height: 15px;
-            accent-color: var(--primary, #0f763f);
-            flex-shrink: 0;
-          }
+.modal-sub-tabs .nav-link.active {
+  color: #212529;
+  border-bottom: 2px solid var(--primary, #0f763f);
+  background: transparent;
+}
 
-          .pharmacy-item:hover {
-            background-color: #b5e4d3;
-            color: #000;
-            cursor: pointer;
-          }
+/* =========================================================
+   LABELS / VALUES
+========================================================= */
 
-          .min-w-drug {
-            min-width: 400px;
-            width: 45%;
-          }
+.inst-label {
+  min-width: 140px;
+  font-weight: 700;
+  color: #212529;
+  font-size: 0.95rem;
+}
 
-          .min-w-freq {
-            min-width: 50px;
-            width: 8%;
-          }
+.inst-value-green {
+  color: var(--primary, #0f763f);
+  font-weight: 600;
+}
 
-          .min-w-rem {
-            min-width: 150px;
-            width: 23%;
-          }
+/* =========================================================
+   CHECKBOX
+========================================================= */
 
-          .min-w-action {
-            min-width: 70px;
-            width: 70px;
-          }
+.inst-checkbox {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--primary, #0f763f);
+  flex-shrink: 0;
+}
 
-          .instruction-main-panel {
-            min-height: 450px;
-          }
+/* =========================================================
+   PHARMACY HOVER
+========================================================= */
 
-          .instruction-action-btn {
-            min-height: 38px;
-            font-size: 0.9rem;
-          }
+.pharmacy-item:hover {
+  background-color: #b5e4d3;
+  color: #000;
+  cursor: pointer;
+}
 
-          .required-field-highlight {
-            border-color: #dc3545 !important;
-            background-color: #fff5f5 !important;
-            box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.18) !important;
-          }
+/* =========================================================
+   WIDTH HELPERS
+========================================================= */
 
-          .required-field-label {
-            color: #dc3545 !important;
-          }
+.min-w-drug {
+  min-width: 400px;
+  width: 45%;
+}
 
-          @media (max-width: 575.98px) {
-            .modal-footer-actions {
-              flex-direction: column-reverse;
-              width: 100%;
-            }
+.min-w-freq {
+  min-width: 50px;
+  width: 8%;
+}
 
-            .modal-footer-actions button {
-              width: 100%;
-              margin-top: 8px;
-            }
+.min-w-rem {
+  min-width: 150px;
+  width: 23%;
+}
 
-            .inst-label {
-              min-width: 100px;
-              margin-bottom: 0.5rem;
-            }
+.min-w-action {
+  min-width: 70px;
+  width: 70px;
+}
 
-            .d-flex.mb-3 {
-              flex-direction: column;
-            }
-          }
-        `}
+/* =========================================================
+   INSTRUCTION PANEL
+========================================================= */
+
+.instruction-main-panel {
+  min-height: 450px;
+}
+
+.instruction-action-btn {
+  min-height: 38px;
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   REQUIRED FIELD STYLES
+========================================================= */
+
+.required-field-highlight {
+  border-color: #dc3545 !important;
+  background-color: #fff5f5 !important;
+  box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.18) !important;
+}
+
+.required-field-label {
+  color: #dc3545 !important;
+}
+
+/* =========================================================
+   ACTION BUTTON CONTAINER
+========================================================= */
+
+.instruction-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.discharge-mobile-name {
+  font-size: clamp(1.6rem, 3vw, 2.8rem) !important;
+  line-height: 1.2;
+}
+
+/* hide scrollbar if overflow */
+.instruction-action-buttons::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================================
+   HIDE TOP DISPOSE BUTTON ON MOBILE WHEN EMPTY
+========================================================= */
+
+@media (max-width: 991.98px) {
+  .instruction-action-buttons.hide-mobile-empty {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   MOBILE: CENTER ADD + EDIT BUTTONS
+========================================================= */
+
+@media (max-width: 767px) {
+  .instruction-action-buttons {
+    justify-content: center !important;
+    width: 100% !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* =========================================================
+   MOBILE LAYOUT FIXES
+========================================================= */
+
+@media (max-width: 575.98px) {
+  .modal-footer-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .modal-footer-actions button {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .inst-label {
+    min-width: 100px;
+    margin-bottom: 0.5rem;
+  }
+
+  .d-flex.mb-3 {
+    flex-direction: column;
+  }
+}
+`}
       </style>
 
       <div
@@ -396,41 +484,55 @@ const DispositionModule = () => {
                   borderTop: "4px solid var(--primary, #0f763f)",
                 }}
               >
-                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
-                  <div
-                    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
-                    style={{
-                      width: "90px",
-                      height: "90px",
-                      border: "2px solid var(--primary, #0f763f)",
-                    }}
-                  >
-                    <i
-                      className="isax isax-user fs-1 text-primary"
-                      style={{ color: "var(--primary, #0f763f)" }}
-                    />
-                  </div>
+                {/* ================= PATIENT HEADER ================= */}
+{/* ================= PATIENT HEADER ================= */}
+{/* This is the HEADER section (Patient profile summary at top) */}
+<div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
 
-                  <div>
-                    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
-                      ID: {mockPatientProfile.hospitalNumber}
-                    </div>
+  {/* Avatar */}
+  <div
+    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
+    style={{
+      width: "90px",
+      height: "90px",
+      border: "2px solid var(--primary, #0f763f)",
+    }}
+  >
+    <i
+      className="isax isax-user fs-1"
+      style={{ color: "var(--primary, #0f763f)" }}
+    />
+  </div>
 
-                    <h3 className="fw-bold mb-1 text-dark fs-3 fs-md-2">
-                      {mockPatientProfile.lastName}, {mockPatientProfile.firstName}{" "}
-                      {mockPatientProfile.middleName}
-                    </h3>
+  {/* Patient Info */}
+  <div className="flex-grow-1">
 
-                    <div className="text-muted small d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-start gap-2">
-                      <div className="d-flex align-items-center gap-1">
-                        <i className="isax isax-location text-danger" />
-                        {mockPatientProfile.address}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+    {/* ID */}
+    <div className="d-flex justify-content-center justify-content-md-start mb-2">
+      <span className="badge bg-light text-secondary border px-2 py-1">
+        ID: {mockPatientProfile.hospitalNumber}
+      </span>
+    </div>
 
-                <div className="d-flex flex-row flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    {/* Name */}
+    <h3 className="fw-bold mb-2 text-dark discharge-mobile-name">
+      {mockPatientProfile.lastName}, {mockPatientProfile.firstName}{" "}
+      {mockPatientProfile.middleName}
+    </h3>
+
+    {/* Address */}
+    <div className="d-flex justify-content-center justify-content-md-start align-items-start text-muted small gap-2">
+      <i className="isax isax-location text-danger mt-1" />
+      <span style={{ maxWidth: "500px" }}>
+        {mockPatientProfile.address}
+      </span>
+    </div>
+
+  </div>
+</div>
+
+                <div className="d-flex flex-column flex-md-row flex-wrap justify-content-center justify-content-md-between align-items-center mb-3 gap-2 text-center text-md-start">
+                  
                   <h5
                     className="fw-bold text-dark mb-0 text-uppercase text-nowrap"
                     style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}
@@ -438,11 +540,9 @@ const DispositionModule = () => {
                     Discharge Instructions
                   </h5>
 
-                  <div
-  className={`justify-content-end gap-2 ms-auto ${
-    instructionData.length === 0
-      ? "d-none d-lg-flex"
-      : "d-flex flex-nowrap"
+                 <div
+  className={`instruction-action-buttons gap-2 ${
+    instructionData.length === 0 ? "hide-mobile-empty" : ""
   }`}
 >
                     <button

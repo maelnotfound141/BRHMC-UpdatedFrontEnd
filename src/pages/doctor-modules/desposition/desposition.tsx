@@ -164,94 +164,95 @@ const DispositionModule = () => {
                 }}
               >
                 {/* Patient Profile Header */}
-                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
-                  <div
-                    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
-                    style={{
-                      width: "90px",
-                      height: "90px",
-                      border: "2px solid var(--primary, #0f763f)",
-                    }}
-                  >
-                    <i
-                      className="isax isax-user fs-1 text-primary"
-                      style={{ color: "var(--primary, #0f763f)" }}
-                    />
-                  </div>
+                {/* Patient Profile Header */}
+<div className="d-flex flex-column flex-md-row align-items-center align-items-md-start text-center text-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom">
 
-                  <div>
-                    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
-                      ID: {mockPatientProfile.hospitalNumber}
-                    </div>
+  {/* Avatar */}
+  <div
+    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
+    style={{
+      width: "90px",
+      height: "90px",
+      border: "2px solid var(--primary, #0f763f)",
+    }}
+  >
+    <i
+      className="isax isax-user fs-1 text-primary"
+      style={{ color: "var(--primary, #0f763f)" }}
+    />
+  </div>
 
-                    <h3 className="fw-bold mb-1 text-dark fs-3 fs-md-2">
-                      {mockPatientProfile.lastName},{" "}
-                      {mockPatientProfile.firstName}{" "}
-                      {mockPatientProfile.middleName}
-                    </h3>
+  {/* Patient Info */}
+  <div className="d-flex flex-column align-items-center align-items-md-start text-center text-md-start">
 
-                    <div className="text-muted small d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-start gap-2">
-                      <div className="d-flex align-items-center gap-1">
-                        <i className="isax isax-location text-danger" />
-                        {mockPatientProfile.address}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
+      ID: {mockPatientProfile.hospitalNumber}
+    </div>
+
+    <h3 className="fw-bold mb-1 text-dark">
+      {mockPatientProfile.lastName},{" "}
+      {mockPatientProfile.firstName}{" "}
+      {mockPatientProfile.middleName}
+    </h3>
+
+    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+      <i className="isax isax-location text-danger" />
+      {mockPatientProfile.address}
+    </div>
+
+  </div>
+</div>
 
 
 
                 {/* Toolbar */}
-                <div className="d-flex flex-row flex-wrap justify-content-between align-items-center mb-4 gap-2">
-                  <h5
-                    className="fw-bold text-dark mb-0 text-uppercase text-nowrap"
-                    style={{ fontSize: "clamp(1rem, 2.5vw, 1.25rem)" }}
-                  >
-                    Disposition
-                  </h5>
+                {/* Toolbar */}
+<div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
 
-                  <div
-  className={`justify-content-end gap-2 ms-auto ${
-    !dispositionData
-      ? "d-none d-lg-flex"
-      : "d-flex flex-nowrap"
+  <h5 className="fw-bold text-uppercase mb-0 text-center text-md-start">
+    Disposition
+  </h5>
+  
+  <div
+  className={`d-flex justify-content-center justify-content-md-end gap-2 flex-wrap w-100 w-md-auto ${
+    !dispositionData ? "d-none d-md-flex" : ""
   }`}
 >
-                    <button
-  type="button"
-  onClick={handleOpenAddDisposition}
-  className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white disposition-action-btn"
-  style={{
-    borderRadius: "4px",
-    cursor: "pointer",
-    backgroundColor: "#0f763f",
-    border: "1px solid #0f763f",
-  }}
->
-  <i className="isax isax-add"></i>
-  <span>Dispose</span>
-</button>
 
-                    <button
-                      type="button"
-                      disabled={!dispositionData}
-                      onClick={handleOpenEditDisposition}
-                      className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold disposition-action-btn ${
-                        dispositionData
-                          ? "bg-white text-dark text-hover-primary"
-                          : "bg-light text-muted opacity-50"
-                      }`}
-                      style={{
-                        borderRadius: "4px",
-                        cursor: dispositionData ? "pointer" : "not-allowed",
-                      }}
-                    >
-                      <i className="isax isax-edit-2"></i>
-                      <span>Edit</span>
-                    </button>
-                  </div>
-                </div>
+    <button
+      type="button"
+      onClick={handleOpenAddDisposition}
+      className="btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold text-white disposition-action-btn"
+      style={{
+        borderRadius: "4px",
+        backgroundColor: "#0f763f",
+        border: "1px solid #0f763f",
+      }}
+    >
+      <i className="isax isax-add"></i>
+      <span>Dispose</span>
+    </button>
 
+    <button
+      type="button"
+      disabled={!dispositionData}
+      onClick={handleOpenEditDisposition}
+      className={`btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold disposition-action-btn ${
+        dispositionData
+          ? "bg-white text-dark text-hover-primary"
+          : "bg-light text-muted opacity-50"
+      }`}
+      style={{
+        borderRadius: "4px",
+        cursor: dispositionData ? "pointer" : "not-allowed",
+      }}
+    >
+      <i className="isax isax-edit-2"></i>
+      <span>Edit</span>
+    </button>
+
+  </div>
+</div>
                 {/* Main Content */}
                 <div className="border rounded bg-white disposition-main-panel">
                  {!dispositionData ? (
