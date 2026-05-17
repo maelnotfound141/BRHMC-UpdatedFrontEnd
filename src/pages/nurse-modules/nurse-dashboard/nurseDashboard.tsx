@@ -107,7 +107,6 @@ const DoctorDashboard = () => {
     <>
       <style>
         {`
-          /* ── Search Patient Banner ─────────────────────────── */
           .find-patient-banner {
             cursor: pointer;
             user-select: none;
@@ -325,23 +324,36 @@ const DoctorDashboard = () => {
                       title: "Patient Log",
                       desc: "List of patients under this ward",
                       icon: "isax isax-document-text",
-                      color: "var(--primary, #0f763f)"
+                      color: "var(--primary, #0f763f)",
+                      path: all_routes.nursePatientLog
                     },
                     {
-                      title: "Archive Viewer",
-                      desc: "Access archive file online",
-                      icon: "isax isax-archive",
-                      color: "var(--primary, #0f763f)"
+                      title: "Room Management",
+                      desc: "Manage ward rooms and bed assignments",
+                      icon: "isax isax-hospital",
+                      color: "var(--primary, #0f763f)",
+                      path: all_routes.nurseAccomodation
                     },
                     {
-                      title: "Reports",
+                      title: "Utility",
+                      desc: "Access nursing module utilities",
+                      icon: "isax isax-setting-2",
+                      color: "var(--primary, #0f763f)",
+                      path: all_routes.nurseUtility
+                    },
+                    {
+                      title: "Report",
                       desc: "System report generation",
                       icon: "isax isax-chart-square",
-                      color: "var(--primary, #0f763f)"
+                      color: "var(--primary, #0f763f)",
+                      path: all_routes.nurseReport
                     }
                   ].map((item, index) => (
-                    <div className="col-12 col-sm-6 col-lg-4" key={index}>
-                      <div className="card shadow-sm utility-card h-100 p-3">
+                    <div className="col-12 col-sm-6 col-lg-3" key={index}>
+                      <div
+                        className="card shadow-sm utility-card h-100 p-3"
+                        onClick={() => navigate(item.path)}
+                      >
                         <div className="d-flex align-items-center gap-3">
                           <div
                             className="rounded-3 d-flex align-items-center justify-content-center"
