@@ -259,8 +259,8 @@ const DispositionModule = () => {
 
                   <div
                     className={`d-flex justify-content-center justify-content-md-end gap-2 flex-wrap w-100 w-md-auto ${
-                      !dispositionData ? "d-none d-md-flex" : ""
-                    }`}
+  !dispositionData ? "d-none" : ""
+}`}
                   >
                     <button
                       type="button"

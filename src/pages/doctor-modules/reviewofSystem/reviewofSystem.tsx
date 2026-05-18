@@ -233,18 +233,48 @@ const ReviewOfSystem = () => {
   };
 
   const renderFormContent = () => {
-    if (!showForm) {
-      return (
-        <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted py-5 px-3 text-center">
-          <i className="isax isax-document-text fs-1 mb-3 opacity-50" style={{ fontSize: '3rem' }}></i>
-          <h5 className="text-dark fw-bold mb-1">No system review data recorded.</h5>
-          <p></p>
-        </div>
-      );
-    }
+  if (!showForm) {
+    return (
+      <div
+        className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+        style={{ flex: 1, minHeight: "350px" }}
+      >
+        {/* Desktop icon only */}
+        <i
+          className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
+          style={{ fontSize: "3rem" }}
+        ></i>
 
-    return renderCheckboxesAndOther(activeCategory);
-  };
+        {/* Mobile FAB */}
+        <button
+          onClick={handleAdd}
+          className="d-lg-none"
+          style={{
+            width: "64px",
+            height: "64px",
+            borderRadius: "50%",
+            backgroundColor: "var(--primary, #0f763f)",
+            color: "#fff",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
+            cursor: "pointer",
+          }}
+        >
+          <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+        </button>
+
+        <h5 className="text-dark fw-bold mb-0 mt-3">
+          No system review data recorded.
+        </h5>
+      </div>
+    );
+  }
+
+  return renderCheckboxesAndOther(activeCategory);
+};
 
   return (
     <>
@@ -302,7 +332,7 @@ const ReviewOfSystem = () => {
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
                     <h5 className="fw-bold text-dark mb-0 text-center text-md-start text-uppercase">Review of System</h5>
             
-                    <div className="d-flex flex-wrap justify-content-center justify-content-lg-end pb-1 pb-lg-0 ms-lg-auto" style={{ gap: "4px" }}>
+                    <div className={`d-flex flex-wrap justify-content-center justify-content-lg-end pb-1 pb-lg-0 ms-lg-auto ${!catHasData && !isUnlocked ? "d-none d-lg-flex" : ""}`} style={{ gap: "4px" }}>
                       <button 
                         onClick={handleAdd} 
                         disabled={catHasData || isUnlocked}
@@ -435,32 +465,7 @@ const ReviewOfSystem = () => {
     ></i>
   </button> */}
 
-{!catHasData && !isUnlocked && (
-  <button
-    onClick={handleAdd}
-    className="btn d-lg-none position-absolute shadow"
-    style={{
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "64px",
-      height: "64px",
-      borderRadius: "50%",
-      backgroundColor: "var(--primary, #0f763f)",
-      color: "#fff",
-      zIndex: 10,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      border: "none"
-    }}
-  >
-    <i
-      className="isax isax-add"
-      style={{ fontSize: "1.6rem" }}
-    ></i>
-  </button>
-)}
+
 
 
   {renderFormContent()}

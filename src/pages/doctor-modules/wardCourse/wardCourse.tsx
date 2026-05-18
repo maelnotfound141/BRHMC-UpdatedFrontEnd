@@ -289,7 +289,7 @@ letter-spacing: 0.2px;
 
           .table-hover tbody tr {
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
+            
           }
 
           .selected-row > td {
@@ -460,7 +460,7 @@ style={{ minHeight: "450px", position: "relative" }}
 >
                     <div className="table-responsive flex-grow-1 bg-white p-0">
                       <table
-  className="table table-hover align-middle mb-0"
+  className="table align-middle mb-0"
   style={{
     fontSize: "0.85rem",
     width: "100%",
@@ -502,34 +502,40 @@ style={{ minHeight: "450px", position: "relative" }}
 
                         <tbody>
                             {paginatedRecords.length === 0 ? (
-                              <td colSpan={4} className="text-center text-muted py-5 border-0">
-  <div className="d-flex flex-column align-items-center justify-content-center gap-3">
+  <tr>
+    <td colSpan={4} className="border-0 p-0">
+      <div
+        className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+        style={{ minHeight: "350px" }}
+      >
+        {/* Desktop icon */}
+        <i className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block" style={{ fontSize: "3rem" }} />
 
-    {/* <i className="isax isax-document-text fs-1 opacity-50" /> */}
-    <i className="isax isax-document-text fs-1 opacity-50 d-none d-lg-block" />
+        {/* Mobile add button */}
+        <button
+          onClick={handleAdd}
+          className="d-lg-none"
+          style={{
+            width: "64px",
+            height: "64px",
+            borderRadius: "50%",
+            backgroundColor: "var(--primary, #0f763f)",
+            color: "#fff",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
+            cursor: "pointer",
+          }}
+        >
+          <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+        </button>
 
-    <button
-      onClick={handleAdd}
-      className="btn d-lg-none shadow"
-      style={{
-        width: "64px",
-        height: "64px",
-        borderRadius: "50%",
-        backgroundColor: "var(--primary, #0f763f)",
-        color: "#fff",
-        border: "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
-    </button>
-
-
-    <h6 className="fw-bold mb-1">No course records found.</h6>
-  </div>
-</td>
+        <h6 className="fw-bold mb-0 mt-3">No course records found.</h6>
+      </div>
+    </td>
+  </tr>
                             ) : (
                             paginatedRecords.map((record) => (
                               <tr

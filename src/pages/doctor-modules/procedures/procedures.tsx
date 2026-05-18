@@ -258,11 +258,9 @@ const isEmpty = !hasData;
                   
                   <div
   className={`
-    flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto
-    d-lg-flex
-    ${showMobileActions ? "d-flex" : "d-none d-lg-flex"}
-    ${isEmpty && !showMobileActions ? "d-none d-lg-flex" : ""}
-  `}
+  flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto
+  ${hasData || isEditing ? "d-flex" : "d-none d-lg-flex"}
+`}
   style={{ gap: "6px" }}
 >
   <button 
@@ -354,11 +352,7 @@ const isEmpty = !hasData;
                   <div
   className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden"
   style={{ minHeight: "450px" }}
-  onClick={() => {
-    if (window.innerWidth < 992) {
-      setShowMobileActions(true);
-    }
-  }}
+  
 >
                     
                     <div className="d-flex border-bottom" style={{ backgroundColor: "#f8f9fa" }}>
@@ -381,33 +375,28 @@ const isEmpty = !hasData;
                     {/* edit content area */}
                     <div className="d-flex flex-column flex-grow-1 p-3 p-md-4" style={{ backgroundColor: "#ffffff" }}>
                       {!isEditing && !hasData ? (
-                        <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted py-5 text-center">
-
+                        <div
+  className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+  style={{ flex: 1, minHeight: "350px" }}
+>
   {/* DESKTOP ICON */}
-  <i className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block" style={{ fontSize: '3rem' }}></i>
+  <i
+    className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
+    style={{ fontSize: "3rem" }}
+  ></i>
 
   {/* MOBILE ADD BUTTON */}
   <button
-  type="button"
-  onClick={handleAdd}
-  className="empty-state-fab d-lg-none"
->
-  <i className="isax isax-add"></i>
-</button>
+    type="button"
+    onClick={handleAdd}
+    className="empty-state-fab d-lg-none"
+  >
+    <i className="isax isax-add"></i>
+  </button>
 
-  {/* MOBILE LABEL */}
-  <span className="mt-2 fw-semibold text-muted d-lg-none" style={{ fontSize: "24px" }}>
-    
-  </span>
-  <td>
-  </td>
-
-  <h6 className="fw-bold mb-1">
+  <h6 className="fw-bold mb-0 mt-3">
     No {activeTab} data recorded.
   </h6>
-
- 
-
 </div>
                       ) : (
                         <div className="d-flex flex-column flex-grow-1 fade-in">
