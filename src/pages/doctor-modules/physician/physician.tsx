@@ -491,7 +491,7 @@ const PhysicianModule = () => {
 
                   {/* TABLE */}
                   <div className="border rounded-0 flex-grow-1 bg-white d-flex flex-column shadow-sm physician-mobile-table">
-                    <table className="table table-hover align-middle mb-0 table-fixed">
+                    <table className="table align-middle mb-0 table-fixed">
                       {hasRecords && (
                         <thead className="table-light">
                           <tr>

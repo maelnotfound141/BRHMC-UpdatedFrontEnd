@@ -565,7 +565,7 @@ const SignatoryModule = () => {
                     style={{ minHeight: "450px" }}
                   >
                     <div className="table-responsive flex-grow-1 bg-white p-0">
-                      <table className="table table-hover align-middle mb-0 table-fixed">
+                      <table className="table align-middle mb-0 table-fixed">
                         
 
                           <tbody>
