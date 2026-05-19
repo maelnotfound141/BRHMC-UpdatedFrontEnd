@@ -361,48 +361,43 @@ const CourseInTheWard = () => {
 
                   {/* Table */}
                   <div
-  className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden position-relative"
+className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden position-relative"
 style={{ minHeight: "450px", position: "relative" }} 
 >
                     <div className="table-responsive flex-grow-1 bg-white p-0">
                       <table
-  className="table align-middle mb-0"
-  style={{
-    fontSize: "0.85rem",
-    width: "100%",
-    tableLayout: isMobile ? "auto" : "fixed",
-    minWidth: isMobile ? "100%" : "750px",
-  }}
+  className="table ward-table align-middle mb-0"
+  
 >
                         <thead style={{ backgroundColor: "#f8f9fa" }}>
                           <tr>
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "15%" }}
-                            >
-                              Date
-                            </th>
+<th
+  className="text-center border-bottom py-3 px-4 text-dark text-start align-middle"
+  style={{ fontWeight: 700 }}
+>
+  Date
+</th>
 
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "50%" }}
-                            >
-                              Course In the Ward
-                            </th>
+<th
+  className="text-center border-bottom py-3 px-4 text-dark text-start align-middle"
+  style={{ fontWeight: 700, color: "#000" }}
+>
+  Course In the Ward
+</th>
 
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold"
-                              style={{ width: "20%" }}
-                            >
-                              Entry by
-                            </th>
+<th
+  className="text-center border-bottom py-3 px-4 text-dark text-start align-middle"
+  style={{ fontWeight: 700, color: "#000"  }}
+>
+  Entry by
+</th>
 
-                            <th
-                              className="border-bottom py-3 px-4 text-dark fw-bold text-center"
-                              style={{ width: "15%" }}
-                            >
-                              Show in CF4
-                            </th>
+<th
+  className="text-center border-bottom py-3 px-4 text-dark text-center align-middle"
+  style={{ fontWeight: 700, color: "#000"  }}
+>
+  Show in CF4
+</th>                          
                           </tr>
                         </thead>
 
@@ -462,10 +457,10 @@ style={{ minHeight: "450px", position: "relative" }}
                                 <td
                                   className="py-3 px-3 align-top"
                                   style={{
-                                    whiteSpace: "normal",
-                                    wordBreak: "break-word",
-                                    overflowWrap: "anywhere",
-                                  }}
+                                  whiteSpace: "normal",
+                                  overflowWrap: "break-word",
+                                  wordBreak: "break-word",
+                                }}
                                 >
                                   {record.courseText}
                                 </td>
@@ -473,10 +468,10 @@ style={{ minHeight: "450px", position: "relative" }}
                                 <td
                                   className="py-3 px-3 align-top"
                                   style={{
-                                    whiteSpace: "normal",
-                                    wordBreak: "break-word",
-                                    overflowWrap: "anywhere",
-                                  }}
+                                  whiteSpace: "normal",
+                                  overflowWrap: "break-word",
+                                  wordBreak: "break-word",
+                                }}
                                 >
                                   {record.entryBy}
                                 </td>

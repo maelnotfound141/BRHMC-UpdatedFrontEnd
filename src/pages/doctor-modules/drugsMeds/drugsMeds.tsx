@@ -345,26 +345,60 @@ useEffect(() => {
 
                   {/* table layout */}
                   <div className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden" style={{ minHeight: "450px" }}>
-                    <div className="table-responsive flex-grow-1 bg-white p-0">
+                    <div className="table-responsive flex-grow-1 bg-white p-0 border-0">
                       <table className="table table-hover table-fixed mb-0 align-middle"> 
                         <thead style={{ backgroundColor: "#f8f9fa" }}>
                           <tr>
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold" style={{ width: "60%" }}>Drug/Medicine Description</th>
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold" style={{ width: "20%" }}>Cost</th>
-                            <th className="border-bottom py-3 px-4 text-dark fw-bold" style={{ width: "20%" }}>Date Dispensed</th>
-                          </tr>
+  <th
+    className="text-center text-dark align-middle"
+    style={{
+      width: "40%",
+      whiteSpace: "normal",
+      color: "#000"
+    }}
+  >
+    Drug/Medicine Description
+  </th>
+
+  <th
+    className="text-center text-dark align-middle"
+    style={{
+      width: "15%",
+      whiteSpace: "nowrap",
+      color: "#000"
+    }}
+  >
+    Cost ₱
+  </th>
+
+  <th
+    className="text-center text-dark align-middle"
+    style={{
+      width: "35%",
+      whiteSpace: "nowrap",
+      textAlign: "center",
+      color: "#000"
+    }}
+  >
+    Date Dispensed
+  </th>
+</tr>
                         </thead>
                         <tbody>
                           {paginatedRecords.length === 0 ? (
   <tr>
-    <td
+<td
   colSpan={3}
-  className="text-center text-muted border-0"
+  className="text-center text-muted border-0 p-0"
   style={{ height: "280px", verticalAlign: "middle" }}
 >
       <div
-  className="d-flex flex-column align-items-center justify-content-center h-100"
-  style={{ marginTop: isMobile ? "-10px" : "0px" }}
+  className="d-flex flex-column align-items-center justify-content-center w-100 bg-white"
+  style={{
+    height: "280px",
+    margin: 0,
+    
+  }}
 >
 
         {/* DESKTOP / TABLET ONLY CONTENT */}
@@ -387,20 +421,30 @@ useEffect(() => {
 
         {/* MOBILE ONLY CTA */}
         {isMobile && (
-          <div className="d-flex flex-column align-items-center justify-content-center">
-            <div
-              onClick={openDmListModal}
-              className="mobile-empty-add-btn"
-              title="Open DM List"
-            >
-              <i className="isax isax-menu-board"></i>
-            </div>
+  <div className="d-flex flex-column align-items-center justify-content-center">
+    
+    <div
+      onClick={openDmListModal}
+    >
+      <div className="modern-dm-icon-wrap d-flex align-items-center justify-content-center">
+        <div className="modern-dm-pulse"></div>
 
-            <div className="mobile-empty-add-label">
-              DM List
-            </div>
-          </div>
-        )}
+        <div className="modern-dm-icon d-flex align-items-center justify-content-center">
+          <i className="isax isax-menu-board"></i>
+        </div>
+      </div>
+
+      <div className="modern-dm-text text-center">
+        <span className="modern-dm-title">DM List</span>
+
+        <span className="modern-dm-subtitle">
+          Tap to issue medicine
+        </span>
+      </div>
+    </div>
+
+  </div>
+)}
 
       </div>
     </td>
@@ -417,10 +461,10 @@ useEffect(() => {
     {record.description}
   </div>
 </td>
-                                <td className="align-top">
-  P {record.cost.toFixed(2)}
+                                <td className="align-top text-center">
+   {record.cost.toFixed(2)}
 </td>
-                                <td className="align-top text-muted">
+                                <td className="align-top text-muted text-center">
   {record.dateDispensed}
 </td>
                               </tr>

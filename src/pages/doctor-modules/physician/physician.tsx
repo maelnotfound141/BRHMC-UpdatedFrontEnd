@@ -320,7 +320,7 @@ const PhysicianModule = () => {
                 <div className="d-flex flex-column flex-grow-1 mb-4">
                   {/* HEADER */}
                   <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-3 gap-3">
-                    <h5 className="fw-bold text-dark mb-0 text-uppercase physician-mobile-title">
+                    <h5 className="text-center fw-bold text-dark mb-0 text-uppercase physician-mobile-title">
                       Physician
                     </h5>
 

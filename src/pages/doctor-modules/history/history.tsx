@@ -481,23 +481,23 @@ const PatientHistory = () => {
                     >
                       <thead className="table-light">
                         <tr>
-                          <th className="fw-semibold text-secondary py-3 ps-3 border-bottom text-nowrap">
+                          <th className="fw-semibold text-dark py-3 ps-3 border-bottom text-nowrap  ">
                             History
                           </th>
 
-                          <th className="fw-semibold text-secondary py-3 border-bottom d-none d-md-table-cell">
+                          <th className="fw-semibold text-dark py-3 border-bottom d-none d-md-table-cell">
                             Details
                           </th>
 
-                          <th className="fw-semibold text-secondary py-3 border-bottom text-nowrap d-none d-md-table-cell">
+                          <th className="fw-semibold text-dark py-3 border-bottom text-nowrap d-none d-md-table-cell">
                             Date Entered
                           </th>
 
-                          <th className="fw-semibold text-secondary py-3 pe-3 border-bottom text-nowrap d-none d-lg-table-cell">
+                          <th className="fw-semibold text-dark py-3 pe-3 border-bottom text-nowrap d-none d-lg-table-cell">
                             Entry By
                           </th>
 
-                          <th className="fw-semibold text-secondary py-3 pe-3 border-bottom text-center d-md-none">
+                          <th className="fw-semibold text-dark py-3 pe-3 border-bottom text-center d-md-none">
                             Action
                           </th>
                         </tr>
