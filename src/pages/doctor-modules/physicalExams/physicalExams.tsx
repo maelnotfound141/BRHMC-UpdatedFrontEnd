@@ -337,40 +337,45 @@ const PhysicalExamination = () => {
   };
 
   const renderFormContent = () => {
-    if (!showForm) {
-      return (
-  <div
-    className="d-flex flex-column align-items-center justify-content-center text-center w-100"
-    style={{
-      minHeight: "100%",
-      marginTop: "auto",
-      marginBottom: "auto",
-    }}
-  >
-    <button
-      onClick={handleAdd}
-      className="btn d-lg-none shadow mb-3"
-      style={{
-        width: "64px",
-        height: "64px",
-        borderRadius: "50%",
-        backgroundColor: "var(--primary, #0f763f)",
-        color: "#fff",
-        border: "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+if (!showForm) {
+  return (
+    <div
+      className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+      style={{ flex: 1, minHeight: "350px" }}
     >
-      <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
-    </button>
+      {/* Desktop icon only */}
+      <i
+        className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
+        style={{ fontSize: "3rem" }}
+      ></i>
 
-    <h5 className="text-dark fw-bold mb-0">
-      No physical exam data recorded.
-    </h5>
-  </div>
-);
-    }
+      {/* Mobile FAB */}
+      <button
+        onClick={handleAdd}
+        className="d-lg-none"
+        style={{
+          width: "64px",
+          height: "64px",
+          borderRadius: "50%",
+          backgroundColor: "var(--primary, #0f763f)",
+          color: "#fff",
+          border: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
+          cursor: "pointer",
+        }}
+      >
+        <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+      </button>
+
+      <h5 className="text-dark fw-bold mb-0 mt-3">
+        No physical exam data recorded.
+      </h5>
+    </div>
+  );
+}
 
     return (
       <div className="fade-in">
@@ -445,7 +450,7 @@ const PhysicalExamination = () => {
   white-space: nowrap;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .sidebar-flex {
     flex-direction: column;
     overflow-x: hidden;
@@ -560,7 +565,7 @@ const PhysicalExamination = () => {
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
   <h5 className="fw-bold text-dark mb-0 text-center text-md-start text-uppercase">Physical Examination</h5>
   
-  <div className="d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-md-0 ms-md-auto" style={{ gap: "4px" }}>
+ <div className={`d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-md-0 ms-md-auto ${!catHasData && !isUnlocked ? "d-none d-lg-flex" : ""}`} style={{ gap: "4px" }}>
                       <button 
                         onClick={handleAdd} 
                         disabled={catHasData || isUnlocked}

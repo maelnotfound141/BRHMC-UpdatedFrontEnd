@@ -1,4 +1,5 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
+import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
@@ -233,18 +234,48 @@ const ReviewOfSystem = () => {
   };
 
   const renderFormContent = () => {
-    if (!showForm) {
-      return (
-        <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted py-5 px-3 text-center">
-          <i className="isax isax-document-text fs-1 mb-3 opacity-50" style={{ fontSize: '3rem' }}></i>
-          <h5 className="text-dark fw-bold mb-1">No system review data recorded.</h5>
-          <p></p>
-        </div>
-      );
-    }
+  if (!showForm) {
+    return (
+      <div
+        className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+        style={{ flex: 1, minHeight: "350px" }}
+      >
+        {/* Desktop icon only */}
+        <i
+          className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
+          style={{ fontSize: "3rem" }}
+        ></i>
 
-    return renderCheckboxesAndOther(activeCategory);
-  };
+        {/* Mobile FAB */}
+        <button
+          onClick={handleAdd}
+          className="d-lg-none"
+          style={{
+            width: "64px",
+            height: "64px",
+            borderRadius: "50%",
+            backgroundColor: "var(--primary, #0f763f)",
+            color: "#fff",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
+            cursor: "pointer",
+          }}
+        >
+          <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+        </button>
+
+        <h5 className="text-dark fw-bold mb-0 mt-3">
+          No system review data recorded.
+        </h5>
+      </div>
+    );
+  }
+
+  return renderCheckboxesAndOther(activeCategory);
+};
 
   return (
     <>
@@ -302,7 +333,7 @@ const ReviewOfSystem = () => {
                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
                     <h5 className="fw-bold text-dark mb-0 text-center text-md-start text-uppercase">Review of System</h5>
             
-                    <div className="d-flex flex-wrap justify-content-center justify-content-lg-end pb-1 pb-lg-0 ms-lg-auto" style={{ gap: "4px" }}>
+                    <div className={`d-flex flex-wrap justify-content-center justify-content-lg-end pb-1 pb-lg-0 ms-lg-auto ${!catHasData && !isUnlocked ? "d-none d-lg-flex" : ""}`} style={{ gap: "4px" }}>
                       <button 
                         onClick={handleAdd} 
                         disabled={catHasData || isUnlocked}
@@ -435,32 +466,7 @@ const ReviewOfSystem = () => {
     ></i>
   </button> */}
 
-{!catHasData && !isUnlocked && (
-  <button
-    onClick={handleAdd}
-    className="btn d-lg-none position-absolute shadow"
-    style={{
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: "64px",
-      height: "64px",
-      borderRadius: "50%",
-      backgroundColor: "var(--primary, #0f763f)",
-      color: "#fff",
-      zIndex: 10,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      border: "none"
-    }}
-  >
-    <i
-      className="isax isax-add"
-      style={{ fontSize: "1.6rem" }}
-    ></i>
-  </button>
-)}
+
 
 
   {renderFormContent()}
@@ -476,45 +482,16 @@ const ReviewOfSystem = () => {
       </div>
 
       {showDeleteModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1060 }}>
-          <div className="modal-dialog modal-sm modal-dialog-centered px-3">
-            <div className="modal-content border-0 shadow-lg" style={{ borderRadius: '8px', overflow: 'hidden' }}>
-              
-              <div className="modal-header border-0 py-3 d-flex align-items-center" style={{ backgroundColor: '#333b45' }}>
-                <h3 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2" style={{ fontSize: '1.1rem', letterSpacing: '0.5px' }}>
-                  <i className="isax isax-warning-2" style={{ fontSize: '1.5rem' }}></i>
-                  Confirm Delete
-                </h3>
-           
-              </div>
-              
-              <div className="modal-body p-4 bg-white text-center">
-                <i className="isax isax-trash text-danger mb-3 d-block" style={{ fontSize: '2.5rem' }}></i>
-                <p className="mb-0 text-dark fw-medium" style={{ fontSize: '1.05rem' }}>
-                  Are you sure you want to clear the record for <strong className="text-danger">{activeCategory}</strong>?
-                </p>
-              </div>
-              
-              <div className="modal-footer border-0 d-flex justify-content-center gap-2 p-3" style={{ backgroundColor: '#e2e5e9' }}>
-                <button 
-                  type="button" 
-                  className="btn btn-light rounded-1 px-4 py-2 fw-medium border-secondary-subtle" 
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-danger rounded-1 px-4 py-2 fw-medium" 
-                  onClick={confirmDelete}
-                >
-                  Delete
-                </button>
-              </div>
-
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmationModal
+          message={
+            <>
+              Are you sure you want to clear the record for{" "}
+              <strong className="text-danger">{activeCategory}</strong>?
+            </>
+          }
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={confirmDelete}
+        />
       )}
     </>
   );

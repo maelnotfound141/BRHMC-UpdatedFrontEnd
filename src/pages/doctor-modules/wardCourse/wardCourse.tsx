@@ -1,4 +1,5 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
+import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 
@@ -289,7 +290,7 @@ letter-spacing: 0.2px;
 
           .table-hover tbody tr {
             cursor: pointer;
-            transition: all 0.2s ease-in-out;
+            
           }
 
           .selected-row > td {
@@ -460,7 +461,7 @@ style={{ minHeight: "450px", position: "relative" }}
 >
                     <div className="table-responsive flex-grow-1 bg-white p-0">
                       <table
-  className="table table-hover align-middle mb-0"
+  className="table align-middle mb-0"
   style={{
     fontSize: "0.85rem",
     width: "100%",
@@ -502,34 +503,40 @@ style={{ minHeight: "450px", position: "relative" }}
 
                         <tbody>
                             {paginatedRecords.length === 0 ? (
-                              <td colSpan={4} className="text-center text-muted py-5 border-0">
-  <div className="d-flex flex-column align-items-center justify-content-center gap-3">
+  <tr>
+    <td colSpan={4} className="border-0 p-0">
+      <div
+        className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+        style={{ minHeight: "350px" }}
+      >
+        {/* Desktop icon */}
+        <i className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block" style={{ fontSize: "3rem" }} />
 
-    {/* <i className="isax isax-document-text fs-1 opacity-50" /> */}
-    <i className="isax isax-document-text fs-1 opacity-50 d-none d-lg-block" />
+        {/* Mobile add button */}
+        <button
+          onClick={handleAdd}
+          className="d-lg-none"
+          style={{
+            width: "64px",
+            height: "64px",
+            borderRadius: "50%",
+            backgroundColor: "var(--primary, #0f763f)",
+            color: "#fff",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
+            cursor: "pointer",
+          }}
+        >
+          <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+        </button>
 
-    <button
-      onClick={handleAdd}
-      className="btn d-lg-none shadow"
-      style={{
-        width: "64px",
-        height: "64px",
-        borderRadius: "50%",
-        backgroundColor: "var(--primary, #0f763f)",
-        color: "#fff",
-        border: "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
-    </button>
-
-
-    <h6 className="fw-bold mb-1">No course records found.</h6>
-  </div>
-</td>
+        <h6 className="fw-bold mb-0 mt-3">No course records found.</h6>
+      </div>
+    </td>
+  </tr>
                             ) : (
                             paginatedRecords.map((record) => (
                               <tr
@@ -907,83 +914,16 @@ style={{ minHeight: "450px", position: "relative" }}
 
       {/* Delete Modal */}
       {showDeleteModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex={-1}
-          style={{
-            backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 1060,
-          }}
-        >
-          <div className="modal-dialog modal-sm modal-dialog-centered px-3">
-            <div
-              className="modal-content border-0 shadow-lg"
-              style={{
-                borderRadius: "8px",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                className="modal-header border-0 py-3 d-flex align-items-center"
-                style={{ backgroundColor: "#333b45" }}
-              >
-                <h3
-                  className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2"
-                  style={{
-                    fontSize: "1.1rem",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  <i
-                    className="isax isax-warning-2"
-                    style={{ fontSize: "1.5rem" }}
-                  ></i>
-
-                  Confirm Delete
-                </h3>
-              </div>
-
-              <div className="modal-body p-4 bg-white text-center">
-                <i
-                  className="isax isax-trash text-danger mb-3 d-block"
-                  style={{ fontSize: "2.5rem" }}
-                ></i>
-
-                <p
-                  className="mb-0 text-dark fw-medium"
-                  style={{ fontSize: "1.05rem" }}
-                >
-                  Are you sure you want to delete this{" "}
-                  <strong className="text-danger">
-                    Course Record
-                  </strong>
-                  ?
-                </p>
-              </div>
-
-              <div
-                className="modal-footer border-0 d-flex flex-column flex-sm-row justify-content-center gap-2 p-3"
-                style={{ backgroundColor: "#e2e5e9" }}
-              >
-                <button
-                  type="button"
-                  className="btn btn-light rounded-1 px-4 py-2 fw-medium border-secondary-subtle w-100"
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="button"
-                  className="btn btn-danger rounded-1 px-4 py-2 fw-medium w-100"
-                  onClick={confirmDelete}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmationModal
+          message={
+            <>
+              Are you sure you want to delete this{" "}
+              <strong className="text-danger">Course Record</strong>?
+            </>
+          }
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={confirmDelete}
+        />
       )}
     </>
   );

@@ -600,12 +600,12 @@ th {
 </button>
 
                       <div
-                        className={
-                          isTableEmpty
-                            ? "d-flex d-md-none d-lg-flex gap-2"
-                            : "d-flex gap-2"
-                        }
-                      >
+  className={
+    isTableEmpty
+      ? "d-none d-lg-flex gap-2"
+      : "d-flex gap-2"
+  }
+>
                         <button
                           onClick={handleOpenAddHistory}
                           className={`btn btn-sm btn-light border border-secondary-subtle rounded-1 d-flex align-items-center justify-content-center gap-1 text-dark text-hover-primary history-action-btn ${
@@ -675,7 +675,7 @@ th {
   {/* MOBILE CENTER FAB */}
   
                     <table
-                      className="table table-hover align-middle mb-0"
+                     className="table align-middle mb-0"
                       style={{ tableLayout: "auto" }}
                     >
                       <thead className="table-light">

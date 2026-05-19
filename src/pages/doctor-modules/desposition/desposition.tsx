@@ -97,10 +97,6 @@ const DispositionModule = () => {
     <>
       <style>
         {`
-          .text-hover-primary:hover {
-            color: var(--primary, #0f763f) !important;
-          }
-
           .disposition-action-btn {
             min-height: 38px;
             font-size: 0.9rem;
@@ -146,19 +142,10 @@ const DispositionModule = () => {
             min-height: 36px;
           }
 
-          /* Hover/tap effect on the whole table panel */
           .disposition-main-panel {
             transition: background-color 0.15s ease;
             -webkit-tap-highlight-color: transparent;
             cursor: pointer;
-          }
-
-          .disposition-main-panel:hover {
-            background-color: #f3f3f3 !important;
-          }
-
-          .disposition-main-panel:active {
-            background-color: #e8e8e8 !important;
           }
 
           .disposition-note {
@@ -171,10 +158,6 @@ const DispositionModule = () => {
               margin: 0 !important;
               transition: all 0.15s ease;
               -webkit-tap-highlight-color: transparent;
-            }
-
-            .disposition-mobile-add-btn:hover {
-              transform: scale(1.05);
             }
 
             .disposition-mobile-add-btn:active {
@@ -282,7 +265,7 @@ const DispositionModule = () => {
                       onClick={handleOpenEditDisposition}
                       className={`btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap fw-bold disposition-action-btn ${
                         dispositionData
-                          ? "bg-white text-dark text-hover-primary"
+                          ? "bg-white text-dark"
                           : "bg-light text-muted opacity-50"
                       }`}
                       style={{
@@ -408,9 +391,6 @@ const DispositionModule = () => {
           tabIndex={-1}
           style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}
         >
-          {/* FIX 5: Removed modal-fullscreen-md-down and h-100 from modal-content
-              and form — prevents the modal stretching to full viewport height on
-              mobile and leaving empty space below the content. */}
           <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable px-0 px-md-2">
             <div className="modal-content shadow-lg border-0 rounded-1 overflow-hidden bg-white">
               <div

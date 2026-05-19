@@ -163,9 +163,7 @@ const PatientSignsAndSymptoms = () => {
     <>
       <style>
         {`
-          .text-hover-primary:hover {
-            color: var(--primary, #0f763f) !important;
-          }
+          
 
           .acc-info-backdrop {
             position: fixed;
@@ -397,7 +395,7 @@ const PatientSignsAndSymptoms = () => {
                   {/* TABLE */}
                   <div className="border rounded-0 flex-grow-1 bg-white d-flex flex-column shadow-sm">
                     <table
-                      className="table table-hover align-middle mb-0"
+                      className="table align-middle mb-0"
                       style={{ tableLayout: "auto" }}
                     >
                       <thead className="table-light">
