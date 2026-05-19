@@ -21,6 +21,8 @@ const nurseUtilityRoutes = [
   all_routes.nurseReport,
 ];
 
+const doctorUtilityRoutes = [all_routes.doctorPatientLog];
+
 const Header = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -37,6 +39,8 @@ const Header = () => {
   );
 
   const isDoctorRoute = useMemo(() => {
+    if (doctorUtilityRoutes.includes(location.pathname)) return true;
+
     return doctorSidebarData.some((item) => {
       if (location.pathname === item.path) return true;
       if (location.pathname.startsWith(`${item.path}/`)) return true;

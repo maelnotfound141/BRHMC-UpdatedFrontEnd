@@ -564,15 +564,15 @@ if (!showForm) {
                         })}
                       </div>
                     </div>
-<div
-  className="flex-grow-1 d-flex flex-column p-3 p-md-4 position-relative overflow-y-auto"
-  style={{ maxHeight: "600px" }}
->
-  {/* Mobile Center FAB */}
+                      <div
+                        className="flex-grow-1 d-flex flex-column p-3 p-md-4 position-relative overflow-y-auto"
+                        style={{ maxHeight: "600px" }}
+                      >
+                        {/* Mobile Center FAB */}
 
 
-  {renderFormContent()}
-</div>
+                        {renderFormContent()}
+                      </div>
 
                   </div>
                 </div>
