@@ -239,9 +239,29 @@
   overflow: visible;
 }
 
+.patient-log-card > .bg-white {
+  padding-top: 10px !important;
+}
+
+.patient-log-page-head {
+  gap: 8px !important;
+  padding-bottom: 10px !important;
+}
+
+.patient-log-page-head h4 {
+  font-size: 0.92rem;
+  line-height: 1.1;
+  margin-bottom: 2px !important;
+}
+
+.patient-log-page-head p {
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
 .patient-log-page-icon {
-  width: 58px;
-  height: 58px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 2px solid var(--primary, #0f763f);
   background: #f8f9fa;
@@ -252,10 +272,14 @@
   flex-shrink: 0;
 }
 
+.patient-log-page-icon i {
+  font-size: 1.05rem !important;
+}
+
 .patient-log-main-menu-btn,
 .patient-log-close-btn {
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
@@ -280,21 +304,25 @@
 }
 
 .patient-log-physician-name {
-  font-size: 0.82rem;
+  font-size: 0.7rem;
   letter-spacing: 0.4px;
+}
+
+.patient-log-head-actions .small {
+  font-size: 0.68rem;
 }
 
 .patient-log-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  padding: 12px 16px;
+  gap: 4px;
+  padding: 6px 12px;
   background: #eef5f8;
   border-bottom: 1px solid #dce5ea;
 }
 
 .patient-log-tab-btn {
-  min-height: 46px;
+  min-height: 30px;
   border: 1px solid #dce5ea;
   border-radius: 6px;
   background: #fff;
@@ -302,7 +330,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 5px;
+  font-size: 0.78rem;
   font-weight: 700;
   transition: all 0.2s ease;
 }
@@ -331,7 +360,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-bottom: 1px solid #edf0f2;
   font-size: 0.88rem;
 }
@@ -356,67 +385,77 @@
 }
 
 .patient-log-table {
-  min-width: 0;
+  min-width: 940px;
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 .patient-log-col-hospital {
-  width: 16%;
+  width: 150px;
 }
 
 .patient-log-col-name {
-  width: 24%;
+  width: 250px;
 }
 
 .patient-log-col-date {
-  width: 12%;
+  width: 140px;
 }
 
 .patient-log-col-ward {
-  width: 8%;
+  width: 100px;
 }
 
 .patient-log-col-los {
-  width: 10%;
+  width: 120px;
 }
 
 .patient-log-col-service {
-  width: 10%;
-}
-
-.patient-log-col-account {
-  width: 8%;
+  width: 130px;
 }
 
 .patient-log-col-action {
-  width: 12%;
+  width: 110px;
 }
 
 .patient-log-table th {
   background: #f8faf9;
   border-bottom: 1px solid #dce5ea !important;
   color: #5d6675;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.1px;
   line-height: 1.2;
-  padding: 14px 12px;
+  padding: 10px 10px;
   position: sticky;
+  text-align: left;
   text-transform: uppercase;
   top: 0;
   vertical-align: middle;
+  white-space: nowrap;
   z-index: 2;
 }
 
 .patient-log-table td {
   border-color: #f1f1f1 !important;
   color: #2f3947;
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   line-height: 1.35;
-  padding: 14px 12px;
+  padding: 10px 10px;
+  text-align: left;
   vertical-align: middle;
-  word-break: break-word;
+  word-break: normal;
+}
+
+.patient-log-table th:nth-child(3),
+.patient-log-table td:nth-child(3),
+.patient-log-table th:nth-child(4),
+.patient-log-table td:nth-child(4),
+.patient-log-table th:nth-child(5),
+.patient-log-table td:nth-child(5),
+.patient-log-table th:nth-child(7),
+.patient-log-table td:nth-child(7) {
+  text-align: center;
 }
 
 .patient-log-nowrap-cell {
@@ -477,9 +516,14 @@
 }
 
 .patient-log-view-more-btn {
-  min-height: 28px;
-  padding: 4px 6px;
+  min-height: 26px;
+  padding: 3px 6px;
   flex-shrink: 0;
+}
+
+.patient-log-view-more-btn span,
+.patient-log-mobile-view-more span {
+  line-height: 1;
 }
 
 .patient-log-action-cell {
@@ -505,12 +549,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 26px;
+  min-height: 22px;
   border-radius: 999px;
-  padding: 3px 10px;
+  padding: 2px 8px;
   background: #eef5f8;
   color: #283443;
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 800;
   white-space: nowrap;
 }
@@ -558,7 +602,7 @@
   border: 1px solid #e9ecef;
   border-radius: 8px;
   background: #fff;
-  padding: 14px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -576,6 +620,7 @@
 
 .patient-log-mobile-name {
   color: #172033;
+  font-size: 0.86rem;
   font-weight: 800;
   line-height: 1.25;
 }
@@ -605,18 +650,19 @@
 
 .patient-log-mobile-view-more {
   width: 100%;
-  min-height: 36px;
-  margin-top: 14px;
-  padding: 7px 12px;
+  min-height: 32px;
+  margin-top: 10px;
+  padding: 6px 10px;
 }
 
 .patient-log-sticky-footer {
   background: #fff;
   flex: 0 0 auto;
-  margin-top: auto;
+  margin-top: 0;
   position: sticky;
   bottom: 0;
   z-index: 3;
+  box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.04);
 }
 
 .patient-log-pagination {
@@ -703,6 +749,11 @@
 .patient-log-page-btn.active {
   background: var(--primary, #0f763f);
   border-color: var(--primary, #0f763f);
+  color: #fff;
+}
+
+.patient-log-page-btn.active:hover,
+.patient-log-page-btn.active:focus {
   color: #fff;
 }
 
@@ -812,6 +863,16 @@
 .patient-log-open-record-btn {
   background: var(--primary, #0f763f);
   border-color: var(--primary, #0f763f);
+  box-shadow: 0 8px 16px rgba(15, 118, 63, 0.18);
+  min-height: 34px;
+  min-width: 132px;
+}
+
+.patient-log-open-record-btn:hover,
+.patient-log-open-record-btn:focus {
+  background: #0b6435;
+  border-color: #0b6435;
+  box-shadow: 0 10px 20px rgba(15, 118, 63, 0.24);
 }
 
 .patient-log-summary {
@@ -819,23 +880,28 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1px;
   background: #e8edf1;
-  border-top: 1px solid #dce5ea;
-  box-shadow: 0 -8px 18px rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid #dce5ea;
+  box-shadow: none;
   flex: 0 0 auto;
 }
 
 .patient-log-summary-item {
-  min-height: 64px;
+  min-height: 52px;
   background: #fff;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
+  padding: 9px 14px;
+}
+
+.patient-log-summary-item:first-child {
+  justify-content: center;
+  text-align: center;
 }
 
 .patient-log-summary-item i {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   border-radius: 8px;
   background: rgba(15, 118, 63, 0.08);
   color: var(--primary, #0f763f);
@@ -848,7 +914,7 @@
 .patient-log-summary-item span {
   display: block;
   color: #5d6675;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   line-height: 1.1;
 }
@@ -856,7 +922,7 @@
 .patient-log-summary-item strong {
   display: block;
   color: #172033;
-  font-size: 1.15rem;
+  font-size: 1rem;
   line-height: 1.1;
 }
 
@@ -871,6 +937,92 @@
 }
 
 @media (max-width: 991.98px) {
+  .patient-log-summary {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .patient-log-summary-item:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .patient-log-summary-item:nth-child(n + 2) {
+    grid-column: span 3;
+  }
+
+  .patient-log-table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  .patient-log-table-wrap {
+    overflow-x: hidden;
+  }
+
+  .patient-log-col-hospital {
+    width: 30%;
+  }
+
+  .patient-log-col-name {
+    width: 42%;
+  }
+
+  .patient-log-col-date,
+  .patient-log-col-los,
+  .patient-log-col-service,
+  .patient-log-table th:nth-child(3),
+  .patient-log-table td:nth-child(3),
+  .patient-log-table th:nth-child(5),
+  .patient-log-table td:nth-child(5),
+  .patient-log-table th:nth-child(6),
+  .patient-log-table td:nth-child(6) {
+    display: none;
+  }
+
+  .patient-log-col-ward {
+    width: 18%;
+  }
+
+  .patient-log-col-action {
+    width: 10%;
+  }
+
+  .patient-log-table th,
+  .patient-log-table td {
+    padding: 8px 6px;
+  }
+
+  .patient-log-table th {
+    font-size: 0.62rem;
+  }
+
+  .patient-log-table td {
+    font-size: 0.72rem;
+  }
+
+  .patient-log-view-more-btn,
+  .patient-log-mobile-view-more {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    min-height: 32px;
+    gap: 0;
+    padding: 0;
+  }
+
+  .patient-log-action-cell .patient-log-view-more-btn {
+    width: 38px;
+    max-width: none;
+  }
+
+  .patient-log-view-more-btn span,
+  .patient-log-mobile-view-more span {
+    display: none;
+  }
+
+  .patient-log-mobile-view-more {
+    margin-left: auto;
+  }
+
   .patient-log-sidebar-wrap {
     position: fixed;
     top: 0;
@@ -961,21 +1113,34 @@
 @media (max-width: 767.98px) {
   .patient-log-page-head {
     align-items: flex-start !important;
+    padding-bottom: 8px !important;
+  }
+
+  .patient-log-card > .bg-white {
+    padding-top: 8px !important;
   }
 
   .patient-log-page-icon {
-    width: 50px;
-    height: 50px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .patient-log-page-head p {
+    display: none;
   }
 
   .patient-log-tabs {
-    grid-template-columns: 1fr;
-    padding: 10px 12px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3px;
+    padding: 5px 8px;
   }
 
   .patient-log-tab-btn {
-    justify-content: flex-start;
-    padding: 0 14px;
+    min-height: 28px;
+    gap: 3px;
+    justify-content: center;
+    padding: 0 6px;
+    font-size: 0.72rem;
   }
 
   .patient-log-table-shell {
@@ -983,7 +1148,7 @@
   }
 
   .patient-log-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
   .patient-log-details-body {
@@ -1036,7 +1201,7 @@
   }
 
   .patient-log-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
   .patient-log-details-footer {

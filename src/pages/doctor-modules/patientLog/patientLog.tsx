@@ -402,6 +402,18 @@ const PatientLog = () => {
     closeMobileSidebar();
   };
 
+  const handlePatientRowClick = (patientId: string) => {
+    if (isMobileView) {
+      handlePatientOpen(patientId);
+    }
+  };
+
+  const handlePatientRowDoubleClick = (patientId: string) => {
+    if (!isMobileView) {
+      handlePatientOpen(patientId);
+    }
+  };
+
   const handlePatientKeyDown = (
     event: KeyboardEvent<HTMLElement>,
     patientId: string
@@ -533,15 +545,7 @@ const PatientLog = () => {
                 <div className="bg-white px-3 px-md-4 pt-4">
                   <div className="d-flex justify-content-between align-items-center gap-3 pb-4 border-bottom patient-log-page-head">
                     <div className="d-flex align-items-center gap-3 min-width-0">
-                      <button
-                        type="button"
-                        className="patient-log-main-menu-btn"
-                        aria-label="Open patient log sidebar"
-                        title="Open patient log sidebar"
-                        onClick={toggleSidebar}
-                      >
-                        <i className="fa-solid fa-bars" />
-                      </button>
+                   
 
                       <div className="patient-log-page-icon">
                         <i className="isax isax-document-text fs-3" />
@@ -552,7 +556,9 @@ const PatientLog = () => {
                           Patient Log
                         </h4>
                         <p className="text-muted small mb-0">
-                          Click a patient to open the patient account record
+                          {isMobileView
+                            ? "Tap a patient to open the patient account record"
+                            : "Double-click a patient to open the patient account record"}
                         </p>
                       </div>
                     </div>
@@ -596,19 +602,20 @@ const PatientLog = () => {
                   ))}
                 </div>
 
-                <div className="patient-log-table-shell">
-                  <div className="patient-log-result-bar">
-                    <div>
-                      <span className="fw-bold text-dark">
-                        {filteredRecords.length}
-                      </span>{" "}
-                      <span className="text-muted">patient record/s</span>
+                <div className="patient-log-summary" aria-label="Patient log summary">
+                  {summaryCards.map((item) => (
+                    <div className="patient-log-summary-item" key={item.label}>
+                      <i className={item.icon} />
+                      <div>
+                        <span>{item.label}</span>
+                        <strong>{item.value}</strong>
+                      </div>
                     </div>
+                  ))}
+                </div>
 
-                    <span className="patient-log-filter-pill">
-                      {selectedWard === "all" ? "All wards" : selectedWard}
-                    </span>
-                  </div>
+                <div className="patient-log-table-shell">
+           
 
                   <div className="table-responsive patient-log-table-wrap d-none d-md-block">
                     <table className="table align-middle mb-0 patient-log-table">
@@ -619,7 +626,6 @@ const PatientLog = () => {
                         <col className="patient-log-col-ward" />
                         <col className="patient-log-col-los" />
                         <col className="patient-log-col-service" />
-                        <col className="patient-log-col-account" />
                         <col className="patient-log-col-action" />
                       </colgroup>
                       <thead>
@@ -630,14 +636,13 @@ const PatientLog = () => {
                           <th>Ward</th>
                           <th>Length of Stay</th>
                           <th>Type of Service</th>
-                          <th>Type of Account</th>
                           <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filteredRecords.length === 0 ? (
                           <tr>
-                            <td colSpan={8} className="patient-log-empty-cell">
+                            <td colSpan={7} className="patient-log-empty-cell">
                               <div className="patient-log-empty-state">
                                 <i className="isax isax-document-text" />
                                 <h6>No patient records found</h6>
@@ -651,7 +656,10 @@ const PatientLog = () => {
                               key={`${record.hospitalNo}-${pageStart + index}`}
                               role="button"
                               tabIndex={0}
-                              onClick={() => handlePatientOpen(record.hospitalNo)}
+                              onClick={() => handlePatientRowClick(record.hospitalNo)}
+                              onDoubleClick={() =>
+                                handlePatientRowDoubleClick(record.hospitalNo)
+                              }
                               onKeyDown={(event) =>
                                 handlePatientKeyDown(event, record.hospitalNo)
                               }
@@ -672,12 +680,12 @@ const PatientLog = () => {
                               </td>
                               <td>{record.lengthOfStay}</td>
                               <td>{record.service}</td>
-                              <td>{record.account}</td>
                               <td className="patient-log-action-cell">
                                 <button
                                   type="button"
                                   className="patient-log-view-more-btn"
-                                  aria-label={`View more details for ${record.patientName}`}
+                                  aria-label={`View details for ${record.patientName}`}
+                                  title={`View details for ${record.patientName}`}
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     setSelectedDetails(record);
@@ -685,7 +693,7 @@ const PatientLog = () => {
                                   onKeyDown={(event) => event.stopPropagation()}
                                 >
                                   <i className="isax isax-eye" />
-                                  View more
+                                  <span>Details</span>
                                 </button>
                               </td>
                             </tr>
@@ -728,24 +736,11 @@ const PatientLog = () => {
                             </span>
                           </div>
 
-                          <div className="patient-log-mobile-details">
-                            <div>
-                              <span>Date</span>
-                              <strong>{record.admissionDate}</strong>
-                            </div>
-                            <div>
-                              <span>Service</span>
-                              <strong>{record.service}</strong>
-                            </div>
-                            <div>
-                              <span>Account</span>
-                              <strong>{record.account}</strong>
-                            </div>
-                          </div>
-
                           <button
                             type="button"
                             className="patient-log-mobile-view-more"
+                            aria-label={`View details for ${record.patientName}`}
+                            title={`View details for ${record.patientName}`}
                             onClick={(event) => {
                               event.stopPropagation();
                               setSelectedDetails(record);
@@ -753,7 +748,7 @@ const PatientLog = () => {
                             onKeyDown={(event) => event.stopPropagation()}
                           >
                             <i className="isax isax-eye" />
-                            View more
+                            <span>Details</span>
                           </button>
                         </div>
                       ))
@@ -827,18 +822,6 @@ const PatientLog = () => {
                       </button>
                     </div>
                   </div>
-
-                  <div className="patient-log-summary">
-                    {summaryCards.map((item) => (
-                      <div className="patient-log-summary-item" key={item.label}>
-                        <i className={item.icon} />
-                        <div>
-                          <span>{item.label}</span>
-                          <strong>{item.value}</strong>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
@@ -911,6 +894,7 @@ const PatientLog = () => {
                 className="btn btn-sm text-white fw-bold px-3 patient-log-open-record-btn"
                 onClick={() => handlePatientOpen(selectedDetails.hospitalNo)}
               >
+                <i className="isax isax-arrow-right-3 me-1" />
                 Open Patient
               </button>
             </div>
