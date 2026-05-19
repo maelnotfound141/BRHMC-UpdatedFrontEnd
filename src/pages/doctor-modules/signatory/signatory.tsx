@@ -1,6 +1,8 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
+import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
+import "./signatory.css";
 
 // --- Helpers ---
 const getCurrentDate = () => {
@@ -343,108 +345,7 @@ const SignatoryModule = () => {
 
   return (
     <>
-    <style>
-{`
-/* =========================
-   REMOVE HOVER COMPLETELY
-========================= */
-.table-hover tbody tr:hover > td {
-  background-color: transparent !important;
-  color: inherit !important;
-}
 
-.table-hover tbody tr {
-  cursor: default !important;
-}
-
-/* =========================
-   SELECTED ROW (MATCHES UI GREEN THEME)
-========================= */
-.selected-row > td {
-  background-color: #e9f7ef !important; /* soft clinical green */
-  color: #0f763f !important;
-}
-
-/* left accent bar like your UI theme */
-.selected-row > td:first-child {
-  border-left: 4px solid #0f763f !important;
-}
-
-/* =========================
-   TABLE BASE STYLE (CLEAN CLINICAL LOOK)
-========================= */
-.table {
-  background-color: #ffffff;
-}
-
-.table td,
-.table th {
-  border-color: #f1f1f1 !important;
-}
-
-/* optional subtle row separation (medical UI style) */
-.table tbody tr {
-  border-bottom: 1px solid #f3f3f3;
-}
-
-/* =========================
-   FIXED TABLE LAYOUT
-========================= */
-.table-fixed {
-  table-layout: fixed;
-  width: 100%;
-}
-
-.table-fixed td,
-.table-fixed th {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  vertical-align: top;
-}
-
-/* =========================
-   TEXT WRAP
-========================= */
-.text-wrap-custom {
-  white-space: normal !important;
-  word-break: break-word;
-}
-
-/* =========================
-   EMPTY STATE
-========================= */
-.empty-table-cell {
-  height: 450px;
-  min-height: 450px;
-  background-color: #f8faf9;
-  vertical-align: middle;
-}
-
-.empty-table-cell > div {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-/* =========================
-   MOBILE CLEANUP
-========================= */
-@media (max-width: 575.98px) {
-  .modal-footer-actions {
-    flex-direction: column-reverse;
-    width: 100%;
-  }
-
-  .modal-footer-actions button {
-    width: 100%;
-    margin-top: 8px;
-  }
-}
-`}
-</style>
-`
 
       <div
         className="content doctor-content bg-light mt-n4 d-flex flex-column"
@@ -888,67 +789,11 @@ const SignatoryModule = () => {
 
       {/* Delete Modal */}
       {showDeleteModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex={-1}
-          style={{
-            backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 1060,
-          }}
-        >
-          <div className="modal-dialog modal-sm modal-dialog-centered px-3">
-            <div className="modal-content border-0 shadow-lg">
-              <div
-                className="modal-header border-0 py-3 d-flex align-items-center"
-                style={{
-                  backgroundColor: "#333b45",
-                }}
-              >
-                <h3 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2">
-                  <i className="isax isax-warning-2"></i>
-                  Confirm Delete
-                </h3>
-              </div>
-
-              <div className="modal-body p-4 bg-white text-center">
-                <i
-                  className="isax isax-trash text-danger mb-3 d-block"
-                  style={{ fontSize: "2.5rem" }}
-                ></i>
-
-                <p className="mb-0 text-dark fw-medium">
-                  Are you sure you want to delete
-                  this record?
-                </p>
-              </div>
-
-              <div
-                className="modal-footer border-0 d-flex flex-column flex-sm-row justify-content-center gap-2 p-3"
-                style={{
-                  backgroundColor: "#e2e5e9",
-                }}
-              >
-                <button
-                  type="button"
-                  className="btn btn-light rounded-1 px-4 py-2 fw-medium border-secondary-subtle w-100"
-                  onClick={() =>
-                    setShowDeleteModal(false)
-                  }
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="button"
-                  className="btn btn-danger rounded-1 px-4 py-2 fw-medium w-100"
-                  onClick={confirmDelete}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmationModal
+          message="Are you sure you want to delete this record?"
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={confirmDelete}
+        />
       )}
     </>
   );

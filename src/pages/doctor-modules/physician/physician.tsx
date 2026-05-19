@@ -1,4 +1,5 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
+import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import { useEffect, useRef, useState } from "react";
 
 interface Physician {
@@ -788,82 +789,11 @@ const PhysicianModule = () => {
 
       {/* DELETE MODAL */}
       {showDeleteConfirmModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex={-1}
-          style={{
-            backgroundColor:
-              "rgba(0,0,0,0.5)",
-            zIndex: 1060,
-          }}
-        >
-          <div className="modal-dialog modal-sm modal-dialog-centered px-3">
-            <div
-              className="modal-content border-0 shadow-lg"
-              style={{
-                borderRadius: "8px",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                className="modal-header border-0 py-2 d-flex align-items-center"
-                style={{
-                  backgroundColor: "#dc3545",
-                }}
-              >
-                <h6 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2">
-                  <i className="isax isax-trash"></i>
-                  Confirm Delete
-                </h6>
-              </div>
-
-              <div className="modal-body p-4 text-center bg-white">
-                <i
-                  className="isax isax-warning-2 text-danger mb-3 d-block"
-                  style={{
-                    fontSize: "2.5rem",
-                  }}
-                ></i>
-
-                <p className="mb-0 text-dark fw-medium">
-                  Are you sure you want to
-                  delete this physician?
-                </p>
-              </div>
-
-              <div
-                className="modal-footer border-0 p-2 justify-content-center"
-                style={{
-                  backgroundColor: "#f8f9fa",
-                }}
-              >
-                <button
-                  type="button"
-                  className="btn btn-sm btn-light border border-secondary-subtle fw-bold text-dark shadow-sm px-4"
-                  onClick={() =>
-                    setShowDeleteConfirmModal(
-                      false
-                    )
-                  }
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="button"
-                  className="btn btn-sm px-4 fw-bold text-white shadow-sm"
-                  style={{
-                    backgroundColor:
-                      "#dc3545",
-                  }}
-                  onClick={confirmDelete}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmationModal
+          message="Are you sure you want to delete this physician?"
+          onCancel={() => setShowDeleteConfirmModal(false)}
+          onConfirm={confirmDelete}
+        />
       )}
     </>
   );

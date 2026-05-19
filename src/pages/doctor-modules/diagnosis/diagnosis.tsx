@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
+import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import { useLocation } from "react-router";
 
 // --- Types ---
@@ -662,7 +663,7 @@ const DiagnosisModule = () => {
                 {/* Table */}
                 {/* Main Content */}
 <div
-  className="border rounded bg-white flex-grow-1"
+  className="border rounded bg-white flex-grow-1 d-flex flex-column"
   style={{
     minHeight: "460px",
     border: "1px solid #e5e7eb",
@@ -704,7 +705,7 @@ const DiagnosisModule = () => {
   </div>
 ) : (
     <>
-      <div className="table-responsive">
+      <div className="table-responsive flex-grow-1">
         <table className="table table-hover align-middle mb-0">
           <thead className="bg-light">
             <tr>
@@ -798,7 +799,7 @@ const DiagnosisModule = () => {
       </div>
 
       {/* Pagination */}
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top bg-light gap-3">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center p-3 border-top bg-light gap-3 mt-auto">
         <div className="d-flex align-items-center gap-2">
           <span className="small text-muted">Show</span>
 
@@ -1045,50 +1046,11 @@ const DiagnosisModule = () => {
 
       {/* Delete Modal */}
       {showDeleteModal && (
-        <div
-          className="modal fade show d-block"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 1060,
-          }}
-        >
-          <div className="modal-dialog modal-sm modal-dialog-centered">
-            <div className="modal-content border-0 shadow">
-              <div className="modal-header">
-                <h5 className="modal-title text-white">
-                  Confirm Delete
-                </h5>
-              </div>
-
-              <div className="modal-body text-center py-4">
-                <i
-                  className="isax isax-trash text-danger mb-3"
-                  style={{ fontSize: "3rem" }}
-                ></i>
-
-                <p>
-                  Are you sure you want to delete this record?
-                </p>
-              </div>
-
-              <div className="modal-footer">
-                <button
-                  className="btn btn-light"
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  className="btn btn-danger"
-                  onClick={confirmDelete}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmationModal
+          message="Are you sure you want to delete this record?"
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={confirmDelete}
+        />
       )}
     </>
   );
