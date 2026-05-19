@@ -1,6 +1,7 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import { useEffect, useRef, useState } from "react";
+import "./physician.css";
 
 interface Physician {
   id: number;
@@ -211,115 +212,7 @@ const PhysicianModule = () => {
 
   return (
     <>
-  <style>
-{`
 
-
-/* =========================================================
-   CLEAN WHITE TABLE UI (NO HOVER - MEDICAL STYLE)
-========================================================= */
-
-/* ===== TABLE BASE LOOK ===== */
-.table {
-  background-color: #ffffff !important;
-}
-
-/* Force white rows */
-.table tbody tr {
-  background-color: #ffffff !important;
-}
-
-/* Remove ALL hover effects completely */
-.table-hover tbody tr:hover,
-.table-hover tbody tr:hover > td {
-  background-color: #ffffff !important;
-  color: inherit !important;
-}
-
-/* Keep click behavior but no hover styling */
-.table-hover tbody tr {
-  cursor: pointer;
-  transition: none !important;
-}
-
-/* ===== SELECTED ROW (GREEN MEDICAL HIGHLIGHT) ===== */
-.selected-row > td {
-  background-color: #e6f4ea !important; /* soft green like your UI */
-  color: #0b592f !important;
-}
-
-/* left border accent */
-.selected-row > td:first-child {
-  border-left: 4px solid var(--primary, #0f763f) !important;
-}
-
-/* ===== TABLE HEADER (CLEAN WHITE HEADER) ===== */
-.table thead th {
-  background-color: #ffffff !important;
-  color: #6c757d !important;
-  font-weight: 600;
-  border-bottom: 1px solid #e9ecef !important;
-}
-
-/* ===== TABLE CELLS ===== */
-.table td {
-  background-color: #ffffff !important;
-  border-bottom: 1px solid #f1f3f5 !important;
-}
-
-/* ===== REMOVE STRIPING IF ANY ===== */
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: #ffffff !important;
-}
-
-/* ===== TABLE LAYOUT ===== */
-.table-fixed {
-  table-layout: fixed;
-  width: 100%;
-}
-
-.table-fixed td,
-.table-fixed th {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  vertical-align: top;
-}
-
-/* ===== TEXT WRAP ===== */
-.text-wrap-custom {
-  white-space: normal !important;
-  word-break: break-word;
-}
-
-/* ===== EMPTY TABLE STATE ===== */
-.empty-table-cell {
-  height: 450px;
-  min-height: 450px;
-  background-color: #ffffff !important;
-  vertical-align: middle;
-}
-
-.empty-table-cell > div {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ===== MOBILE CLEANUP ===== */
-@media (max-width: 767px) {
-  .table td,
-  .table th {
-    font-size: 13px;
-  }
-
-  .table thead th {
-    font-size: 12px;
-  }
-}
-`}
-</style>
 
       <div
         className="content doctor-content bg-light mt-n4 d-flex flex-column"

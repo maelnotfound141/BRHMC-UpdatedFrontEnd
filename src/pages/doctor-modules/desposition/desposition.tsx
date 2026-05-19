@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import { useLocation } from "react-router";
+import "./desposition.css";
 
 interface DispositionData {
   typeOfDisposition: string;
@@ -95,89 +96,6 @@ const DispositionModule = () => {
 
   return (
     <>
-      <style>
-        {`
-          .disposition-action-btn {
-            min-height: 38px;
-            font-size: 0.9rem;
-          }
-
-          .disposition-main-panel {
-            min-height: 460px;
-          }
-
-          /* Desktop: empty-state fills the panel so content stays centered */
-          .disposition-empty-state {
-            min-height: 460px;
-          }
-
-          /* Mobile: collapse both the panel and the empty-state to content height
-             — no more hanging blank space below "No disposition set." */
-          @media (max-width: 767.98px) {
-            .disposition-main-panel {
-              min-height: unset !important;
-            }
-            .disposition-empty-state {
-              min-height: unset !important;
-              height: auto !important;
-            }
-          }
-
-          .disposition-empty-icon {
-            font-size: 3.25rem;
-          }
-
-          .disposition-section-title {
-            font-size: 1rem;
-            letter-spacing: 0.3px;
-          }
-
-          .disposition-label {
-            font-size: 0.85rem;
-          }
-
-          /* FIX 2: Reduced row height from 42px to 36px for compactness. */
-          .disposition-value {
-            font-size: 0.95rem;
-            min-height: 36px;
-          }
-
-          .disposition-main-panel {
-            transition: background-color 0.15s ease;
-            -webkit-tap-highlight-color: transparent;
-            cursor: pointer;
-          }
-
-          .disposition-note {
-            font-size: 0.95rem;
-            line-height: 1.7;
-          }
-
-          /* FIX 3: Mobile add button — zero out margin and add tap feedback */
-          .disposition-mobile-add-btn {
-              margin: 0 !important;
-              transition: all 0.15s ease;
-              -webkit-tap-highlight-color: transparent;
-            }
-
-            .disposition-mobile-add-btn:active {
-              transform: scale(0.95);
-            }
-
-          @media (max-width: 575.98px) {
-            .modal-footer-actions {
-              flex-direction: column-reverse;
-              width: 100%;
-            }
-
-            .modal-footer-actions button {
-              width: 100%;
-              margin-top: 8px;
-            }
-          }
-        `}
-      </style>
-
       <div
         className="content doctor-content bg-light mt-n4"
         style={{ minHeight: "100vh" }}
@@ -241,10 +159,20 @@ const DispositionModule = () => {
                   </h5>
 
                   <div
-                    className={`d-flex justify-content-center justify-content-md-end gap-2 flex-wrap w-100 w-md-auto ${
-                      !dispositionData ? "d-none d-md-flex" : ""
-                    }`}
-                  >
+  className={`
+    gap-2
+    flex-wrap
+    w-100
+    w-md-auto
+    justify-content-center
+    justify-content-md-end
+    ${
+      !dispositionData
+  ? "d-none d-lg-flex"
+  : "d-flex"
+    }
+  `}
+>
                     <button
                       type="button"
                       onClick={handleOpenAddDisposition}
@@ -551,3 +479,4 @@ const DispositionModule = () => {
 };
 
 export default DispositionModule;
+

@@ -3,6 +3,7 @@ import DeleteConfirmationModal from "@/components/delete-confirmation-modal/Dele
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
+import "./reviewofSystem.css";
 
 const ROS_CATEGORIES = [
   "General",
@@ -279,18 +280,7 @@ const ReviewOfSystem = () => {
 
   return (
     <>
-      <style>
-        {`
-          .hide-scrollbar::-webkit-scrollbar { display: none; }
-          .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-          .responsive-exam-sidebar { width: 100%; flex-shrink: 0; }
-          
-       
-          @media (min-width: 992px) {
-            .responsive-exam-sidebar { max-width: 250px; }
-          }
-        `}
-      </style>
+      
       
     
 
@@ -433,42 +423,6 @@ const ReviewOfSystem = () => {
   className="flex-grow-1 d-flex flex-column p-3 p-md-4 position-relative overflow-y-auto"
   style={{ maxHeight: "600px" }}
 >
-  {/* Mobile Floating Add/Edit Button */}
-  {/* <button
-    onClick={() => {
-      if (catHasData) {
-        handleEdit();
-      } else {
-        handleAdd();
-      }
-    }}
-    className="btn d-lg-none position-absolute shadow"
-    style={{
-      bottom: "20px",
-      right: "20px",
-      width: "50px",
-      height: "50px",
-      borderRadius: "50%",
-      backgroundColor: "var(--primary, #0f763f)",
-      color: "#fff",
-      zIndex: 10,
-      display: isUnlocked ? "none" : "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      border: "none"
-    }}
-  >
-    <i
-      className={`isax ${
-        catHasData ? "isax-edit" : "isax-add"
-      }`}
-      style={{ fontSize: "1.3rem" }}
-    ></i>
-  </button> */}
-
-
-
-
   {renderFormContent()}
 </div>
 

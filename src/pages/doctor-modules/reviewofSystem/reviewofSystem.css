@@ -1,0 +1,10 @@
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .responsive-exam-sidebar { width: 100%; flex-shrink: 0; }
+          
+       
+    @media (min-width: 992px) {
+    .responsive-exam-sidebar { max-width: 250px; }
+}
+       

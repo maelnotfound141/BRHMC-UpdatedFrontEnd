@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useLocation } from "react-router";
+import "./drugMeds.css";
 
 // --- Types ---
 interface MainDrugRecord {
@@ -242,109 +243,6 @@ useEffect(() => {
 
   return (
     <>
-      <style>
-        {`
-
-        .table-fixed {
-  table-layout: fixed;
-  width: 100%;
-}
-
-.table-fixed td,
-.table-fixed th {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-}
-
-
-.table-fixed {
-  table-layout: fixed;
-  width: 100%;
-}
-
-.table-fixed th,
-.table-fixed td {
-  vertical-align: top;
-  white-space: normal !important;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-.table td {
-  padding: 12px !important;
-}
-
-.safe-text {
-  white-space: normal !important;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  display: block;
-  line-height: 1.4;
-}
-
-/* prevent horizontal overflow issues */
-.table-responsive {
-  overflow-x: auto;
-}
-
-          .mobile-empty-add-btn {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid var(--primary, #0f763f);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 6px 18px rgba(15, 118, 63, 0.15);
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-          }
-
-          .mobile-empty-add-btn:hover,
-          .mobile-empty-add-btn:active {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 10px 24px rgba(15, 118, 63, 0.22);
-            background-color: #f8fffb;
-          }
-
-          .mobile-empty-add-btn i {
-            font-size: 2rem;
-            color: var(--primary, #0f763f);
-          }
-
-          .mobile-empty-add-label {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #6c757d;
-            letter-spacing: 0.2px;
-          }
-          .hide-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
-          .hide-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-          .hide-scrollbar { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
-          .text-hover-primary:hover { color: var(--primary, #0f763f) !important; }
-
-          /* Modal Inline Forms */
-          .form-control-compact { padding: 2px 6px; font-size: 0.85rem; height: 28px; border: 1px solid #ced4da; border-radius: 2px; }
-          .form-select-compact { padding: 2px 24px 2px 6px; font-size: 0.85rem; height: 28px; border: 1px solid #ced4da; border-radius: 2px; }
-          
-          /* Wider modal for Tablets */
-          @media (min-width: 768px) and (max-width: 1199px) {
-            .tablet-wide-modal { max-width: 95% !important; width: 95% !important; }
-          }
-
-          /* Responsive Buttons */
-          @media (max-width: 575.98px) {
-            .modal-footer-actions { flex-direction: column-reverse; width: 100%; }
-            .modal-footer-actions button { width: 100%; margin-top: 8px; }
-            .pagination-controls { flex-direction: column; gap: 12px; }
-          }
-        `}
-      </style>
-
-     
 
       <div className="content doctor-content bg-light mt-n4 d-flex flex-column" style={{ minHeight: "100vh" }}>
         <div className="container-fluid px-3 px-lg-5 pt-0 flex-grow-1 d-flex flex-column">

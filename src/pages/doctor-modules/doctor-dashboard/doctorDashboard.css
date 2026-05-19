@@ -1,0 +1,153 @@
+          /* search patient banner */
+          .find-patient-banner {
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: box-shadow 0.25s ease, border-color 0.25s ease;
+            border-left: 4px solid var(--primary, #0f763f) !important;
+          }
+
+          .find-patient-banner:hover,
+          .find-patient-banner:focus-visible {
+            box-shadow: 0 6px 20px rgba(15, 118, 63, 0.13) !important;
+            border-color: var(--primary, #0f763f) !important;
+            outline: none;
+          }
+
+          .find-patient-banner:active {
+            transform: scale(0.995);
+          }
+
+          .find-patient-banner:focus-visible {
+            outline: 2px solid var(--primary, #0f763f);
+            outline-offset: 2px;
+          }
+
+          .fp-icon-wrap {
+            width: 44px;
+            height: 44px;
+            background: rgba(15, 118, 63, 0.09);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.25s ease, transform 0.25s ease;
+          }
+
+          .find-patient-banner:hover .fp-icon-wrap {
+            background: rgba(15, 118, 63, 0.16);
+            transform: scale(1.07);
+          }
+
+          .fp-search-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(15, 118, 63, 0.07);
+            border: 1px solid rgba(15, 118, 63, 0.18);
+            border-radius: 20px;
+            padding: 5px 13px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--primary, #0f763f);
+            white-space: nowrap;
+            transition: background 0.2s ease;
+          }
+
+          .find-patient-banner:hover .fp-search-pill {
+            background: rgba(15, 118, 63, 0.13);
+          }
+
+          /* pulse dot */
+          .fp-pulse {
+            width: 7px;
+            height: 7px;
+            background: var(--primary, #0f763f);
+            border-radius: 50%;
+            animation: fpPulse 2s ease-in-out infinite;
+            flex-shrink: 0;
+          }
+
+          @keyframes fpPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.45; transform: scale(0.7); }
+          }
+
+          /* utility cards */
+          .utility-card {
+            background: #ffffff;
+            border: 1px solid #f0f2f5 !important;
+            border-radius: 16px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+
+          .utility-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06) !important;
+            border-color: transparent !important;
+          }
+
+          .utility-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary, #0f763f);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          }
+
+          .utility-card:hover::before {
+            opacity: 1;
+          }
+
+          .utility-icon-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+          }
+
+          .utility-card:hover .utility-icon-wrap {
+            transform: scale(1.05);
+          }
+
+          .utility-arrow {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #adb5bd;
+          }
+
+          .utility-card:hover .utility-arrow {
+            background: var(--primary, #0f763f);
+            color: #ffffff;
+            transform: translateX(4px);
+          }
+
+          /* responsive tweaks */
+          @media (max-width: 575.98px) {
+            .fp-divider       { display: none !important; }
+            .fp-subtitle      { display: none !important; }
+            .fp-search-pill   { padding: 4px 10px; font-size: 0.72rem; }
+            .fp-icon-wrap     { width: 38px; height: 38px; border-radius: 8px; }
+          }
+
+          @media (min-width: 576px) and (max-width: 767.98px) {
+            .fp-subtitle { display: none !important; }
+          }
+      

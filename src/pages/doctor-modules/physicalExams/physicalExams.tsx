@@ -2,6 +2,7 @@ import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
+import "./physicalExams.css";
 
 const EXAM_CATEGORIES = [
   "General Survey",
@@ -428,103 +429,7 @@ if (!showForm) {
 
   return (
     <>
-      <style>
-        {`
-          .hide-scrollbar::-webkit-scrollbar { display: none; }
-          .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-          .responsive-exam-sidebar { width: 100%; flex-shrink: 0; }
-          
-          /* RESPONSIVE FIXES: Breakpoints set to large (lg) to ensure Tablets trigger horizontal layouts */
-          @media (min-width: 992px) {
-            .responsive-exam-sidebar { max-width: 250px; }
-            .vital-group-margin { margin-top: 2.1rem; }
-          }
-          @media (max-width: 991px) {
-            .vital-group-margin { margin-top: 0.5rem; }
-          }
-
-.sidebar-flex {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-@media (min-width: 992px) {
-  .sidebar-flex {
-    flex-direction: column;
-    overflow-x: hidden;
-    white-space: normal;
-  }
-}
-            .acc-info-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1080;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-.acc-info-box {
-  width: 360px;
-  max-width: 100%;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.acc-info-title {
-  height: 40px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.acc-info-icon {
-  width: 42px;
-  height: 42px;
-  background: var(--primary, #0f763f);
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-
-.acc-info-icon-danger {
-  background: #dc3545;
-}
-
-.acc-info-action-btn {
-  border-radius: 4px;
-  font-size: 0.82rem;
-}
-
-@media (max-width: 575.98px) {
-  .acc-info-box {
-    width: 100%;
-  }
-
-  .acc-info-footer {
-    flex-direction: column;
-  }
-
-  .acc-info-footer button {
-    width: 100%;
-  }
-}
-        `}
-      </style>
+      
    
 
       <div className="content doctor-content bg-light mt-n4 d-flex flex-column" style={{ minHeight: "100vh" }}>

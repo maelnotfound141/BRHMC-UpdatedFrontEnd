@@ -1,0 +1,91 @@
+.mobile-empty-add-btn {
+width: 72px;
+height: 72px;
+border-radius: 50%;
+background: #ffffff;
+border: 2px solid var(--primary, #0f763f);
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 6px 18px rgba(15, 118, 63, 0.15);
+transition: all 0.2s ease-in-out;
+cursor: pointer;
+}
+
+.mobile-empty-add-btn:hover,
+.mobile-empty-add-btn:active {
+transform: translateY(-2px) scale(1.03);
+box-shadow: 0 10px 24px rgba(15, 118, 63, 0.22);
+background-color: #f8fffb;
+}
+
+.mobile-empty-add-btn i {
+font-size: 2rem;
+color: var(--primary, #0f763f);
+}
+
+.mobile-empty-add-label {
+margin-top: 10px;
+font-size: 0.85rem;
+font-weight: 600;
+color: #6c757d;
+letter-spacing: 0.2px;
+}
+.mobile-empty-add-btn
+.mobile-empty-add-label
+
+          .hide-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+          }
+
+          .hide-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+          }
+
+          .hide-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+          }
+
+          .text-hover-primary:hover {
+            color: var(--primary, #0f763f) !important;
+          }
+
+          .table-hover tbody tr {
+            cursor: pointer;
+            
+          }
+
+          .selected-row > td {
+            background-color: #e6f4ea !important;
+            color: #0b592f !important;
+          }
+
+          .selected-row > td:first-child {
+            border-left: 4px solid var(--primary, #0f763f) !important;
+          }
+
+          .selected-row .text-muted {
+            color: #0f763f !important;
+          }
+
+          @media (max-width: 575.98px) {
+            .modal-footer-actions {
+              flex-direction: column-reverse;
+              width: 100%;
+            }
+
+            .modal-footer-actions button {
+              width: 100%;
+              margin-top: 8px;
+            }
+
+            .pagination-controls {
+              flex-direction: column;
+              gap: 12px;
+            }
+          }
+        
+     
