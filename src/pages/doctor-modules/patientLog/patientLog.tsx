@@ -31,8 +31,131 @@ const patientLogTabs: { key: PatientLogType; label: string; icon: string }[] = [
   { key: "opd", label: "OPD", icon: "isax isax-profile-2user" },
 ];
 
+const patientLogPageSizeOptions = [10, 20, 50, 100];
+const defaultPatientLogPageSize = 10;
+
 const patientLogRecords: PatientLogRecord[] = [
   {
+    hospitalNo: "000000000777288",
+    patientName: "DO, REA MON",
+    admissionDate: "03/21/2026",
+    ward: "Ph Med",
+    lengthOfStay: "0d, 6h",
+    service: "Medicine",
+    account: "Service",
+    mghDate: "---",
+    disposition: "---",
+    attendingPhysician: "ROWAN M. LIQUE MD",
+    status: "Under My Care",
+    withPhilHealth: true,
+    type: "admission",
+  },
+    {
+    hospitalNo: "000000000777288",
+    patientName: "DO, REA MON",
+    admissionDate: "03/21/2026",
+    ward: "Ph Med",
+    lengthOfStay: "0d, 6h",
+    service: "Medicine",
+    account: "Service",
+    mghDate: "---",
+    disposition: "---",
+    attendingPhysician: "ROWAN M. LIQUE MD",
+    status: "Under My Care",
+    withPhilHealth: true,
+    type: "admission",
+  },
+    {
+    hospitalNo: "000000000777288",
+    patientName: "DO, REA MON",
+    admissionDate: "03/21/2026",
+    ward: "Ph Med",
+    lengthOfStay: "0d, 6h",
+    service: "Medicine",
+    account: "Service",
+    mghDate: "---",
+    disposition: "---",
+    attendingPhysician: "ROWAN M. LIQUE MD",
+    status: "Under My Care",
+    withPhilHealth: true,
+    type: "admission",
+  },
+    {
+    hospitalNo: "000000000777288",
+    patientName: "DO, REA MON",
+    admissionDate: "03/21/2026",
+    ward: "Ph Med",
+    lengthOfStay: "0d, 6h",
+    service: "Medicine",
+    account: "Service",
+    mghDate: "---",
+    disposition: "---",
+    attendingPhysician: "ROWAN M. LIQUE MD",
+    status: "Under My Care",
+    withPhilHealth: true,
+    type: "admission",
+  },
+    {
+    hospitalNo: "000000000777288",
+    patientName: "DO, REA MON",
+    admissionDate: "03/21/2026",
+    ward: "Ph Med",
+    lengthOfStay: "0d, 6h",
+    service: "Medicine",
+    account: "Service",
+    mghDate: "---",
+    disposition: "---",
+    attendingPhysician: "ROWAN M. LIQUE MD",
+    status: "Under My Care",
+    withPhilHealth: true,
+    type: "admission",
+  },
+    {
+    hospitalNo: "000000000777288",
+    patientName: "DO, REA MON",
+    admissionDate: "03/21/2026",
+    ward: "Ph Med",
+    lengthOfStay: "0d, 6h",
+    service: "Medicine",
+    account: "Service",
+    mghDate: "---",
+    disposition: "---",
+    attendingPhysician: "ROWAN M. LIQUE MD",
+    status: "Under My Care",
+    withPhilHealth: true,
+    type: "admission",
+  },
+    {
+    hospitalNo: "000000000777288",
+    patientName: "DO, REA MON",
+    admissionDate: "03/21/2026",
+    ward: "Ph Med",
+    lengthOfStay: "0d, 6h",
+    service: "Medicine",
+    account: "Service",
+    mghDate: "---",
+    disposition: "---",
+    attendingPhysician: "ROWAN M. LIQUE MD",
+    status: "Under My Care",
+    withPhilHealth: true,
+    type: "admission",
+  },
+    {
+    hospitalNo: "000000000777288",
+    patientName: "DO, REA MON",
+    admissionDate: "03/21/2026",
+    ward: "Ph Med",
+    lengthOfStay: "0d, 6h",
+    service: "Medicine",
+    account: "Service",
+    mghDate: "---",
+    disposition: "---",
+    attendingPhysician: "ROWAN M. LIQUE MD",
+    status: "Under My Care",
+    withPhilHealth: true,
+    type: "admission",
+  },
+    {
     hospitalNo: "000000000777288",
     patientName: "DO, REA MON",
     admissionDate: "03/21/2026",
@@ -131,6 +254,8 @@ const PatientLog = () => {
   const [activeType, setActiveType] = useState<PatientLogType>("admission");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedWard, setSelectedWard] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(defaultPatientLogPageSize);
   const [isMobileView, setIsMobileView] = useState(false);
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
   const [selectedDetails, setSelectedDetails] = useState<PatientLogRecord | null>(null);
@@ -180,6 +305,31 @@ const PatientLog = () => {
       return matchesType && matchesWard && matchesSearch;
     });
   }, [activeType, searchTerm, selectedWard]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredRecords.length / pageSize)
+  );
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+
+  const pageStart = (safeCurrentPage - 1) * pageSize;
+  const pageEnd = Math.min(pageStart + pageSize, filteredRecords.length);
+
+  const paginatedRecords = useMemo(() => {
+    return filteredRecords.slice(pageStart, pageEnd);
+  }, [filteredRecords, pageEnd, pageStart]);
+
+  const paginationPages = useMemo(() => {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }, [totalPages]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeType, pageSize, searchTerm, selectedWard]);
+
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(page, totalPages));
+  }, [totalPages]);
 
   const summaryCards = useMemo(
     () => [
@@ -379,7 +529,7 @@ const PatientLog = () => {
             </aside>
 
             <div className="doctor-dashboard-main patient-log-main mt-4 mt-lg-0">
-              <div className="card border-0 shadow-sm rounded-3 overflow-hidden mb-4 patient-log-card">
+              <div className="card border-0 shadow-sm rounded-3 mb-4 patient-log-card">
                 <div className="bg-white px-3 px-md-4 pt-4">
                   <div className="d-flex justify-content-between align-items-center gap-3 pb-4 border-bottom patient-log-page-head">
                     <div className="d-flex align-items-center gap-3 min-width-0">
@@ -496,9 +646,9 @@ const PatientLog = () => {
                             </td>
                           </tr>
                         ) : (
-                          filteredRecords.map((record) => (
+                          paginatedRecords.map((record, index) => (
                             <tr
-                              key={record.hospitalNo}
+                              key={`${record.hospitalNo}-${pageStart + index}`}
                               role="button"
                               tabIndex={0}
                               onClick={() => handlePatientOpen(record.hospitalNo)}
@@ -553,10 +703,10 @@ const PatientLog = () => {
                         <p>Try a different search term, ward, or log type.</p>
                       </div>
                     ) : (
-                      filteredRecords.map((record) => (
+                      paginatedRecords.map((record, index) => (
                         <div
                           className="patient-log-mobile-card"
-                          key={record.hospitalNo}
+                          key={`${record.hospitalNo}-${pageStart + index}`}
                           role="button"
                           tabIndex={0}
                           onClick={() => handlePatientOpen(record.hospitalNo)}
@@ -609,18 +759,86 @@ const PatientLog = () => {
                       ))
                     )}
                   </div>
-                </div>
 
-                <div className="patient-log-summary">
-                  {summaryCards.map((item) => (
-                    <div className="patient-log-summary-item" key={item.label}>
-                      <i className={item.icon} />
-                      <div>
-                        <span>{item.label}</span>
-                        <strong>{item.value}</strong>
+                  </div>
+
+                <div className="patient-log-sticky-footer">
+                  <div className="patient-log-pagination">
+                    <div className="patient-log-pagination-meta">
+                      <div className="patient-log-pagination-info">
+                        {filteredRecords.length === 0
+                          ? "Showing 0 of 0 records"
+                          : `Showing ${pageStart + 1}-${pageEnd} of ${
+                              filteredRecords.length
+                            } records`}
                       </div>
+
+                      <label className="patient-log-page-size">
+                        <span>Show</span>
+                        <select
+                          value={pageSize}
+                          onChange={(event) => setPageSize(Number(event.target.value))}
+                        >
+                          {patientLogPageSizeOptions.map((option) => (
+                            <option value={option} key={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
                     </div>
-                  ))}
+
+                    <div className="patient-log-pagination-actions" aria-label="Patient log pagination">
+                      <button
+                        type="button"
+                        className="patient-log-page-btn"
+                        aria-label="Previous page"
+                        disabled={safeCurrentPage === 1}
+                        onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                      >
+                        <i className="isax isax-arrow-left-2" />
+                      </button>
+
+                      {paginationPages.map((page) => (
+                        <button
+                          type="button"
+                          key={page}
+                          className={`patient-log-page-btn ${
+                            safeCurrentPage === page ? "active" : ""
+                          }`}
+                          aria-label={`Go to page ${page}`}
+                          aria-current={safeCurrentPage === page ? "page" : undefined}
+                          onClick={() => setCurrentPage(page)}
+                        >
+                          {page}
+                        </button>
+                      ))}
+
+                      <button
+                        type="button"
+                        className="patient-log-page-btn"
+                        aria-label="Next page"
+                        disabled={safeCurrentPage === totalPages}
+                        onClick={() =>
+                          setCurrentPage((page) => Math.min(totalPages, page + 1))
+                        }
+                      >
+                        <i className="isax isax-arrow-right-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="patient-log-summary">
+                    {summaryCards.map((item) => (
+                      <div className="patient-log-summary-item" key={item.label}>
+                        <i className={item.icon} />
+                        <div>
+                          <span>{item.label}</span>
+                          <strong>{item.value}</strong>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
