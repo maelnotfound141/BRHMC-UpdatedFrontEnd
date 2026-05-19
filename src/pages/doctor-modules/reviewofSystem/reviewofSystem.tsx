@@ -1,9 +1,7 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
-import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
-import "./reviewofSystem.css";
 
 const ROS_CATEGORIES = [
   "General",
@@ -280,7 +278,18 @@ const ReviewOfSystem = () => {
 
   return (
     <>
-      
+      <style>
+        {`
+          .hide-scrollbar::-webkit-scrollbar { display: none; }
+          .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+          .responsive-exam-sidebar { width: 100%; flex-shrink: 0; }
+          
+       
+          @media (min-width: 992px) {
+            .responsive-exam-sidebar { max-width: 250px; }
+          }
+        `}
+      </style>
       
     
 
@@ -325,15 +334,25 @@ const ReviewOfSystem = () => {
             
                     <div className={`d-flex flex-wrap justify-content-center justify-content-lg-end pb-1 pb-lg-0 ms-lg-auto ${!catHasData && !isUnlocked ? "d-none d-lg-flex" : ""}`} style={{ gap: "4px" }}>
                       <button 
-                        onClick={handleAdd} 
-                        disabled={catHasData || isUnlocked}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-                          (catHasData || isUnlocked) ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold text-hover-primary'
-                        }`}
-                        style={{ borderRadius: "3px", cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-add-square"></i> <span className="d-none d-md-inline">Add</span>
-                      </button>
+  onClick={handleAdd} 
+  disabled={catHasData || isUnlocked}
+  className={`btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
+    (catHasData || isUnlocked)
+      ? 'bg-light text-muted opacity-50 border border-secondary-subtle'
+      : 'text-white fw-bold border-0'
+  }`}
+  style={{
+    borderRadius: "3px",
+    cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer",
+    backgroundColor:
+      (!catHasData && !isUnlocked)
+        ? "#0f763f"
+        : undefined
+  }}
+>
+  <i className="isax isax-add-square"></i>
+  <span className="d-none d-md-inline">Add</span>
+</button>
                       
                       <button 
                         onClick={handleEdit} 
@@ -423,6 +442,42 @@ const ReviewOfSystem = () => {
   className="flex-grow-1 d-flex flex-column p-3 p-md-4 position-relative overflow-y-auto"
   style={{ maxHeight: "600px" }}
 >
+  {/* Mobile Floating Add/Edit Button */}
+  {/* <button
+    onClick={() => {
+      if (catHasData) {
+        handleEdit();
+      } else {
+        handleAdd();
+      }
+    }}
+    className="btn d-lg-none position-absolute shadow"
+    style={{
+      bottom: "20px",
+      right: "20px",
+      width: "50px",
+      height: "50px",
+      borderRadius: "50%",
+      backgroundColor: "var(--primary, #0f763f)",
+      color: "#fff",
+      zIndex: 10,
+      display: isUnlocked ? "none" : "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "none"
+    }}
+  >
+    <i
+      className={`isax ${
+        catHasData ? "isax-edit" : "isax-add"
+      }`}
+      style={{ fontSize: "1.3rem" }}
+    ></i>
+  </button> */}
+
+
+
+
   {renderFormContent()}
 </div>
 
@@ -436,16 +491,45 @@ const ReviewOfSystem = () => {
       </div>
 
       {showDeleteModal && (
-        <DeleteConfirmationModal
-          message={
-            <>
-              Are you sure you want to clear the record for{" "}
-              <strong className="text-danger">{activeCategory}</strong>?
-            </>
-          }
-          onCancel={() => setShowDeleteModal(false)}
-          onConfirm={confirmDelete}
-        />
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1060 }}>
+          <div className="modal-dialog modal-sm modal-dialog-centered px-3">
+            <div className="modal-content border-0 shadow-lg" style={{ borderRadius: '8px', overflow: 'hidden' }}>
+              
+              <div className="modal-header border-0 py-3 d-flex align-items-center" style={{ backgroundColor: '#333b45' }}>
+                <h3 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2" style={{ fontSize: '1.1rem', letterSpacing: '0.5px' }}>
+                  <i className="isax isax-warning-2" style={{ fontSize: '1.5rem' }}></i>
+                  Confirm Delete
+                </h3>
+           
+              </div>
+              
+              <div className="modal-body p-4 bg-white text-center">
+                <i className="isax isax-trash text-danger mb-3 d-block" style={{ fontSize: '2.5rem' }}></i>
+                <p className="mb-0 text-dark fw-medium" style={{ fontSize: '1.05rem' }}>
+                  Are you sure you want to clear the record for <strong className="text-danger">{activeCategory}</strong>?
+                </p>
+              </div>
+              
+              <div className="modal-footer border-0 d-flex justify-content-center gap-2 p-3" style={{ backgroundColor: '#e2e5e9' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-light rounded-1 px-4 py-2 fw-medium border-secondary-subtle" 
+                  onClick={() => setShowDeleteModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-danger rounded-1 px-4 py-2 fw-medium" 
+                  onClick={confirmDelete}
+                >
+                  Delete
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

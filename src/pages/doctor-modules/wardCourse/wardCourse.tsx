@@ -294,16 +294,21 @@ const CourseInTheWard = () => {
                         style={{ gap: "6px" }}
                       >
                         <button
-                          onClick={handleAdd}
-                          className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0"
-                          style={{
-                            borderRadius: "4px",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <i className="isax isax-add-square"></i>
-                          <span>Add</span>
-                        </button>
+  onClick={handleAdd}
+  className={`btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+    !hasRecords
+      ? "text-white fw-bold border-0"
+      : "bg-white text-dark fw-bold border border-secondary-subtle"
+  }`}
+  style={{
+    borderRadius: "4px",
+    cursor: "pointer",
+    backgroundColor: !hasRecords ? "#0f763f" : undefined,
+  }}
+>
+  <i className="isax isax-add-square"></i>
+  <span>Add</span>
+</button>
 
                         <button
                           onClick={handleEdit}

@@ -472,16 +472,25 @@ if (!showForm) {
   
  <div className={`d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-md-0 ms-md-auto ${!catHasData && !isUnlocked ? "d-none d-lg-flex" : ""}`} style={{ gap: "4px" }}>
                       <button 
-                        onClick={handleAdd} 
-                        disabled={catHasData || isUnlocked}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-                          (catHasData || isUnlocked) ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold text-hover-primary'
-                        }`}
-                        style={{ borderRadius: "3px", cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-add-square"></i> <span className="d-none d-md-inline">Add</span>
-                        
-                      </button>
+  onClick={handleAdd} 
+  disabled={catHasData || isUnlocked}
+  className={`btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
+    (catHasData || isUnlocked)
+      ? 'bg-light text-muted opacity-50 border border-secondary-subtle'
+      : 'text-white fw-bold border-0'
+  }`}
+  style={{
+    borderRadius: "3px",
+    cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer",
+    backgroundColor:
+      (!catHasData && !isUnlocked)
+        ? "#0f763f"
+        : undefined
+  }}
+>
+  <i className="isax isax-add-square"></i>
+  <span className="d-none d-md-inline">Add</span>
+</button>
                       
                       <button 
                         onClick={handleEdit} 

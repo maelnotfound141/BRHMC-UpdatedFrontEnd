@@ -286,16 +286,27 @@ useEffect(() => {
     style={{ gap: "6px" }}
   >
     {/* ✅ DM LIST BUTTON (hidden ONLY on mobile empty state) */}
-    {!(isMobile && sortedRecords.length === 0) && (
-      <button
-        onClick={openDmListModal}
-        className="btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap bg-white text-dark fw-bold text-hover-primary flex-grow-1 flex-md-grow-0"
-        style={{ borderRadius: "4px", cursor: "pointer" }}
-      >
-        <i className="isax isax-menu-board"></i>
-        <span>DM List</span>
-      </button>
-    )}
+    {/* ✅ DM LIST BUTTON */}
+{!(isMobile && sortedRecords.length === 0) && (
+  <button
+    onClick={openDmListModal}
+    disabled={showModal}
+    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+      showModal
+        ? "bg-light text-muted opacity-50"
+        : "text-white fw-bold"
+    }`}
+    style={{
+      borderRadius: "4px",
+      cursor: showModal ? "not-allowed" : "pointer",
+      backgroundColor: showModal ? undefined : "#0f763f",
+      borderColor: showModal ? undefined : "#0f763f",
+    }}
+  >
+    <i className="isax isax-menu-board"></i>
+    <span>DM List</span>
+  </button>
+)}
 
     {/* sort by date btn */}
     <button
