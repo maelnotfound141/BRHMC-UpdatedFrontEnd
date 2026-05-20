@@ -1,9 +1,12 @@
 import NurseSidebar from "@/components/custom-sidebar/nurseSidebar";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { ComponentType } from "react";
+import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
 import { useLocation } from "react-router";
-import ccsFormHtml from "@/pages/doctor-modules/printableForms/index1.html?raw";
-import patientIdHtml from "@/pages/doctor-modules/printableForms/index2.html?raw";
-import otherFormHtml from "@/pages/doctor-modules/printableForms/index3.html?raw";
+import ClinicalCoverSheet from "@/pages/doctor-modules/printableForms/index1";
+import PatientIdentificationCard from "@/pages/doctor-modules/printableForms/index2";
+import WatcherDischargeLabels from "@/pages/doctor-modules/printableForms/index3";
 import brhmcLogo from "@/pages/doctor-modules/printableForms/logo/brhmclogo.jpg";
 
 type PrintableFormKey = "ccs-form" | "patient-id" | "other-form";
@@ -13,7 +16,7 @@ type PrintableForm = {
   label: string;
   subtitle: string;
   icon: string;
-  html: string;
+  Component: ComponentType<{ logoSrc?: string }>;
   defaultHeight: number;
 };
 
@@ -23,7 +26,7 @@ const printableForms: PrintableForm[] = [
     label: "CCS Form",
     subtitle: "Clinical cover sheet",
     icon: "isax isax-document-text",
-    html: ccsFormHtml,
+    Component: ClinicalCoverSheet,
     defaultHeight: 1280,
   },
   {
@@ -31,7 +34,7 @@ const printableForms: PrintableForm[] = [
     label: "Patient ID",
     subtitle: "Patient identification form",
     icon: "isax isax-card",
-    html: patientIdHtml,
+    Component: PatientIdentificationCard,
     defaultHeight: 1120,
   },
   {
@@ -39,22 +42,34 @@ const printableForms: PrintableForm[] = [
     label: "Other Form",
     subtitle: "Watcher and supporting forms",
     icon: "isax isax-document-copy",
-    html: otherFormHtml,
+    Component: WatcherDischargeLabels,
     defaultHeight: 1320,
   },
 ];
+const defaultPrintableForm = printableForms[0] as PrintableForm;
 
 const clampZoom = (value: number) => Math.min(160, Math.max(50, value));
+const A4_WIDTH_PX = 794;
+const A4_HEIGHT_PX = 1123;
+const printMarginsByForm: Record<
+  PrintableFormKey,
+  { top: number; right: number; bottom: number; left: number }
+> = {
+  "ccs-form": { top: 16, right: 0, bottom: 0, left: 0 },
+  "patient-id": { top: 0, right: 0, bottom: 0, left: 0 },
+  "other-form": { top: 16, right: 18, bottom: 0, left: 18 },
+};
 
 const Forms = () => {
   const location = useLocation();
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const printFrameRef = useRef<HTMLIFrameElement | null>(null);
+  const printRootRef = useRef<Root | null>(null);
 
   const [activeFormKey, setActiveFormKey] =
     useState<PrintableFormKey>("ccs-form");
   const [zoom, setZoom] = useState(100);
   const [previewHeight, setPreviewHeight] = useState(
-    printableForms[0].defaultHeight
+    defaultPrintableForm.defaultHeight
   );
 
   const [mockPatientProfile] = useState({
@@ -75,31 +90,12 @@ const Forms = () => {
 
   const activeForm =
     printableForms.find((form) => form.key === activeFormKey) ||
-    printableForms[0];
-
-  const previewHtml = useMemo(
-    () =>
-      activeForm.html.replaceAll("/logo/brhmclogo.jpg", brhmcLogo),
-    [activeForm.html]
-  );
+    defaultPrintableForm;
+  const ActivePrintableForm = activeForm.Component;
 
   useEffect(() => {
     setPreviewHeight(activeForm.defaultHeight);
   }, [activeForm]);
-
-  const handleIframeLoad = () => {
-    const iframeDocument = iframeRef.current?.contentWindow?.document;
-
-    if (!iframeDocument) return;
-
-    const measuredHeight = Math.max(
-      iframeDocument.documentElement?.scrollHeight || 0,
-      iframeDocument.body?.scrollHeight || 0,
-      activeForm.defaultHeight
-    );
-
-    setPreviewHeight(measuredHeight);
-  };
 
   const handleZoomChange = (value: string) => {
     const numericValue = Number(value);
@@ -110,12 +106,138 @@ const Forms = () => {
   };
 
   const handlePrintCurrent = () => {
-    const iframeWindow = iframeRef.current?.contentWindow;
+    const printFrame = printFrameRef.current;
+    const printDocument = printFrame?.contentDocument;
+    const printWindow = printFrame?.contentWindow;
 
-    if (!iframeWindow) return;
+    if (!printFrame || !printDocument || !printWindow) return;
 
-    iframeWindow.focus();
-    iframeWindow.print();
+    printRootRef.current?.unmount();
+    printRootRef.current = null;
+
+    printDocument.open();
+    printDocument.write(`<!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8" />
+          <title>${activeForm.label}</title>
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 0;
+            }
+
+            html,
+            body {
+              background: #fff;
+              margin: 0;
+              min-height: 297mm;
+              padding: 0;
+              width: 210mm;
+            }
+
+            .print-page {
+              background: #fff;
+              height: 297mm;
+              overflow: hidden;
+              position: relative;
+              width: 210mm;
+            }
+
+            .print-fit {
+              left: 0;
+              position: absolute;
+              top: 0;
+              transform-origin: top left;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="print-root"></div>
+        </body>
+      </html>`);
+    printDocument.close();
+
+    const printRootElement = printDocument.getElementById("print-root");
+
+    if (!printRootElement) return;
+
+    printRootRef.current = createRoot(printRootElement);
+    printRootRef.current.render(
+      <div className="print-page">
+        <div className="print-fit">
+          <ActivePrintableForm logoSrc={brhmcLogo} />
+        </div>
+      </div>
+    );
+
+    window.setTimeout(() => {
+      const printFit = printDocument.querySelector<HTMLElement>(".print-fit");
+      const printableDocument = printDocument.querySelector<HTMLElement>(
+        ".printable-form-document"
+      );
+      const printablePage =
+        printDocument.querySelector<HTMLElement>(".printable-form-document .page") ||
+        printableDocument;
+
+      if (!printFit || !printablePage) return;
+
+      const overrideStyle = printDocument.createElement("style");
+      overrideStyle.textContent = `
+        .printable-form-document {
+          background: #fff !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        .printable-form-document .page {
+          box-shadow: none !important;
+          margin: 0 auto !important;
+        }
+
+        @media print {
+          .printable-form-document {
+            background: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          .printable-form-document .page {
+            box-shadow: none !important;
+            margin: 0 auto !important;
+          }
+        }
+      `;
+      printDocument.head.appendChild(overrideStyle);
+
+      const measuredWidth = Math.max(
+        printablePage.scrollWidth,
+        Math.ceil(printablePage.getBoundingClientRect().width)
+      );
+      const measuredHeight = Math.max(
+        printablePage.scrollHeight,
+        Math.ceil(printablePage.getBoundingClientRect().height)
+      );
+      const printMargins = printMarginsByForm[activeForm.key];
+      const availableWidth = A4_WIDTH_PX - printMargins.left - printMargins.right;
+      const availableHeight =
+        A4_HEIGHT_PX - printMargins.top - printMargins.bottom;
+      const scale = Math.min(
+        1,
+        availableWidth / Math.max(measuredWidth, 1),
+        availableHeight / Math.max(measuredHeight, 1)
+      );
+      const offsetX =
+        printMargins.left +
+        Math.max((availableWidth - measuredWidth * scale) / 2, 0);
+      const offsetY = printMargins.top;
+
+      printFit.style.width = `${measuredWidth}px`;
+      printFit.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+
+      printWindow.focus();
+      printWindow.print();
+    }, 250);
   };
 
   return (
@@ -277,11 +399,68 @@ const Forms = () => {
           transition: transform 0.18s ease;
         }
 
-        .nurse-forms-preview-frame {
-          width: 794px;
-          border: 0;
-          display: block;
-          background: #fff;
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 0;
+          }
+
+          html,
+          body {
+            background: #fff !important;
+            height: auto !important;
+            margin: 0 !important;
+            min-height: 297mm !important;
+            padding: 0 !important;
+            width: 210mm !important;
+          }
+
+          body * {
+            visibility: hidden !important;
+          }
+
+          .nurse-forms-preview-print-target,
+          .nurse-forms-preview-print-target * {
+            visibility: visible !important;
+          }
+
+          .nurse-forms-preview-section,
+          .nurse-forms-preview-scroll,
+          .nurse-forms-preview-stage,
+          .nurse-forms-preview-page,
+          .nurse-forms-preview-print-target {
+            background: #fff !important;
+            box-shadow: none !important;
+            height: auto !important;
+            max-height: none !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            transform: none !important;
+            width: 794px !important;
+          }
+
+          .nurse-forms-preview-print-target {
+            left: 0 !important;
+            min-height: 297mm !important;
+            position: absolute !important;
+            top: 0 !important;
+            width: 210mm !important;
+          }
+
+          .nurse-forms-preview-print-target .printable-form-document {
+            background: #fff !important;
+            min-height: 297mm !important;
+            padding: 0 !important;
+            width: 210mm !important;
+          }
+
+          .nurse-forms-preview-print-target .page {
+            box-shadow: none !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            max-width: 210mm !important;
+          }
         }
 
         @media (max-width: 991.98px) {
@@ -472,15 +651,12 @@ const Forms = () => {
                         className="nurse-forms-preview-page"
                         style={{ transform: `scale(${zoom / 100})` }}
                       >
-                        <iframe
+                        <div
                           key={activeForm.key}
-                          ref={iframeRef}
-                          title={`${activeForm.label} Print Preview`}
-                          className="nurse-forms-preview-frame"
-                          srcDoc={previewHtml}
-                          onLoad={handleIframeLoad}
-                          style={{ height: `${previewHeight}px` }}
-                        />
+                          className="nurse-forms-preview-print-target"
+                        >
+                          <ActivePrintableForm logoSrc={brhmcLogo} />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -490,6 +666,22 @@ const Forms = () => {
           </div>
         </div>
       </div>
+      <iframe
+        ref={printFrameRef}
+        title="Printable form output"
+        aria-hidden="true"
+        tabIndex={-1}
+        style={{
+          border: 0,
+          height: "297mm",
+          left: "-10000px",
+          opacity: 0,
+          pointerEvents: "none",
+          position: "fixed",
+          top: 0,
+          width: "210mm",
+        }}
+      />
     </>
   );
 };
