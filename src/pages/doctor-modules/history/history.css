@@ -197,3 +197,38 @@ th {
     font-size: 0.9rem;
   }
 }
+
+
+.card-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+
+  background-color: #0f763f;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.card-close-btn:hover {
+  background-color: #0c5f32;
+  transform: scale(1.05);
+}
+
+.card-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 9999; /* 🔥 IMPORTANT FIX */
+}

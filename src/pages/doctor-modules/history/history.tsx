@@ -1,6 +1,7 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
+import "./history.css";
 
 // helper function para s date and time
 const getCurrentDateTime = () => {
@@ -32,6 +33,7 @@ const ALL_HISTORY_TYPES = [
 
 const PatientHistory = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // su sa informant modal state
   const [showInformantModal, setShowInformantModal] = useState(false);
@@ -330,207 +332,7 @@ const PatientHistory = () => {
 
   return (
     <>
-    <style>{`
-.selected-row td {
-  background-color: rgba(15, 118, 63, 0.15) !important;
-}
-
-/* =========================
-   ACTION BAR (ADD / EDIT / DELETE / INFORMANT)
-========================= */
-.history-action-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  min-width: 0;
-  white-space: nowrap;
-}
-
-/* Shared button style */
-.history-action-btn {
-  min-width: 72px;
-  transition: all 0.2s ease;
-  font-size: 0.85rem;
-  padding: 0.45rem 0.75rem !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border-radius: 6px;
-}
-
-/* Hover effect */
-.history-action-btn:hover {
-  transform: translateY(-1px);
-  opacity: 0.95;
-}
-
-/* Icon sizing consistency */
-.history-action-btn i {
-  font-size: 1rem;
-}
-
-/* Empty state container */
-.history-empty-tablet-box {
-  min-height: 180px;
-}
-
-/* =========================
-   MODAL / INFO BOX
-========================= */
-.acc-info-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1080;
-  background: rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-.acc-info-box {
-  width: 360px;
-  max-width: 100%;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.acc-info-title {
-  height: 42px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.acc-info-icon {
-  width: 42px;
-  height: 42px;
-  background: var(--primary, #0f763f);
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-
-.acc-info-icon-danger {
-  background: #dc3545;
-}
-
-.acc-info-action-btn {
-  border-radius: 4px;
-  font-size: 0.82rem;
-}
-
-/* =========================
-   TABLE RESPONSIVENESS
-========================= */
-table {
-  width: 100%;
-}
-
-td,
-th {
-  vertical-align: middle;
-  word-break: break-word;
-}
-
-/* =========================
-   TABLET (≤ 992px)
-========================= */
-@media (max-width: 991.98px) {
-  .history-action-bar {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .history-action-btn {
-    flex: 1 1 calc(50% - 8px);
-    min-width: unset;
-    font-size: 0.82rem;
-    padding: 0.5rem 0.6rem !important;
-  }
-
-  .history-action-btn i {
-    font-size: 0.95rem;
-  }
-
-  .acc-info-box {
-    width: 90%;
-  }
-}
-
-/* =========================
-   MOBILE (≤ 768px)
-========================= */
-@media (max-width: 767.98px) {
-  .history-action-bar {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .history-action-btn {
-    width: 100%;
-    flex: 1 1 100%;
-    font-size: 0.8rem;
-    padding: 0.55rem 0.7rem !important;
-  }
-
-  .history-action-btn span {
-    display: inline;
-  }
-
-  .history-empty-tablet-box {
-    min-height: auto;
-  }
-
-  .acc-info-title {
-    font-size: 13px;
-    padding: 0 10px;
-  }
-
-  .acc-info-icon {
-    width: 38px;
-    height: 38px;
-    font-size: 18px;
-  }
-
-  .acc-info-action-btn {
-    width: 100%;
-  }
-}
-
-/* =========================
-   EXTRA SMALL (≤ 420px)
-========================= */
-@media (max-width: 420px) {
-  .history-action-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .history-action-btn {
-    width: 100%;
-    font-size: 0.78rem;
-  }
-
-  .history-action-btn i {
-    font-size: 0.9rem;
-  }
-}
-`}</style>  
+     
 
       <div
         className="content doctor-content bg-light mt-n4 d-flex flex-column"
@@ -542,12 +344,30 @@ th {
 
   <div className="doctor-dashboard-main">
               <div
-                className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column h-100"
+              
+                className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column h-100 position-relative"
                 style={{
                   borderRadius: "12px",
                   borderTop: "4px solid var(--primary, #0f763f)",
                 }}
               >
+
+
+{/* close button */}
+<button
+  type="button"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/doctor-dashboard", { replace: true });
+  }}
+  className="card-close-btn d-flex align-items-center justify-content-center"
+>
+  <span className="text-white fw-bold" style={{ fontSize: "18px", lineHeight: 1 }}>
+    ×
+  </span>
+</button>
+
                 {/* profile header */}
                 <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start position-relative">
                   <div

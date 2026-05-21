@@ -1,7 +1,7 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./physicalExams.css";
 
 const EXAM_CATEGORIES = [
@@ -47,6 +47,7 @@ const INITIAL_FORM_STATE: any = {
 const PhysicalExamination = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [mockPatientProfile] = useState({
     hospitalNumber: "000000000777288",
@@ -442,6 +443,25 @@ if (!showForm) {
                 className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column h-100"
                 style={{ borderRadius: "12px", borderTop: "4px solid var(--primary, #0f763f)" }}
               >
+{/* close button */}
+<button
+  type="button"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/doctor-dashboard", { replace: true });
+  }}
+  className="card-close-btn d-flex align-items-center justify-content-center"
+>
+  <span className="text-white fw-bold" style={{ fontSize: "18px", lineHeight: 1 }}>
+    ×
+  </span>
+</button>
+
+
+
+
+
                 {/* Patient Profile Header */}
                 <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start position-relative">
                   <div

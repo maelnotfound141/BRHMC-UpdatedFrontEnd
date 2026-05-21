@@ -1,10 +1,86 @@
+<style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .responsive-exam-sidebar { width: 100%; flex-shrink: 0; }
 
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .responsive-exam-sidebar { width: 100%; flex-shrink: 0; }
-          
-       
-    @media (min-width: 992px) {
-    .responsive-exam-sidebar { max-width: 250px; }
-}
-       
+        @media (min-width: 992px) {
+          .responsive-exam-sidebar { max-width: 250px; }
+        }
+
+        /* ── Locked tab styles ── */
+        .tab-locked {
+          opacity: 0.4 !important;
+          cursor: not-allowed !important;
+          pointer-events: auto !important;
+          user-select: none;
+        }
+        .tab-locked:hover {
+          background-color: transparent !important;
+          color: inherit !important;
+        }
+
+        /* ── Lock icon pulse when clicked ── */
+        @keyframes lockShake {
+          0%,100% { transform: translateX(0); }
+          20%      { transform: translateX(-3px); }
+          40%      { transform: translateX(3px); }
+          60%      { transform: translateX(-2px); }
+          80%      { transform: translateX(2px); }
+        }
+        .lock-shake {
+          animation: lockShake 0.4s ease;
+        }
+
+        /* ── Tooltip for locked tab ── */
+        .tab-tooltip {
+          position: absolute;
+          left: 110%;
+          top: 50%;
+          transform: translateY(-50%);
+          background: #333b45;
+          color: #fff;
+          padding: 4px 10px;
+          border-radius: 6px;
+          font-size: 0.72rem;
+          white-space: nowrap;
+          z-index: 100;
+          pointer-events: none;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+        .tab-tooltip::before {
+          content: '';
+          position: absolute;
+          right: 100%;
+          top: 50%;
+          transform: translateY(-50%);
+          border: 5px solid transparent;
+          border-right-color: #333b45;
+        }
+
+        /* Mobile tooltip: show below */
+        @media (max-width: 991px) {
+          .tab-tooltip {
+            left: 50%;
+            top: 110%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+          }
+          .tab-tooltip::before {
+            right: unset;
+            left: 50%;
+            top: unset;
+            bottom: 100%;
+            transform: translateX(-50%);
+            border-right-color: transparent;
+            border-bottom-color: #333b45;
+          }
+        }
+
+        .fade-in {
+          animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
