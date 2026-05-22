@@ -363,9 +363,11 @@ const PatientHistory = () => {
   }}
   className="card-close-btn d-flex align-items-center justify-content-center"
 >
-  <span className="text-white fw-bold" style={{ fontSize: "18px", lineHeight: 1 }}>
-    ×
-  </span>
+  <span className="desktop-close text-white fw-bold">×</span>
+
+  <span className="mobile-back">
+  <i className="isax isax-arrow-left"></i>
+</span>
 </button>
 
                 {/* profile header */}
