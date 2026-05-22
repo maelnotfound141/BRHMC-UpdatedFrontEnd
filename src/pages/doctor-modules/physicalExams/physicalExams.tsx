@@ -443,7 +443,8 @@ if (!showForm) {
                 className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column h-100"
                 style={{ borderRadius: "12px", borderTop: "4px solid var(--primary, #0f763f)" }}
               >
-{/* close button */}
+
+                {/* close button */}
 <button
   type="button"
   onClick={(e) => {
@@ -453,15 +454,12 @@ if (!showForm) {
   }}
   className="card-close-btn d-flex align-items-center justify-content-center"
 >
-  <span className="text-white fw-bold" style={{ fontSize: "18px", lineHeight: 1 }}>
-    ×
-  </span>
-</button>
+  <span className="desktop-close text-white fw-bold">×</span>
 
-
-
-
-
+  <span className="mobile-back">
+  <i className="isax isax-arrow-left"></i>
+</span>
+</button>  
                 {/* Patient Profile Header */}
                 <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start position-relative">
                   <div
@@ -492,25 +490,16 @@ if (!showForm) {
   
  <div className={`d-flex flex-wrap justify-content-center justify-content-md-end pb-1 pb-md-0 ms-md-auto ${!catHasData && !isUnlocked ? "d-none d-lg-flex" : ""}`} style={{ gap: "4px" }}>
                       <button 
-  onClick={handleAdd} 
-  disabled={catHasData || isUnlocked}
-  className={`btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-    (catHasData || isUnlocked)
-      ? 'bg-light text-muted opacity-50 border border-secondary-subtle'
-      : 'text-white fw-bold border-0'
-  }`}
-  style={{
-    borderRadius: "3px",
-    cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer",
-    backgroundColor:
-      (!catHasData && !isUnlocked)
-        ? "#0f763f"
-        : undefined
-  }}
->
-  <i className="isax isax-add-square"></i>
-  <span className="d-none d-md-inline">Add</span>
-</button>
+                        onClick={handleAdd} 
+                        disabled={catHasData || isUnlocked}
+                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
+                          (catHasData || isUnlocked) ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold text-hover-primary'
+                        }`}
+                        style={{ borderRadius: "3px", cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer" }}
+                      >
+                        <i className="isax isax-add-square"></i> <span className="d-none d-md-inline">Add</span>
+                        
+                      </button>
                       
                       <button 
                         onClick={handleEdit} 

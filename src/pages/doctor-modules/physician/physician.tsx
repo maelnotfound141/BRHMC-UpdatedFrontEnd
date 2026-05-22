@@ -1,6 +1,7 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./physician.css";
 
 interface Physician {
@@ -11,6 +12,10 @@ interface Physician {
 }
 
 const PhysicianModule = () => {
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
 
   // modal states
@@ -231,7 +236,23 @@ const PhysicianModule = () => {
                     "4px solid var(--primary, #0f763f)",
                 }}
               >
-                {/* PROFILE HEADER */}
+{/* close button */}
+<button
+  type="button"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/doctor-dashboard", { replace: true });
+  }}
+  className="card-close-btn d-flex align-items-center justify-content-center"
+>
+  <span className="desktop-close text-white fw-bold">×</span>
+
+  <span className="mobile-back">
+  <i className="isax isax-arrow-left"></i>
+</span>
+</button>                
+                
 {/* PROFILE HEADER */}
 <div
   className="

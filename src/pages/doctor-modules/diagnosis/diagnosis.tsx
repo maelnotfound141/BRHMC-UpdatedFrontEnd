@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./diagnosis.css";
 
 // --- Types ---
@@ -38,6 +38,7 @@ const getCurrentDateTimeLocal = () => {
 
 const DiagnosisModule = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // --- Mock Patient ---
   const [mockPatientProfile] = useState({
@@ -337,6 +338,41 @@ const DiagnosisModule = () => {
 
   </div>
 </div>
+
+{/* close button */}
+<button
+  type="button"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/doctor-dashboard", { replace: true });
+  }}
+  className="card-close-btn d-flex align-items-center justify-content-center"
+>
+  <span className="desktop-close text-white fw-bold">×</span>
+
+  <span className="mobile-back">
+  <i className="isax isax-arrow-left"></i>
+</span>
+</button>
+
+
+{/* close button */}
+<button
+  type="button"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/doctor-dashboard", { replace: true });
+  }}
+  className="card-close-btn d-flex align-items-center justify-content-center"
+>
+  <span className="desktop-close text-white fw-bold">×</span>
+
+  <span className="mobile-back">
+  <i className="isax isax-arrow-left"></i>
+</span>
+</button>
 
                 {/* Toolbar */}
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">

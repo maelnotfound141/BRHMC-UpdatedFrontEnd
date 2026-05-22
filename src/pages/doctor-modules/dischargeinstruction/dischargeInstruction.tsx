@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import ImageWithBasePath from "@/components/image-with-base-path";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./dischargeInstruction.css";
 
 interface InstructionData {
@@ -83,6 +83,7 @@ const MOCK_PHARMACY_DRUGS = [
 
 const DispositionModule = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [mockPatientProfile] = useState({
     hospitalNumber: "000000000777288",
@@ -283,6 +284,24 @@ const DispositionModule = () => {
                   borderTop: "4px solid var(--primary, #0f763f)",
                 }}
               >
+
+{/* close button */}
+<button
+  type="button"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/doctor-dashboard", { replace: true });
+  }}
+  className="card-close-btn d-flex align-items-center justify-content-center"
+>
+  <span className="desktop-close text-white fw-bold">×</span>
+
+  <span className="mobile-back">
+  <i className="isax isax-arrow-left"></i>
+</span>
+</button>
+
                 {/* ================= PATIENT HEADER ================= */}
                 <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
 

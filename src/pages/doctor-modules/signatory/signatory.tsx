@@ -1,7 +1,7 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import DeleteConfirmationModal from "@/components/delete-confirmation-modal/DeleteConfirmationModal";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./signatory.css";
 
 // --- Helpers ---
@@ -61,6 +61,7 @@ interface SignatoryRecord {
 
 const SignatoryModule = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // --- Responsive State ---
   const [isMobile, setIsMobile] = useState(false);
@@ -364,6 +365,24 @@ const SignatoryModule = () => {
                     "4px solid var(--primary, #0f763f)",
                 }}
               >
+
+{/* close button */}
+<button
+  type="button"
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate("/doctor-dashboard", { replace: true });
+  }}
+  className="card-close-btn d-flex align-items-center justify-content-center"
+>
+  <span className="desktop-close text-white fw-bold">×</span>
+
+  <span className="mobile-back">
+  <i className="isax isax-arrow-left"></i>
+</span>
+</button>
+
                 {/* Header */}
                 <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
                   <div

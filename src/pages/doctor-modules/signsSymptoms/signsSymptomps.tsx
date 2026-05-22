@@ -2,6 +2,7 @@ import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import "./signSymptomps.css";
 
 // List of standard symptoms
 const SYMPTOMS_LIST = [
@@ -162,78 +163,7 @@ const PatientSignsAndSymptoms = () => {
 
   return (
     <>
-      <style>
-        {`
-          
-
-          .acc-info-backdrop {
-            position: fixed;
-            inset: 0;
-            z-index: 1080;
-            background: rgba(0, 0, 0, 0.35);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-          }
-
-          .acc-info-box {
-            width: 360px;
-            max-width: 100%;
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-          }
-
-          .acc-info-title {
-            height: 40px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
-            font-size: 14px;
-            font-weight: 700;
-          }
-
-          .acc-info-icon {
-            width: 42px;
-            height: 42px;
-            background: var(--primary, #0f763f);
-            color: #fff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-          }
-
-          .acc-info-icon-danger {
-            background: #dc3545;
-          }
-
-          .acc-info-action-btn {
-            border-radius: 4px;
-            font-size: 0.82rem;
-          }
-
-          @media (max-width: 575.98px) {
-            .acc-info-box {
-              width: 100%;
-            }
-
-            .acc-info-footer {
-              flex-direction: column;
-            }
-
-            .acc-info-footer button {
-              width: 100%;
-            }
-          }
-        `}
-      </style>
+      
 
       <div
         className="content doctor-content bg-light mt-n4 d-flex flex-column"
@@ -253,7 +183,8 @@ const PatientSignsAndSymptoms = () => {
               >
 
 
-                {/* close button */}
+                
+{/* close button */}
 <button
   type="button"
   onClick={(e) => {
@@ -263,10 +194,12 @@ const PatientSignsAndSymptoms = () => {
   }}
   className="card-close-btn d-flex align-items-center justify-content-center"
 >
-  <span className="text-white fw-bold" style={{ fontSize: "18px", lineHeight: 1 }}>
-    ×
-  </span>
-</button>
+  <span className="desktop-close text-white fw-bold">×</span>
+
+  <span className="mobile-back">
+  <i className="isax isax-arrow-left"></i>
+</span>
+</button>  
                 {/* patient profile */}
                 <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
                   <div
