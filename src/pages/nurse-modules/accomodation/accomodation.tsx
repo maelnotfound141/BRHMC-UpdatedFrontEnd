@@ -1,16 +1,17 @@
   import NurseSidebar from "@/components/custom-sidebar/nurseSidebar";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
+import "./accomodation.css";
 
 /* patient accomodation module */
 const RegDetails = () => {
   const [open, setOpen] = useState(false);
   const [showEditRoomModal, setShowEditRoomModal] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
-  const [showInfoModal, setShowInfoModal] = useState(false);
+  
   const [showRecordDetailsModal, setShowRecordDetailsModal] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const [infoMessage, setInfoMessage] = useState("");
   const [selectedTransferWard, setSelectedTransferWard] = useState("Ward 1A - Medicine");
   const [selectedTransferBed, setSelectedTransferBed] = useState<string | null>(null);
   const [selectedEditRoom, setSelectedEditRoom] = useState<string | null>(null);
@@ -41,6 +42,12 @@ const RegDetails = () => {
     roomName: string;
     beds: RoomBed[];
   };
+
+  type Toast = {
+  id: number;
+  message: string;
+  type?: "success" | "info" | "warning";
+};
 
   const [mockPatientProfile] = useState({
     hospitalNumber: "000000000777288",
@@ -349,6 +356,30 @@ const RegDetails = () => {
     return () => document.removeEventListener("click", handleOutsideClick);
   }, []);
 
+  const addToast = (
+      message: string,
+      type: Toast["type"] = "info"
+    ) => {
+      const id = Date.now();
+
+      setToasts((prev) => [
+        ...prev,
+        { id, message, type },
+      ]);
+
+      setTimeout(() => {
+        setToasts((prev) =>
+          prev.filter((toast) => toast.id !== id)
+        );
+      }, 3500);
+    };
+
+    const dismissToast = (id: number) => {
+      setToasts((prev) =>
+        prev.filter((toast) => toast.id !== id)
+      );
+    };
+
   const getCurrentDateTime = () => {
     return "03/21/26 03:32 PM";
   };
@@ -406,11 +437,12 @@ const RegDetails = () => {
     setShowTransferModal(true);
   };
 
-  const handleShowInfo = (message: string) => {
-    setInfoMessage(message);
-    setShowInfoModal(true);
+  const handleShowInfo = (
+    message: string,
+    type: Toast["type"] = "info"
+  ) => {
+    addToast(message, type);
   };
-
   const handleViewRecordDetails = (record: AccomodationRecord) => {
     setSelectedRecord(record);
     setShowRecordDetailsModal(true);
@@ -418,7 +450,10 @@ const RegDetails = () => {
 
   const handleSaveEditRoom = () => {
     if (!selectedEditRoom) {
-      handleShowInfo("Please select a room and bed before saving.");
+      handleShowInfo(
+        "Please select a room and bed before saving.",
+        "warning"
+      );
       return;
     }
 
@@ -426,7 +461,10 @@ const RegDetails = () => {
 
     if (selectedBed?.status !== "Vacant") {
       setSelectedEditRoom(null);
-      handleShowInfo("Please select a vacant room and bed before saving.");
+      handleShowInfo(
+      "Please select a vacant room and bed before saving.",
+      "warning"
+    );
       return;
     }
 
@@ -445,7 +483,10 @@ const RegDetails = () => {
     );
 
     setShowEditRoomModal(false);
-    handleShowInfo("Room and bed successfully updated.");
+      handleShowInfo(
+      "Room and bed successfully updated.",
+      "success"
+    );
   };
 
   const handleTransferPatient = () => {
@@ -481,7 +522,10 @@ const RegDetails = () => {
     });
 
     setShowTransferModal(false);
-    handleShowInfo("Transfer successfully completed.");
+    handleShowInfo(
+      "Transfer successfully completed.",
+      "success"
+    );
   };
 
   const handleRevoke = () => {
@@ -497,7 +541,10 @@ const RegDetails = () => {
       )
     );
 
-    handleShowInfo("Revoke successfully completed.");
+    handleShowInfo(
+      "Revoke successfully completed.",
+      "success"
+    );
   };
 
   const handleSelectEditBed = (room: RoomGroup, bed: RoomBed) => {
@@ -1345,46 +1392,37 @@ const RegDetails = () => {
         </div>
       )}
 
-      {/* info modal */}
-      {showInfoModal && (
-        <div className="acc-info-backdrop">
-          <div className="acc-info-box shadow-lg">
-            <div className="acc-info-title">
-              <span>Info</span>
-
-              <button
-                type="button"
-                className="btn-close btn-close-sm"
-                onClick={() => setShowInfoModal(false)}
+      {/* toast notifications */}
+        <div className="charges-toast-container">
+          {toasts.map((toast) => (
+            <div
+              key={toast.id}
+              className={`charges-toast charges-toast-${
+                toast.type || "info"
+              }`}
+            >
+              <i
+                className={`isax ${
+                  toast.type === "success"
+                    ? "isax-tick-circle"
+                    : toast.type === "warning"
+                    ? "isax-warning-2"
+                    : "isax-info-circle"
+                }`}
               />
-            </div>
 
-            <div className="d-flex align-items-center gap-3 p-4">
-              <div className="acc-info-icon">
-                <i className="isax isax-info-circle"></i>
-              </div>
+              <span>{toast.message}</span>
 
-              <div className="small fw-semibold text-dark">{infoMessage}</div>
-            </div>
-
-            <div className="d-flex justify-content-end px-4 pb-3">
               <button
                 type="button"
-                className="btn btn-sm text-white fw-bold px-4"
-                style={{
-                  backgroundColor: "var(--primary, #0f763f)",
-                  borderColor: "var(--primary, #0f763f)",
-                }}
-                onClick={() => setShowInfoModal(false)}
+                className="charges-toast-close"
+                onClick={() => dismissToast(toast.id)}
               >
-                OK
+                <i className="isax isax-close-circle" />
               </button>
             </div>
-          </div>
+          ))}
         </div>
-      )}
-
-      {/* /page content */}
     </>
   );
 };

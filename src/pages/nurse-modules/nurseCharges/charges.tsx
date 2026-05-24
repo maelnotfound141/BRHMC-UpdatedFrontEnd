@@ -30,6 +30,8 @@ const RegDetails = () => {
     enteredBy: string;
   };
 
+  type Toast = { id: number; message: string; type?: "success" | "info" | "warning" };
+
   const [mockPatientProfile] = useState({
     hospitalNumber: "000000000777288",
     lastName: "DO",
@@ -39,10 +41,9 @@ const RegDetails = () => {
   });
 
   const [showAddItemModal, setShowAddItemModal] = useState(false);
-  const [showInfoModal, setShowInfoModal] = useState(false);
   const [showRecordDetailsModal, setShowRecordDetailsModal] = useState(false);
 
-  const [infoMessage, setInfoMessage] = useState("");
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [activeTab, setActiveTab] = useState<ChargeCategory>("Service");
   const [searchValue, setSearchValue] = useState("");
   const [selectedItem, setSelectedItem] = useState<ChargeItem | null>(null);
@@ -463,9 +464,16 @@ const RegDetails = () => {
     return `W26-${Math.floor(100000 + Math.random() * 900000)}`;
   };
 
-  const handleShowInfo = (message: string) => {
-    setInfoMessage(message);
-    setShowInfoModal(true);
+  const addToast = (message: string, type: Toast["type"] = "info") => {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3500);
+  };
+
+  const dismissToast = (id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
   const resetAddItemForm = (tab: ChargeCategory = activeTab) => {
@@ -492,12 +500,12 @@ const RegDetails = () => {
 
   const handleSaveChargeItem = () => {
     if (!selectedItem) {
-      handleShowInfo("Please select an item first.");
+      addToast("Please select an item first.", "warning");
       return;
     }
 
     if (quantity <= 0) {
-      handleShowInfo("Quantity must be greater than zero.");
+      addToast("Quantity must be greater than zero.", "warning");
       return;
     }
 
@@ -527,7 +535,7 @@ const RegDetails = () => {
       );
       setEditingRecordId(null);
       setShowAddItemModal(false);
-      handleShowInfo("Item successfully updated.");
+      addToast("Item successfully updated.", "success");
       return;
     }
 
@@ -543,7 +551,7 @@ const RegDetails = () => {
       },
     ]);
     setShowAddItemModal(false);
-    handleShowInfo("Item successfully added.");
+    addToast("Item successfully added.", "success");
   };
 
   const handleGenerateChargeSlip = () => {
@@ -552,7 +560,7 @@ const RegDetails = () => {
     );
 
     if (checkedRecordsWithoutSlip.length === 0) {
-      handleShowInfo("Please check at least one item without a charge slip code.");
+      addToast("Please check at least one item without a charge slip code.", "warning");
       return;
     }
 
@@ -570,7 +578,7 @@ const RegDetails = () => {
       )
     );
 
-    handleShowInfo(`Charge slip successfully generated: ${slipNo}`);
+    addToast(`Charge slip generated: ${slipNo}`, "success");
   };
 
   const handleToggleChargeSlip = (id: number) => {
@@ -768,8 +776,6 @@ const RegDetails = () => {
                     </div>
                   </div>
                 </div>
-
-           
 
                 <div className="charges-card-body">
                   <div className="charges-table-area">
@@ -1076,78 +1082,78 @@ const RegDetails = () => {
                     </div>
                   </div>
                 ) : (
-                 <div className="charges-modal-selected-panel">
-  <div className="charges-selected-large-card">
-    <div className="charges-selected-header">
-      <div>
-        <div className="small text-muted fw-bold text-uppercase mb-1">
-          Item Description
-        </div>
+                  <div className="charges-modal-selected-panel">
+                    <div className="charges-selected-large-card">
+                      <div className="charges-selected-header">
+                        <div>
+                          <div className="small text-muted fw-bold text-uppercase mb-1">
+                            Item Description
+                          </div>
 
-        <h4 className="charges-selected-title">
-          {selectedItem.description}
-        </h4>
-      </div>
+                          <h4 className="charges-selected-title">
+                            {selectedItem.description}
+                          </h4>
+                        </div>
 
-      <button
-        type="button"
-        className="charges-change-item-btn"
-        onClick={() => setSelectedItem(null)}
-      >
-        Change Item
-      </button>
-    </div>
+                        <button
+                          type="button"
+                          className="charges-change-item-btn"
+                          onClick={() => setSelectedItem(null)}
+                        >
+                          Change Item
+                        </button>
+                      </div>
 
-    <div className="charges-calc-large-grid">
-      <div className="charges-calc-box">
-        <label>Rate</label>
-        <input
-          type="text"
-          value={formatMoney(selectedItem.rate)}
-          readOnly
-        />
-      </div>
+                      <div className="charges-calc-large-grid">
+                        <div className="charges-calc-box">
+                          <label>Rate</label>
+                          <input
+                            type="text"
+                            value={formatMoney(selectedItem.rate)}
+                            readOnly
+                          />
+                        </div>
 
-      <div className="charges-calc-box charges-qty-box">
-        <label>Quantity</label>
+                        <div className="charges-calc-box charges-qty-box">
+                          <label>Quantity</label>
 
-        <div className="charges-large-qty-control">
-          <button
-            type="button"
-            onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-          >
-            -
-          </button>
+                          <div className="charges-large-qty-control">
+                            <button
+                              type="button"
+                              onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                            >
+                              -
+                            </button>
 
-          <input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(event) =>
-              setQuantity(Math.max(1, Number(event.target.value) || 1))
-            }
-          />
+                            <input
+                              type="number"
+                              min="1"
+                              value={quantity}
+                              onChange={(event) =>
+                                setQuantity(Math.max(1, Number(event.target.value) || 1))
+                              }
+                            />
 
-          <button
-            type="button"
-            onClick={() => setQuantity((prev) => prev + 1)}
-          >
-            +
-          </button>
-        </div>
-      </div>
+                            <button
+                              type="button"
+                              onClick={() => setQuantity((prev) => prev + 1)}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
 
-      <div className="charges-calc-box charges-total-box-large">
-        <label>Total</label>
-        <input
-          type="text"
-          value={formatMoney(selectedTotal)}
-          readOnly
-        />
-      </div>
-    </div>
-  </div>
-</div>
+                        <div className="charges-calc-box charges-total-box-large">
+                          <label>Total</label>
+                          <input
+                            type="text"
+                            value={formatMoney(selectedTotal)}
+                            readOnly
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -1370,46 +1376,52 @@ const RegDetails = () => {
         </div>
       )}
 
-      {/* info modal */}
-      {showInfoModal && (
-        <div className="acc-info-backdrop">
-          <div className="acc-info-box shadow-lg">
-            <div className="acc-info-title">
-              <span>Info</span>
+      {/* toast notifications */}
+<div className="charges-toast-container">
+  {toasts.map((toast) => (
+    <div
+      key={toast.id}
+      className={`charges-toast charges-toast-${toast.type || "info"}`}
+    >
+      {/* icon */}
+      <div className="charges-toast-icon">
+        <i
+          className={`isax ${
+            toast.type === "success"
+              ? "isax-tick-circle"
+              : toast.type === "warning"
+              ? "isax-warning-2"
+              : "isax-info-circle"
+          }`}
+        />
+      </div>
 
-              <button
-                type="button"
-                className="btn-close btn-close-sm"
-                onClick={() => setShowInfoModal(false)}
-              />
-            </div>
-
-            <div className="d-flex align-items-center gap-3 p-4">
-              <div className="acc-info-icon">
-                <i className="isax isax-info-circle"></i>
-              </div>
-
-              <div className="small fw-semibold text-dark">{infoMessage}</div>
-            </div>
-
-            <div className="d-flex justify-content-end px-4 pb-3">
-              <button
-                type="button"
-                className="btn btn-sm text-white fw-bold px-4"
-                style={{
-                  backgroundColor: "var(--primary, #0f763f)",
-                  borderColor: "var(--primary, #0f763f)",
-                }}
-                onClick={() => setShowInfoModal(false)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
+      {/* content */}
+      <div className="charges-toast-content">
+        <div className="charges-toast-title">
+          {toast.type === "success"
+            ? "Success"
+            : toast.type === "warning"
+            ? "Warning"
+            : "Notice"}
         </div>
-      )}
 
-  
+        <div className="charges-toast-message">
+          {toast.message}
+        </div>
+      </div>
+
+      {/* close */}
+      <button
+        type="button"
+        className="charges-toast-close"
+        onClick={() => dismissToast(toast.id)}
+      >
+        <i className="isax isax-close-circle" />
+      </button>
+    </div>
+  ))}
+</div>
     </>
   );
 };
