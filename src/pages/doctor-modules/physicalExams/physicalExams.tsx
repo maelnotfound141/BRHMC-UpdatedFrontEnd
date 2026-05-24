@@ -492,13 +492,20 @@ if (!showForm) {
                       <button 
                         onClick={handleAdd} 
                         disabled={catHasData || isUnlocked}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-                          (catHasData || isUnlocked) ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold text-hover-primary'
+                        className={`btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
+                          (catHasData || isUnlocked)
+                            ? 'bg-light text-muted opacity-50'
+                            : 'text-white fw-bold'
                         }`}
-                        style={{ borderRadius: "3px", cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer" }}
+                        style={{
+                          borderRadius: "3px",
+                          borderColor: "#0f763f",
+                          backgroundColor: (catHasData || isUnlocked) ? undefined : "#0f763f",
+                          cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer"
+                        }}
                       >
-                        <i className="isax isax-add-square"></i> <span className="d-none d-md-inline">Add</span>
-                        
+                        <i className="isax isax-add-square"></i>
+                        <span className="d-none d-md-inline">Add</span>
                       </button>
                       
                       <button 
