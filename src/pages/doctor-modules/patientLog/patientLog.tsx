@@ -448,15 +448,19 @@ const PatientLog = () => {
               ].join(" ")}
             >
               <div className="patient-log-sidebar-card">
-                <button
-                  type="button"
-                  className="patient-log-menu-toggle"
-                  aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-                  title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-                  onClick={toggleSidebar}
-                >
-                  <i className="fa-solid fa-bars" />
-                </button>
+                {!isMobileView && (
+                  <button
+                    type="button"
+                    className="patient-log-menu-toggle"
+                    aria-label={
+                      isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"
+                    }
+                    title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+                    onClick={toggleSidebar}
+                  >
+                    <i className="fa-solid fa-bars" />
+                  </button>
+                )}
 
                 <div className="patient-log-sidebar-profile">
                   <div className="patient-log-sidebar-icon">

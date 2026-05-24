@@ -1057,6 +1057,10 @@
     position: static;
   }
 
+  .patient-log-sidebar-profile {
+    padding: 24px 18px 22px;
+  }
+
   .patient-log-sidebar-wrap.sidebar-collapsed .patient-log-menu-toggle {
     left: auto;
     right: 18px;
@@ -1089,7 +1093,7 @@
   }
 
   .patient-log-sidebar-wrap.sidebar-collapsed .patient-log-sidebar-profile {
-    padding: 64px 18px 22px;
+    padding: 24px 18px 22px;
   }
 
   .patient-log-sidebar-wrap.sidebar-collapsed .patient-log-sidebar-icon {
