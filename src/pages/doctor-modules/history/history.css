@@ -115,7 +115,7 @@ th {
 /* =========================
    TABLET (≤ 992px)
 ========================= */
-@media (max-width: 991.98px) {
+@media (max-width: 1366px) {
   .history-action-bar {
     width: 100%;
     justify-content: center;
@@ -135,6 +135,22 @@ th {
 
   .acc-info-box {
     width: 90%;
+  }
+
+  /* Bigger modals on tablet */
+  .modal-dialog {
+    max-width: 94vw !important;
+    width: 94vw !important;
+    margin: 1.5rem auto !important;
+  }
+
+  .modal-dialog.modal-lg {
+    max-width: 98vw !important;
+    width: 98vw !important;
+  }
+
+  .modal-content {
+    width: 100%;
   }
 }
 
@@ -177,6 +193,19 @@ th {
   .acc-info-action-btn {
     width: 100%;
   }
+
+  /* Full-width modals on mobile */
+  .modal-dialog {
+    max-width: 98vw !important;
+    width: 98vw !important;
+    margin: 1rem auto !important;
+    padding: 0 !important;
+  }
+
+  .modal-dialog.modal-lg {
+    max-width: 98vw !important;
+    width: 98vw !important;
+  }
 }
 
 /* =========================
@@ -195,6 +224,12 @@ th {
 
   .history-action-btn i {
     font-size: 0.9rem;
+  }
+
+  .modal-dialog {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    margin: 0.5rem auto !important;
   }
 }
 
@@ -246,10 +281,7 @@ th {
 }
 
 .mobile-back i {
-  font-size: 24  px;
+  font-size: 24px;
   font-weight: 900;
   color: #0f763f;
 }
-
-
-
