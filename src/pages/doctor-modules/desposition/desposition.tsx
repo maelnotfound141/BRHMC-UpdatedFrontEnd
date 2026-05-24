@@ -114,43 +114,40 @@ const DispositionModule = () => {
                 }}
               >
                 {/* Patient Profile Header */}
-                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start text-center text-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom">
-
-                  {/* Avatar */}
-                  <div
-                    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
-                    style={{
-                      width: "90px",
-                      height: "90px",
-                      border: "2px solid var(--primary, #0f763f)",
-                    }}
-                  >
-                    <i
-                      className="isax isax-user fs-1 text-primary"
-                      style={{ color: "var(--primary, #0f763f)" }}
-                    />
-                  </div>
-
-                  {/* Patient Info */}
-                  <div className="d-flex flex-column align-items-center align-items-md-start text-center text-md-start">
-
-                    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
-                      ID: {mockPatientProfile.hospitalNumber}
+                {/* Patient Profile Header */}
+                  <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
+                    
+                    <div
+                      className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
+                      style={{
+                        width: "90px",
+                        height: "90px",
+                        border: "2px solid var(--primary, #0f763f)",
+                      }}
+                    >
+                      <i
+                        className="isax isax-user fs-1 text-primary"
+                        style={{ color: "var(--primary, #0f763f)" }}
+                      />
                     </div>
 
-                    <h3 className="fw-bold mb-1 text-dark">
-                      {mockPatientProfile.lastName},{" "}
-                      {mockPatientProfile.firstName}{" "}
-                      {mockPatientProfile.middleName}
-                    </h3>
+                    <div>
+                      <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
+                        ID: {mockPatientProfile.hospitalNumber}
+                      </div>
 
-                    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-                      <i className="isax isax-location text-danger" />
-                      {mockPatientProfile.address}
+                      <h3 className="fw-bold mb-1 text-dark fs-3 fs-md-2">
+                        {mockPatientProfile.lastName},{" "}
+                        {mockPatientProfile.firstName}{" "}
+                        {mockPatientProfile.middleName}
+                      </h3>
+
+                      <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                        <i className="isax isax-location text-danger" />
+                        {mockPatientProfile.address}
+                      </div>
                     </div>
-
                   </div>
-                </div>
 {/* close button */}
 <button
   type="button"

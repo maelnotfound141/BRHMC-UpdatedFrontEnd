@@ -303,49 +303,40 @@ const DispositionModule = () => {
 </button>
 
                 {/* ================= PATIENT HEADER ================= */}
-                <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
+                {/* Patient Profile Header */}
+<div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
+  
+  <div
+    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
+    style={{
+      width: "90px",
+      height: "90px",
+      border: "2px solid var(--primary, #0f763f)",
+    }}
+  >
+    <i
+      className="isax isax-user fs-1 text-primary"
+      style={{ color: "var(--primary, #0f763f)" }}
+    />
+  </div>
 
-                  {/* Avatar */}
-                  <div
-                    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
-                    style={{
-                      width: "90px",
-                      height: "90px",
-                      border: "2px solid var(--primary, #0f763f)",
-                    }}
-                  >
-                    <i
-                      className="isax isax-user fs-1"
-                      style={{ color: "var(--primary, #0f763f)" }}
-                    />
-                  </div>
+  <div>
+    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
+      ID: {mockPatientProfile.hospitalNumber}
+    </div>
 
-                  {/* Patient Info */}
-                  <div className="flex-grow-1">
+    <h3 className="fw-bold mb-1 text-dark fs-3 fs-md-2">
+      {mockPatientProfile.lastName},{" "}
+      {mockPatientProfile.firstName}{" "}
+      {mockPatientProfile.middleName}
+    </h3>
 
-                    {/* ID */}
-                    <div className="d-flex justify-content-center justify-content-md-start mb-2">
-                      <span className="badge bg-light text-secondary border px-2 py-1">
-                        ID: {mockPatientProfile.hospitalNumber}
-                      </span>
-                    </div>
-
-                    {/* Name */}
-                    <h3 className="fw-bold mb-2 text-dark discharge-mobile-name">
-                      {mockPatientProfile.lastName}, {mockPatientProfile.firstName}{" "}
-                      {mockPatientProfile.middleName}
-                    </h3>
-
-                    {/* Address */}
-                    <div className="d-flex justify-content-center justify-content-md-start align-items-start text-muted small gap-2">
-                      <i className="isax isax-location text-danger mt-1" />
-                      <span style={{ maxWidth: "500px" }}>
-                        {mockPatientProfile.address}
-                      </span>
-                    </div>
-
-                  </div>
-                </div>
+    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+      <i className="isax isax-location text-danger" />
+      {mockPatientProfile.address}
+    </div>
+  </div>
+</div>
 
                 <div className="d-flex flex-column flex-md-row flex-wrap justify-content-center justify-content-md-between align-items-center mb-3 gap-2 text-center text-md-start">
                   

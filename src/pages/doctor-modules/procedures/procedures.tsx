@@ -125,6 +125,7 @@ const isEmpty = !hasData;
                     </div>
                   </div>
                 </div>
+                
 
                 {/* close button */}
 <button
@@ -145,179 +146,220 @@ const isEmpty = !hasData;
       
 
                 {/* main content area */}
-                <div className="d-flex flex-column flex-grow-1 mb-4">
-                  
-                  <div
-                  className={`
-                  flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 mb-2 ms-md-auto
-                  ${hasData || isEditing ? "d-flex" : "d-none d-lg-flex"}
-                `}
-                  style={{ gap: "6px" }}
-                >
-                  <button 
-  onClick={handleAdd} 
-  disabled={isEditing || hasData}
-  className={`btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-    (isEditing || hasData)
-      ? 'bg-light text-muted opacity-50 border border-secondary-subtle'
-      : 'text-white fw-bold border-0'
-  }`}
-  style={{
-    borderRadius: "4px",
-    cursor: (isEditing || hasData) ? "not-allowed" : "pointer",
-    backgroundColor:
-      (!hasData && !isEditing)
-        ? "#0f763f"
-        : undefined
-  }}
->
-  <i className="isax isax-add-square"></i>
-  <span>Add</span>
-</button>
+                {/* main content area */}
+<div className="d-flex flex-column flex-grow-1 mb-4">
 
-                  <button 
-                    onClick={handleEdit} 
-                    disabled={isEditing || !hasData}
-                    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                      (isEditing || !hasData)
-                        ? 'bg-light text-muted opacity-50'
-                        : 'bg-white text-dark fw-bold text-hover-primary'
-                    }`}
-                    style={{
-                      borderRadius: "4px",
-                      cursor: (isEditing || !hasData) ? "not-allowed" : "pointer"
-                    }}
-                  >
-                    <i className="isax isax-edit"></i>
-                    <span>Edit</span>
-                  </button>
+  {/* Toolbar */}
+  <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
 
-                  <button 
-                    onClick={handleSave} 
-                    disabled={!isEditing}
-                    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                      !isEditing
-                        ? 'bg-light text-muted opacity-50'
-                        : 'bg-white text-dark fw-bold text-hover-primary'
-                    }`}
-                    style={{
-                      borderRadius: "4px",
-                      cursor: !isEditing ? "not-allowed" : "pointer"
-                    }}
-                  >
-                    <i className="isax isax-save-2"></i>
-                    <span>Save</span>
-                  </button>
+    <h5 className="fw-bold text-uppercase mb-0 text-center text-md-start">
+      Procedure
+    </h5>
 
-                  <button 
-                    onClick={handleCancel} 
-                    disabled={!isEditing}
-                    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                      !isEditing
-                        ? 'bg-light text-muted opacity-50'
-                        : 'bg-white text-dark fw-bold text-hover-primary'
-                    }`}
-                    style={{
-                      borderRadius: "4px",
-                      cursor: !isEditing ? "not-allowed" : "pointer"
-                    }}
-                  >
-                    <i className="isax isax-undo"></i>
-                    <span>Cancel</span>
-                  </button>
+    <div
+      className={`
+        flex-wrap justify-content-center justify-content-md-end pb-1 pb-lg-0 ms-md-auto
+        ${hasData || isEditing ? "d-flex" : "d-none d-lg-flex"}
+      `}
+      style={{ gap: "6px" }}
+    >
+      <button
+        onClick={handleAdd}
+        disabled={isEditing || hasData}
+        className={`btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+          isEditing || hasData
+            ? "bg-light text-muted opacity-50 border border-secondary-subtle"
+            : "text-white fw-bold border-0"
+        }`}
+        style={{
+          borderRadius: "4px",
+          cursor: isEditing || hasData ? "not-allowed" : "pointer",
+          backgroundColor:
+            !hasData && !isEditing ? "#0f763f" : undefined,
+        }}
+      >
+        <i className="isax isax-add-square"></i>
+        <span>Add</span>
+      </button>
 
-                  <button 
-                    onClick={handleDeleteClick} 
-                    disabled={isEditing || !hasData}
-                    className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
-                      (isEditing || !hasData)
-                        ? 'bg-light text-muted opacity-50'
-                        : 'bg-white text-danger fw-bold'
-                    }`}
-                    style={{
-                      borderRadius: "4px",
-                      cursor: (isEditing || !hasData) ? "not-allowed" : "pointer"
-                    }}
-                  >
-                    <i className="isax isax-trash"></i>
-                    <span>Del</span>
-                  </button>
-                </div>
+      <button
+        onClick={handleEdit}
+        disabled={isEditing || !hasData}
+        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+          isEditing || !hasData
+            ? "bg-light text-muted opacity-50"
+            : "bg-white text-dark fw-bold text-hover-primary"
+        }`}
+        style={{
+          borderRadius: "4px",
+          cursor:
+            isEditing || !hasData
+              ? "not-allowed"
+              : "pointer",
+        }}
+      >
+        <i className="isax isax-edit"></i>
+        <span>Edit</span>
+      </button>
 
-                                  <div
-                  className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden"
-                  style={{ minHeight: "450px" }}
-                  
-                >
-                    
-                    <div className="d-flex border-bottom" style={{ backgroundColor: "#f8f9fa" }}>
-                      <button 
-                        className={`content-tab ${activeTab === 'procedure' ? 'active' : ''}`}
-                        onClick={() => handleTabSwitch('procedure')}
-                        disabled={isEditing && activeTab !== 'procedure'}
-                      >
-                        Procedure
-                      </button>
-                      <button 
-                        className={`content-tab ${activeTab === 'complication' ? 'active' : ''}`}
-                        onClick={() => handleTabSwitch('complication')}
-                        disabled={isEditing && activeTab !== 'complication'}
-                      >
-                        Complication
-                      </button>
-                    </div>
+      <button
+        onClick={handleSave}
+        disabled={!isEditing}
+        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+          !isEditing
+            ? "bg-light text-muted opacity-50"
+            : "bg-white text-dark fw-bold text-hover-primary"
+        }`}
+        style={{
+          borderRadius: "4px",
+          cursor: !isEditing ? "not-allowed" : "pointer",
+        }}
+      >
+        <i className="isax isax-save-2"></i>
+        <span>Save</span>
+      </button>
 
-                    {/* edit content area */}
-                    <div className="d-flex flex-column flex-grow-1 p-3 p-md-4" style={{ backgroundColor: "#ffffff" }}>
-                      {!isEditing && !hasData ? (
-                        <div
-                        className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
-                        style={{ flex: 1, minHeight: "350px" }}
-                      >
-                        {/* DESKTOP ICON */}
-                        <i
-                          className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
-                          style={{ fontSize: "3rem" }}
-                        ></i>
+      <button
+        onClick={handleCancel}
+        disabled={!isEditing}
+        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+          !isEditing
+            ? "bg-light text-muted opacity-50"
+            : "bg-white text-dark fw-bold text-hover-primary"
+        }`}
+        style={{
+          borderRadius: "4px",
+          cursor: !isEditing ? "not-allowed" : "pointer",
+        }}
+      >
+        <i className="isax isax-undo"></i>
+        <span>Cancel</span>
+      </button>
 
-                        {/* MOBILE ADD BUTTON */}
-                        <button
-                          type="button"
-                          onClick={handleAdd}
-                          className="empty-state-fab d-lg-none"
-                        >
-                          <i className="isax isax-add"></i>
-                        </button>
+      <button
+        onClick={handleDeleteClick}
+        disabled={isEditing || !hasData}
+        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap flex-grow-1 flex-md-grow-0 ${
+          isEditing || !hasData
+            ? "bg-light text-muted opacity-50"
+            : "bg-white text-danger fw-bold"
+        }`}
+        style={{
+          borderRadius: "4px",
+          cursor:
+            isEditing || !hasData
+              ? "not-allowed"
+              : "pointer",
+        }}
+      >
+        <i className="isax isax-trash"></i>
+        <span>Del</span>
+      </button>
+    </div>
+  </div>
 
-                        <h6 className="fw-bold mb-0 mt-3">
-                          No {activeTab} data recorded.
-                        </h6>
-                      </div>
-                      ) : (
-                        <div className="d-flex flex-column flex-grow-1 fade-in">
-                          <label className="fw-bold mb-2 text-dark" style={{ fontSize: "0.9rem", color: "var(--primary, #0f763f)" }}>
-                            {activeTab === 'procedure' ? 'Procedure Done' : 'Complication Details'}
-                          </label>
-                          <textarea
-                            className="form-control rounded-1 shadow-none flex-grow-1"
-                            style={{ 
-                              borderColor: isEditing ? "var(--primary, #0f763f)" : "#dee2e6", 
-                              resize: "none", 
-                              fontSize: "0.95rem",
-                              backgroundColor: isEditing ? "#ffffff" : "#f8f9fa",
-                              minHeight: "300px"
-                            }}
-                            value={isEditing ? tempText : savedData[activeTab]}
-                            onChange={(e) => setTempText(e.target.value)}
-                            disabled={!isEditing}
-                            placeholder={`Type ${activeTab} details here...`}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                </div>
+  {/* Main Content Panel */}
+  <div
+    className="border rounded-0 flex-grow-1 bg-white shadow-sm d-flex flex-column overflow-hidden"
+    style={{ minHeight: "450px" }}
+  >
+
+    {/* Tabs */}
+    <div
+      className="d-flex border-bottom"
+      style={{ backgroundColor: "#f8f9fa" }}
+    >
+      <button
+        className={`content-tab ${
+          activeTab === "procedure" ? "active" : ""
+        }`}
+        onClick={() => handleTabSwitch("procedure")}
+        disabled={isEditing && activeTab !== "procedure"}
+      >
+        Procedure
+      </button>
+
+      <button
+        className={`content-tab ${
+          activeTab === "complication" ? "active" : ""
+        }`}
+        onClick={() => handleTabSwitch("complication")}
+        disabled={isEditing && activeTab !== "complication"}
+      >
+        Complication
+      </button>
+    </div>
+
+    {/* Edit Content Area */}
+    <div
+      className="d-flex flex-column flex-grow-1 p-3 p-md-4"
+      style={{ backgroundColor: "#ffffff" }}
+    >
+      {!isEditing && !hasData ? (
+        <div
+          className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+          style={{ flex: 1, minHeight: "350px" }}
+        >
+          {/* Desktop Icon */}
+          <i
+            className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
+            style={{ fontSize: "3rem" }}
+          ></i>
+
+          {/* Mobile Add Button */}
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="empty-state-fab d-lg-none"
+          >
+            <i className="isax isax-add"></i>
+          </button>
+
+          <h6 className="fw-bold mb-0 mt-3">
+            No {activeTab} data recorded.
+          </h6>
+        </div>
+      ) : (
+        <div className="d-flex flex-column flex-grow-1 fade-in">
+          <label
+            className="fw-bold mb-2 text-dark"
+            style={{
+              fontSize: "0.9rem",
+              color: "var(--primary, #0f763f)",
+            }}
+          >
+            {activeTab === "procedure"
+              ? "Procedure Done"
+              : "Complication Details"}
+          </label>
+
+          <textarea
+            className="form-control rounded-1 shadow-none flex-grow-1"
+            style={{
+              borderColor: isEditing
+                ? "var(--primary, #0f763f)"
+                : "#dee2e6",
+              resize: "none",
+              fontSize: "0.95rem",
+              backgroundColor: isEditing
+                ? "#ffffff"
+                : "#f8f9fa",
+              minHeight: "300px",
+            }}
+            value={
+              isEditing
+                ? tempText
+                : savedData[activeTab]
+            }
+            onChange={(e) => setTempText(e.target.value)}
+            disabled={!isEditing}
+            placeholder={`Type ${activeTab} details here...`}
+          />
+        </div>
+      )}
+    </div>
+  </div>
+</div>
               </div>
             </div>
           </div>

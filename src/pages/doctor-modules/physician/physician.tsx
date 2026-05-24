@@ -254,86 +254,38 @@ const PhysicianModule = () => {
 </button>                
                 
 {/* PROFILE HEADER */}
-<div
-  className="
-    d-flex
-    flex-column
-    flex-md-row
-    align-items-center
-    align-items-md-start
-    text-center
-    text-md-start
-    gap-3
-    mb-4
-    pb-4
-    border-bottom
-  "
->
-
-<div
-  className="
-    rounded-circle
-    d-flex
-    align-items-center
-    justify-content-center
-    bg-light
-    shadow-sm
-    flex-shrink-0
-    mx-auto
-    mx-md-0
-  "
-  style={{
-    width: "90px",
-    height: "90px",
-    minWidth: "90px",
-    minHeight: "90px",
-    border: "2px solid var(--primary, #0f763f)",
-  }}
->
-  <i
-    className="isax isax-user"
-    style={{
-      color: "var(--primary, #0f763f)",
-      fontSize: "38px",
-    }}
-  />
-</div>
-
+{/* Patient Profile Header */}
+<div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start">
+  
   <div
-    className="
-      d-flex
-      flex-column
-      align-items-center
-      align-items-md-start
-    "
+    className="rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0"
+    style={{
+      width: "90px",
+      height: "90px",
+      border: "2px solid var(--primary, #0f763f)",
+    }}
   >
+    <i
+      className="isax isax-user fs-1 text-primary"
+      style={{ color: "var(--primary, #0f763f)" }}
+    />
+  </div>
 
-    <div className="badge bg-light text-secondary border mb-2 px-2 py-1 mobile-badge">
+  <div>
+    <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
       ID: {mockPatientProfile.hospitalNumber}
     </div>
 
-    <h3 className="fw-bold mb-1 text-dark physician-mobile-name">
+    <h3 className="fw-bold mb-1 text-dark fs-3 fs-md-2">
       {mockPatientProfile.lastName},{" "}
       {mockPatientProfile.firstName}{" "}
       {mockPatientProfile.middleName}
     </h3>
 
-    <div
-      className="
-        text-muted
-        small
-        d-flex
-        align-items-center
-        justify-content-center
-        justify-content-md-start
-        gap-2
-        mobile-address
-      "
-    >
+    <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2">
       <i className="isax isax-location text-danger" />
       {mockPatientProfile.address}
     </div>
-
   </div>
 </div>
 
