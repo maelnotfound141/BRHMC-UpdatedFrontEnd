@@ -125,26 +125,15 @@ const updateField = (category: string, field: string, value: any) => {
     }));
   };
 
-  // sa toolbars
+// sa toolbars
 const handleAdd = () =>
   setUnlockedCategories((prev) => ({ ...prev, [activeCategory]: true }));
 
 const handleEdit = () =>
   setUnlockedCategories((prev) => ({ ...prev, [activeCategory]: true }));
 
-// const handleSave = () => {
-//   setSavedState(JSON.parse(JSON.stringify(formData)));
-//   setUnlockedCategories({});
-// };
-
-// const handleCancel = () => {
-//   setFormData(JSON.parse(JSON.stringify(savedState || INITIAL_FORM_STATE)));
-//   setUnlockedCategories({});
-// };
-
 const handleSave = () => {
   setSavedState(JSON.parse(JSON.stringify(formData)));
-  // Only lock the active category, not all of them
   setUnlockedCategories((prev) => {
     const next = { ...prev };
     delete next[activeCategory];
@@ -153,7 +142,6 @@ const handleSave = () => {
 };
 
 const handleCancel = () => {
-  // Only revert the active category
   setFormData((prev: any) => ({
     ...prev,
     [activeCategory]: JSON.parse(
@@ -189,9 +177,7 @@ const handleCancel = () => {
 
   const catHasData = categoryHasData(activeCategory, savedState); 
   const isUnlocked = !!unlockedCategories[activeCategory];
-  const isAnyUnlocked = Object.values(unlockedCategories).some(Boolean);
   const showForm = catHasData || isUnlocked;
-
   const renderCheckboxesAndOther = (category: string) => {
     const options = ROS_OPTIONS[category] || [];
     const currentText = formData[category].otherValue || "";
@@ -366,29 +352,29 @@ const handleCancel = () => {
       <div className="content doctor-content bg-light mt-n4 d-flex flex-column" style={{ minHeight: "100vh" }}>
         <div className="container-fluid px-3 px-lg-5 pt-0 flex-grow-1 d-flex flex-column">
               <div className="doctor-dashboard-layout">
-  <DoctorSidebar />
+              <DoctorSidebar />
 
-  <div className="doctor-dashboard-main">
+              <div className="doctor-dashboard-main">
               <div
                 className="card border-0 shadow-sm p-3 p-md-4 mb-4 d-flex flex-column h-100"
                 style={{ borderRadius: "12px", borderTop: "4px solid var(--primary, #0f763f)" }}
               >
                 {/* close button */}
-<button
-  type="button"
-  onClick={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigate("/doctor-dashboard", { replace: true });
-  }}
-  className="card-close-btn d-flex align-items-center justify-content-center"
->
-  <span className="desktop-close text-white fw-bold">×</span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate("/doctor-dashboard", { replace: true });
+                    }}
+                    className="card-close-btn d-flex align-items-center justify-content-center"
+                  >
+                    <span className="desktop-close text-white fw-bold">×</span>
 
-  <span className="mobile-back">
-  <i className="isax isax-arrow-left"></i>
-</span>
-</button> 
+                    <span className="mobile-back">
+                    <i className="isax isax-arrow-left"></i>
+                  </span>
+                  </button> 
                 {/* Patient Profile Header */}
                 <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 mb-4 pb-4 border-bottom text-center text-md-start position-relative">
                   <div
@@ -420,25 +406,25 @@ const handleCancel = () => {
             
                     <div className={`d-flex flex-wrap justify-content-center justify-content-lg-end pb-1 pb-lg-0 ms-lg-auto ${!catHasData && !isUnlocked ? "d-none d-lg-flex" : ""}`} style={{ gap: "4px" }}>
                       <button 
-  onClick={handleAdd} 
-  disabled={catHasData || isUnlocked}
-  className={`btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-    (catHasData || isUnlocked)
-      ? 'bg-light text-muted opacity-50 border border-secondary-subtle'
-      : 'text-white fw-bold border-0'
-  }`}
-  style={{
-    borderRadius: "3px",
-    cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer",
-    backgroundColor:
-      (!catHasData && !isUnlocked)
-        ? "#0f763f"
-        : undefined
-  }}
->
-  <i className="isax isax-add-square"></i>
-  <span className="d-none d-md-inline">Add</span>
-</button>
+                        onClick={handleAdd} 
+                        disabled={catHasData || isUnlocked}
+                        className={`btn btn-sm shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
+                          (catHasData || isUnlocked)
+                            ? 'bg-light text-muted opacity-50 border border-secondary-subtle'
+                            : 'text-white fw-bold border-0'
+                        }`}
+                        style={{
+                          borderRadius: "3px",
+                          cursor: (catHasData || isUnlocked) ? "not-allowed" : "pointer",
+                          backgroundColor:
+                            (!catHasData && !isUnlocked)
+                              ? "#0f763f"
+                              : undefined
+                        }}
+                      >
+                        <i className="isax isax-add-square"></i>
+                        <span className="d-none d-md-inline">Add</span>
+                      </button>
                       
                       <button 
                         onClick={handleEdit} 
@@ -498,12 +484,26 @@ const handleCancel = () => {
                     <div className="bg-light border-bottom border-lg-bottom-0 border-lg-end responsive-exam-sidebar overflow-x-auto hide-scrollbar">
                       <div className="list-group list-group-flush rounded-0 h-100 p-2 gap-1 d-flex flex-row flex-lg-column">
                         {ROS_CATEGORIES.map((category) => {
-                          const hasContent = categoryHasData(category, formData);
-
+                        const hasContent = categoryHasData(category, savedState);
                           return (
                             <button
                               key={category}
-                              onClick={() => setActiveCategory(category)}
+                                onClick={() => {
+                                  if (unlockedCategories[activeCategory]) {
+                                    setFormData((prev: any) => ({
+                                      ...prev,
+                                      [activeCategory]: JSON.parse(
+                                        JSON.stringify((savedState || INITIAL_FORM_STATE)[activeCategory])
+                                      ),
+                                    }));
+                                    setUnlockedCategories((prev) => {
+                                      const next = { ...prev };
+                                      delete next[activeCategory];
+                                      return next;
+                                    });
+                                  }
+                                  setActiveCategory(category);
+                                }}
                               className={`list-group-item list-group-item-action border-0 rounded-2 py-2 px-3 text-nowrap d-flex align-items-center justify-content-between text-start ${
                                 activeCategory === category ? "fw-bold shadow-sm" : "text-muted"
                               }`}
@@ -562,8 +562,6 @@ const handleCancel = () => {
   </button> */}
 
 
-
-
   {renderFormContent()}
 </div>
 
@@ -577,46 +575,50 @@ const handleCancel = () => {
       </div>
 
       {showDeleteModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1060 }}>
-          <div className="modal-dialog modal-sm modal-dialog-centered px-3">
-            <div className="modal-content border-0 shadow-lg" style={{ borderRadius: '8px', overflow: 'hidden' }}>
-              
-              <div className="modal-header border-0 py-3 d-flex align-items-center" style={{ backgroundColor: '#333b45' }}>
-                <h3 className="modal-title text-white fw-bold m-0 d-flex align-items-center gap-2" style={{ fontSize: '1.1rem', letterSpacing: '0.5px' }}>
-                  <i className="isax isax-warning-2" style={{ fontSize: '1.5rem' }}></i>
-                  Confirm Delete
-                </h3>
-           
-              </div>
-              
-              <div className="modal-body p-4 bg-white text-center">
-                <i className="isax isax-trash text-danger mb-3 d-block" style={{ fontSize: '2.5rem' }}></i>
-                <p className="mb-0 text-dark fw-medium" style={{ fontSize: '1.05rem' }}>
-                  Are you sure you want to clear the record for <strong className="text-danger">{activeCategory}</strong>?
-                </p>
-              </div>
-              
-              <div className="modal-footer border-0 d-flex justify-content-center gap-2 p-3" style={{ backgroundColor: '#e2e5e9' }}>
-                <button 
-                  type="button" 
-                  className="btn btn-light rounded-1 px-4 py-2 fw-medium border-secondary-subtle" 
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="button" 
-                  className="btn btn-danger rounded-1 px-4 py-2 fw-medium" 
-                  onClick={confirmDelete}
-                >
-                  Delete
-                </button>
-              </div>
+            <div className="acc-info-backdrop">
+              <div className="acc-info-box shadow-lg">
+                <div className="acc-info-title">
+                  <span>Confirm Delete</span>
+                  <button
+                    type="button"
+                    className="btn-close btn-close-sm"
+                    onClick={() => setShowDeleteModal(false)}
+                  />
+                </div>
 
+                <div className="d-flex align-items-center gap-3 p-4">
+                  <div className="acc-info-icon acc-info-icon-danger">
+                    <i className="isax isax-trash"></i>
+                  </div>
+
+                  <div>
+                    <div className="fw-bold text-dark mb-1">Clear Record?</div>
+                    <div className="small fw-semibold text-muted">
+                      Are you sure you want to clear the record for{" "}
+                      <span className="text-danger fw-bold">{activeCategory}</span>?
+                    </div>
+                  </div>
+                </div>
+
+                <div className="acc-info-footer d-flex justify-content-end gap-2 px-4 pb-3">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-light fw-bold px-4 border acc-info-action-btn"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-danger fw-bold px-4 acc-info-action-btn"
+                    onClick={confirmDelete}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
     </>
   );
 };

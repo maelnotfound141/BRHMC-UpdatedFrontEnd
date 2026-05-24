@@ -70,7 +70,7 @@ const PhysicalExamination = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [activeCategory, setActiveCategory] = useState(EXAM_CATEGORIES[0]);
 
-  const [unlockedCategories, setUnlockedCategories] = useState<string[]>([]);
+  const [unlockedCategories, setUnlockedCategories] = useState<Record<string, boolean>>({});
 
   const [formData, setFormData] = useState<any>(JSON.parse(JSON.stringify(INITIAL_FORM_STATE)));
   const [savedState, setSavedState] = useState<any>(null);
@@ -112,7 +112,7 @@ const PhysicalExamination = () => {
   };
 
   const toggleSelection = (category: string, option: string) => {
-    if (!unlockedCategories.includes(category)) return;
+  if (!unlockedCategories[category]) return;
     setFormData((prev: any) => {
       const selected = prev[category].selected;
       const newSelected = selected.includes(option) 
@@ -123,23 +123,38 @@ const PhysicalExamination = () => {
   };
 
   const updateField = (category: string, field: string, value: any) => {
-    if (!unlockedCategories.includes(category)) return;
+  if (!unlockedCategories[category]) return;
     setFormData((prev: any) => ({
       ...prev,
       [category]: { ...prev[category], [field]: value }
     }));
   };
 
-  const handleAdd = () => setUnlockedCategories((prev) => [...new Set([...prev, activeCategory])]);
-  const handleEdit = () => setUnlockedCategories((prev) => [...new Set([...prev, activeCategory])]);
-  const handleSave = () => {
-    setSavedState(JSON.parse(JSON.stringify(formData)));
-    setUnlockedCategories([]); 
-  };
-  const handleCancel = () => {
-    setFormData(JSON.parse(JSON.stringify(savedState || INITIAL_FORM_STATE)));
-    setUnlockedCategories([]);
-  };
+const handleAdd = () =>
+  setUnlockedCategories((prev) => ({ ...prev, [activeCategory]: true }));
+const handleEdit = () =>
+  setUnlockedCategories((prev) => ({ ...prev, [activeCategory]: true }));
+const handleSave = () => {
+  setSavedState(JSON.parse(JSON.stringify(formData)));
+  setUnlockedCategories((prev) => {
+    const next = { ...prev };
+    delete next[activeCategory];
+    return next;
+  });
+};
+const handleCancel = () => {
+  setFormData((prev: any) => ({
+    ...prev,
+    [activeCategory]: JSON.parse(
+      JSON.stringify((savedState || INITIAL_FORM_STATE)[activeCategory])
+    ),
+  }));
+  setUnlockedCategories((prev) => {
+    const next = { ...prev };
+    delete next[activeCategory];
+    return next;
+  });
+};
   const handleDeleteClick = () => setShowDeleteModal(true);
   const confirmDelete = () => {
     setFormData((prev: any) => ({
@@ -153,13 +168,16 @@ const PhysicalExamination = () => {
         [activeCategory]: JSON.parse(JSON.stringify(INITIAL_FORM_STATE[activeCategory]))
       };
     });
-    setUnlockedCategories((prev) => prev.filter(c => c !== activeCategory));
+setUnlockedCategories((prev) => {
+  const next = { ...prev };
+  delete next[activeCategory];
+  return next;
+});
     setShowDeleteModal(false);
   };
 
   const catHasData = categoryHasData(activeCategory, savedState); 
-  const isUnlocked = unlockedCategories.includes(activeCategory);
-  const isAnyUnlocked = unlockedCategories.length > 0;
+  const isUnlocked = !!unlockedCategories[activeCategory];
   const showForm = catHasData || isUnlocked;
 
   const renderOtherTextarea = (category: string) => {
@@ -519,32 +537,31 @@ if (!showForm) {
                         <i className="isax isax-edit"></i> <span className="d-none d-md-inline">Edit</span>
                       </button>
                       
-                      <button 
-                        onClick={handleSave} 
-                        disabled={!isAnyUnlocked}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-                          !isAnyUnlocked ? 'bg-light text-muted opacity-50' : 'text-white fw-bold'
-                        }`}
-                        style={{ 
-                          borderRadius: "3px", 
-                          cursor: !isAnyUnlocked ? "not-allowed" : "pointer",
-                          backgroundColor: isAnyUnlocked ? "var(--primary, #0f763f)" : undefined,
-                          borderColor: isAnyUnlocked ? "var(--primary, #0f763f)" : undefined
-                        }}
-                      >
+                      <button
+  onClick={handleSave}
+  disabled={!isUnlocked}
+  className={`btn btn-sm border shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${!isUnlocked ? 'bg-light text-muted opacity-50' : 'text-white fw-bold'}`}
+  style={{
+    borderRadius: "3px",
+    cursor: !isUnlocked ? "not-allowed" : "pointer",
+    backgroundColor: isUnlocked ? "var(--primary, #0f763f)" : undefined,
+    borderColor: isUnlocked ? "var(--primary, #0f763f)" : undefined
+  }}
+>
                         <i className="isax isax-save-2"></i> <span className="d-none d-md-inline">Save</span>
                       </button>
                       
-                      <button 
-                        onClick={handleCancel} 
-                        disabled={!isAnyUnlocked}
-                        className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-                          !isAnyUnlocked ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold'
-                        }`}
-                        style={{ borderRadius: "3px", cursor: !isAnyUnlocked ? "not-allowed" : "pointer" }}
-                      >
-                        <i className="isax isax-undo"></i> <span className="d-none d-md-inline">Cancel</span>
-                      </button>
+                      <button
+  onClick={handleCancel}
+  disabled={!isUnlocked}
+  className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${!isUnlocked ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold'}`}
+  style={{ borderRadius: "3px", cursor: !isUnlocked ? "not-allowed" : "pointer" }}
+>
+
+  <i className="isax isax-undo"></i>
+  <span className="d-none d-md-inline">Cancel</span>
+  
+</button>
                       
                       <button 
                         onClick={handleDeleteClick} 
@@ -564,12 +581,27 @@ if (!showForm) {
                     <div className="bg-light border-bottom border-lg-bottom-0 border-lg-end responsive-exam-sidebar overflow-x-auto hide-scrollbar">
                       <div className="list-group list-group-flush rounded-0 h-100 p-2 gap-1 sidebar-flex">
                         {EXAM_CATEGORIES.map((category) => {
-                          const hasContent = categoryHasData(category, formData);
+                          const hasContent = categoryHasData(category, savedState);
 
                           return (
                             <button
                               key={category}
-                              onClick={() => setActiveCategory(category)}
+                              onClick={() => {
+  if (unlockedCategories[activeCategory]) {
+    setFormData((prev: any) => ({
+      ...prev,
+      [activeCategory]: JSON.parse(
+        JSON.stringify((savedState || INITIAL_FORM_STATE)[activeCategory])
+      ),
+    }));
+    setUnlockedCategories((prev) => {
+      const next = { ...prev };
+      delete next[activeCategory];
+      return next;
+    });
+  }
+  setActiveCategory(category);
+}}
                               className={`list-group-item list-group-item-action border-0 rounded-2 py-2 px-3 text-nowrap d-flex align-items-center justify-content-between text-start ${
                                 activeCategory === category ? "fw-bold shadow-sm" : "text-muted"
                               }`}
