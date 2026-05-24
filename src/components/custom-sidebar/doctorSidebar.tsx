@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { setDoctorMobileSidebar } from "@/core/redux/sidebarSlice";
@@ -16,11 +16,19 @@ const FORM_TABS = [
 ];
 
 const SIDEBAR_COLLAPSED_KEY = "doctor-sidebar-desktop-collapsed";
+const FORM_FRAME_WIDTH = 816;
+const FORM_FRAME_HEIGHT = 1056;
+const MIN_ZOOM = 30;
+const MAX_ZOOM = 200;
+
+const clampZoom = (value: number) =>
+  Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 
 const DoctorSidebar = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const frameAreaRef = useRef<HTMLDivElement>(null);
 
   const doctorMobileSidebar = useSelector(
     (state: any) => state.sidebar.doctorMobileSidebar
@@ -29,7 +37,9 @@ const DoctorSidebar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(FORM_TABS[0].id);
   const [zoom, setZoom] = useState(100);
+  const [zoomMode, setZoomMode] = useState<"fit" | "manual">("fit");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPrintSidebarHidden, setIsPrintSidebarHidden] = useState(false);
 
   const [isMobileView, setIsMobileView] = useState(false);
 
@@ -105,12 +115,39 @@ const DoctorSidebar = () => {
     }
   };
 
+  const fitFormToFrame = useCallback(() => {
+    const frameArea = frameAreaRef.current;
+
+    if (!frameArea) return;
+
+    const styles = window.getComputedStyle(frameArea);
+    const horizontalPadding =
+      parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+    const verticalPadding =
+      parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom);
+    const availableWidth = frameArea.clientWidth - horizontalPadding;
+    const availableHeight = frameArea.clientHeight - verticalPadding;
+
+    if (availableWidth <= 0 || availableHeight <= 0) return;
+
+    const nextZoom = Math.floor(
+      Math.min(
+        (availableWidth / FORM_FRAME_WIDTH) * 100,
+        (availableHeight / FORM_FRAME_HEIGHT) * 100
+      )
+    );
+
+    setZoom(clampZoom(nextZoom));
+  }, []);
+
   const handleNavClick = () => {
     closeMobileSidebar();
   };
 
   const openModal = () => {
     setActiveTab(FORM_TABS[0].id);
+    setZoomMode("fit");
+    setIsPrintSidebarHidden(false);
     setIsLoading(true);
     setIsModalOpen(true);
 
@@ -121,6 +158,7 @@ const DoctorSidebar = () => {
     if (id === activeTab) return;
 
     setActiveTab(id);
+    setZoomMode("fit");
     setIsLoading(true);
 
     setTimeout(() => setIsLoading(false), 500);
@@ -144,16 +182,55 @@ const DoctorSidebar = () => {
       )
     );
 
-  const zoomIn = () => setZoom((z) => Math.min(z + 10, 200));
-  const zoomOut = () => setZoom((z) => Math.max(z - 10, 30));
+  const zoomIn = () => {
+    setZoomMode("manual");
+    setZoom((z) => clampZoom(z + 10));
+  };
+
+  const zoomOut = () => {
+    setZoomMode("manual");
+    setZoom((z) => clampZoom(z - 10));
+  };
+
+  const handleFitToScreen = () => {
+    setZoomMode("fit");
+    window.requestAnimationFrame(fitFormToFrame);
+  };
+
+  const handleResetZoom = () => {
+    setZoomMode("manual");
+    setZoom(100);
+  };
 
   const onZoomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = parseInt(e.target.value, 10);
 
     if (!isNaN(v)) {
-      setZoom(Math.min(Math.max(v, 30), 200));
+      setZoomMode("manual");
+      setZoom(clampZoom(v));
     }
   };
+
+  useEffect(() => {
+    if (!isModalOpen || isLoading || zoomMode !== "fit") return;
+
+    const frame = window.requestAnimationFrame(fitFormToFrame);
+
+    window.addEventListener("resize", fitFormToFrame);
+
+    let observer: ResizeObserver | undefined;
+
+    if (typeof ResizeObserver !== "undefined" && frameAreaRef.current) {
+      observer = new ResizeObserver(fitFormToFrame);
+      observer.observe(frameAreaRef.current);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", fitFormToFrame);
+      observer?.disconnect();
+    };
+  }, [fitFormToFrame, isLoading, isModalOpen, zoomMode]);
 
   return (
     <>
@@ -493,18 +570,19 @@ const DoctorSidebar = () => {
           inset: 0;
           z-index: 1055;
           display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 16px;
+          align-items: stretch;
+          justify-content: stretch;
+          padding: 0;
         }
 
         .pfw-modal-box {
+          position: relative;
           background: #fff;
-          border-radius: 8px;
+          border-radius: 0;
           width: 100%;
-          max-width: 1000px;
-          height: 86vh;
-          max-height: 700px;
+          max-width: none;
+          height: 100dvh;
+          max-height: none;
           display: flex;
           flex-direction: column;
           box-shadow: 0 8px 32px rgba(0, 0, 0, .22);
@@ -513,44 +591,87 @@ const DoctorSidebar = () => {
           font-family: inherit;
         }
 
-        .pfw-modal-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 14px 20px;
-          border-bottom: 1px solid #dee2e6;
-          background: #fff;
-          flex-shrink: 0;
-        }
-
-        .pfw-modal-title {
-          font-size: 16px;
-          font-weight: 600;
+        .pfw-modal-close-btn {
+          position: absolute;
+          top: 14px;
+          right: 16px;
+          z-index: 12;
+          width: 40px;
+          height: 40px;
+          border: 1px solid rgba(15, 23, 42, 0.1);
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.94);
           color: #212529;
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 8px;
-          margin: 0;
+          justify-content: center;
+          box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+          transition: color .12s, border-color .12s, background .12s;
         }
 
-        .pfw-modal-title i {
+        .pfw-modal-close-btn:hover,
+        .pfw-modal-close-btn:focus {
+          background: #fff;
+          border-color: var(--primary, #0f763f);
           color: var(--primary, #0f763f);
-          font-size: 15px;
+          outline: none;
         }
 
         .pfw-modal-body {
           flex: 1;
+          min-height: 0;
           display: flex;
           overflow: hidden;
         }
 
         .pfw-nav-col {
-          width: 190px;
+          width: 176px;
           flex-shrink: 0;
           background: #111418;
           display: flex;
           flex-direction: column;
           overflow: hidden;
+          transition: width .18s ease, max-height .18s ease, padding .18s ease;
+        }
+
+        .pfw-nav-toggle-btn {
+          position: absolute;
+          top: 14px;
+          left: 188px;
+          z-index: 12;
+          width: 40px;
+          height: 40px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 8px;
+          background: rgba(17, 20, 24, 0.96);
+          color: #c8d6e5;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+          transition: left .18s ease, background .12s, color .12s, border-color .12s;
+        }
+
+        .pfw-nav-toggle-btn:hover,
+        .pfw-nav-toggle-btn:focus {
+          background: #111418;
+          border-color: #4dd0e1;
+          color: #4dd0e1;
+          outline: none;
+        }
+
+        .pfw-preview-sidebar-hidden .pfw-nav-col {
+          width: 0;
+        }
+
+        .pfw-preview-sidebar-hidden .pfw-nav-list,
+        .pfw-preview-sidebar-hidden .pfw-nav-footer {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .pfw-preview-sidebar-hidden .pfw-nav-toggle-btn {
+          left: 14px;
         }
 
         .pfw-nav-list {
@@ -638,17 +759,26 @@ const DoctorSidebar = () => {
         .pfw-content-col {
           flex: 1;
           min-width: 0;
+          min-height: 0;
           display: flex;
           flex-direction: column;
           background: #f5f5f5;
+          position: relative;
         }
 
         .pfw-toolbar {
-          flex-shrink: 0;
-          background: #ffffff;
-          border-bottom: 1px solid #dee2e6;
-          padding: 6px 14px;
+          position: absolute;
+          top: 50%;
+          right: 18px;
+          z-index: 8;
+          transform: translateY(-50%);
+          background: rgba(255, 255, 255, 0.96);
+          border: 1px solid rgba(15, 23, 42, 0.12);
+          border-radius: 8px;
+          box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18);
+          padding: 8px;
           display: flex;
+          flex-direction: column;
           align-items: center;
           gap: 8px;
         }
@@ -659,15 +789,19 @@ const DoctorSidebar = () => {
           border: 1px solid #ced4da;
           border-radius: 4px;
           overflow: hidden;
-          height: 26px;
+          width: 46px;
+          height: 40px;
+          background: #fff;
         }
 
         .pfw-zoom-input {
-          width: 44px;
+          width: 100%;
+          height: 100%;
           border: none;
           outline: none;
           text-align: center;
-          font-size: 12.5px;
+          font-size: 13px;
+          font-weight: 700;
           background: #fff;
           padding: 0;
           font-family: inherit;
@@ -679,20 +813,18 @@ const DoctorSidebar = () => {
           -webkit-appearance: none;
         }
 
-        .pfw-zoom-spins {
-          display: flex;
-          flex-direction: column;
-          border-left: 1px solid #ced4da;
-        }
-
-        .pfw-zoom-spin {
-          flex: 1;
+        .pfw-zoom-step-btn {
+          flex: 0 0 auto;
+          width: 46px;
+          height: 40px;
+          min-height: 40px;
           background: #f8f9fa;
-          border: none;
+          border: 1px solid #ced4da;
+          border-radius: 4px;
           cursor: pointer;
-          font-size: 7px;
+          font-size: 0;
           color: #495057;
-          padding: 0 5px;
+          padding: 0;
           line-height: 1;
           display: flex;
           align-items: center;
@@ -700,27 +832,82 @@ const DoctorSidebar = () => {
           transition: background .1s;
         }
 
-        .pfw-zoom-spin:hover {
+        .pfw-zoom-step-btn:hover,
+        .pfw-zoom-step-btn:focus {
           background: #e2e6ea;
+          border-color: var(--primary, #0f763f);
+          color: var(--primary, #0f763f);
+          outline: none;
         }
 
-        .pfw-zoom-spin + .pfw-zoom-spin {
-          border-top: 1px solid #ced4da;
+        .pfw-zoom-step-btn::before {
+          font-family: "Font Awesome 7 Free";
+          font-weight: 900;
+          font-size: 12px;
+          line-height: 1;
         }
 
-        .pfw-toolbar-label {
-          font-size: 12.5px;
-          color: #6c757d;
+        .pfw-zoom-step-btn.pfw-zoom-in-btn::before {
+          content: "\\f077";
+        }
+
+        .pfw-zoom-step-btn.pfw-zoom-out-btn::before {
+          content: "\\f078";
+        }
+
+        .pfw-fit-btn {
+          height: 40px;
+          width: 46px;
+          border: 1px solid #ced4da;
+          border-radius: 4px;
+          background: #fff;
+          color: #495057;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background .12s, color .12s, border-color .12s;
+        }
+
+        .pfw-fit-btn:hover,
+        .pfw-fit-btn:focus {
+          background: #f8f9fa;
+          border-color: var(--primary, #0f763f);
+          color: var(--primary, #0f763f);
         }
 
         .pfw-frame-area {
           flex: 1;
           overflow: auto;
-          padding: 20px;
+          padding: 16px 84px 16px 20px;
           display: flex;
-          justify-content: flex-start;
+          justify-content: center;
           align-items: flex-start;
           background: #f0f2f5;
+        }
+
+        @media (max-width: 1199.98px) {
+          .pfw-nav-col {
+            width: 164px;
+          }
+
+          .pfw-nav-toggle-btn {
+            left: 176px;
+          }
+
+          .pfw-frame-area {
+            padding: 14px 78px 14px 16px;
+          }
+        }
+
+        @media (max-width: 991.98px) {
+          .pfw-toolbar {
+            right: 12px;
+          }
+
+          .pfw-frame-area {
+            padding-right: 72px;
+          }
         }
 
         .pfw-frame-area::-webkit-scrollbar {
@@ -737,18 +924,27 @@ const DoctorSidebar = () => {
           border-radius: 4px;
         }
 
+        .pfw-page-stage {
+          position: relative;
+          flex: 0 0 auto;
+          margin: 0 auto;
+        }
+
         .pfw-page-wrap {
           transform-origin: top left;
           box-shadow: 0 2px 12px rgba(0, 0, 0, .18);
           background: #fff;
-          flex-shrink: 0;
+          position: absolute;
+          inset: 0 auto auto 0;
+          width: ${FORM_FRAME_WIDTH}px;
+          height: ${FORM_FRAME_HEIGHT}px;
         }
 
         .pfw-page-wrap iframe {
           display: block;
           border: none;
-          width: 816px;
-          height: 1056px;
+          width: ${FORM_FRAME_WIDTH}px;
+          height: ${FORM_FRAME_HEIGHT}px;
         }
 
         .pfw-loading-area {
@@ -778,20 +974,44 @@ const DoctorSidebar = () => {
 
         @media (max-width: 767.98px) {
           .pfw-modal-dialog {
-            padding: 10px;
+            padding: 0;
           }
 
           .pfw-modal-box {
-            height: 90vh;
+            height: 100dvh;
+            border-radius: 0;
           }
 
           .pfw-modal-body {
             flex-direction: column;
           }
 
+          .pfw-modal-close-btn {
+            top: 8px;
+            right: 8px;
+            width: 36px;
+            height: 36px;
+          }
+
           .pfw-nav-col {
             width: 100%;
             max-height: 160px;
+            padding-left: 48px;
+            padding-right: 48px;
+          }
+
+          .pfw-nav-toggle-btn,
+          .pfw-preview-sidebar-hidden .pfw-nav-toggle-btn {
+            top: 8px;
+            left: 8px;
+            width: 36px;
+            height: 36px;
+          }
+
+          .pfw-preview-sidebar-hidden .pfw-nav-col {
+            width: 100%;
+            max-height: 0;
+            padding: 0;
           }
 
           .pfw-nav-list {
@@ -822,8 +1042,74 @@ const DoctorSidebar = () => {
             padding: 8px;
           }
 
+          .pfw-toolbar {
+            top: auto;
+            right: 12px;
+            bottom: 12px;
+            transform: none;
+            flex-direction: column;
+            gap: 6px;
+          }
+
           .pfw-frame-area {
-            padding: 14px;
+            padding: 12px 66px 12px 12px;
+          }
+        }
+
+        @media (max-width: 575.98px) {
+          .pfw-nav-col {
+            max-height: 132px;
+          }
+
+          .pfw-nav-list {
+            padding: 6px;
+          }
+
+          .pfw-nav-btn {
+            min-height: 38px;
+            padding: 7px 10px;
+            font-size: 12px;
+          }
+
+          .pfw-nav-footer {
+            gap: 0;
+            padding: 6px;
+          }
+
+          .pfw-print-btn {
+            min-height: 42px;
+            padding: 5px 8px;
+            font-size: 10.5px;
+          }
+
+          .pfw-toolbar {
+            right: 8px;
+            bottom: 8px;
+            padding: 6px;
+          }
+
+          .pfw-zoom-wrap {
+            width: 44px;
+            height: 38px;
+          }
+
+          .pfw-zoom-input {
+            width: 100%;
+          }
+
+          .pfw-zoom-step-btn {
+            width: 44px;
+            height: 38px;
+            min-height: 38px;
+          }
+
+          .pfw-fit-btn {
+            width: 44px;
+            height: 38px;
+          }
+
+          .pfw-frame-area {
+            padding: 10px 60px 10px 10px;
           }
         }
       `}</style>
@@ -922,25 +1208,49 @@ const DoctorSidebar = () => {
 
           <div className="pfw-modal-dialog">
             <div
-              className="pfw-modal-box"
+              className={`pfw-modal-box${
+                isPrintSidebarHidden ? " pfw-preview-sidebar-hidden" : ""
+              }`}
               role="dialog"
               aria-modal="true"
               aria-label="Printable Forms"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="pfw-modal-header">
-                <h5 className="pfw-modal-title">
-                  <i className="fa-solid fa-print"></i>
-                  Printable Forms
-                </h5>
-
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setIsModalOpen(false)}
-                  aria-label="Close"
+              <button
+                type="button"
+                className="pfw-nav-toggle-btn"
+                onClick={() =>
+                  setIsPrintSidebarHidden((isHidden) => !isHidden)
+                }
+                aria-label={
+                  isPrintSidebarHidden
+                    ? "Show print preview sidebar"
+                    : "Hide print preview sidebar"
+                }
+                title={
+                  isPrintSidebarHidden
+                    ? "Show print preview sidebar"
+                    : "Hide print preview sidebar"
+                }
+              >
+                <i
+                  className={`fa-solid ${
+                    isPrintSidebarHidden
+                      ? "fa-chevron-right"
+                      : "fa-chevron-left"
+                  }`}
                 />
-              </div>
+              </button>
+
+              <button
+                type="button"
+                className="pfw-modal-close-btn"
+                onClick={() => setIsModalOpen(false)}
+                aria-label="Close print preview"
+                title="Close"
+              >
+                <i className="fa-solid fa-xmark" />
+              </button>
 
               <div className="pfw-modal-body">
                 <div className="pfw-nav-col">
@@ -996,34 +1306,52 @@ const DoctorSidebar = () => {
                         type="number"
                         className="pfw-zoom-input"
                         value={zoom}
-                        min={30}
-                        max={200}
+                        min={MIN_ZOOM}
+                        max={MAX_ZOOM}
                         onChange={onZoomChange}
                         aria-label="Zoom level"
                       />
 
-                      <div className="pfw-zoom-spins">
+                    </div>
                         <button
                           type="button"
-                          className="pfw-zoom-spin"
+                          className="pfw-zoom-step-btn pfw-zoom-in-btn"
                           onClick={zoomIn}
                           aria-label="Zoom in"
+                          title="Zoom in"
                         >
                           ▲
                         </button>
 
                         <button
                           type="button"
-                          className="pfw-zoom-spin"
+                          className="pfw-zoom-step-btn pfw-zoom-out-btn"
                           onClick={zoomOut}
                           aria-label="Zoom out"
+                          title="Zoom out"
                         >
                           ▼
                         </button>
-                      </div>
-                    </div>
 
-                    <span className="pfw-toolbar-label">Page Zoom</span>
+                    <button
+                      type="button"
+                      className="pfw-fit-btn"
+                      onClick={handleFitToScreen}
+                      title="Fit form to screen"
+                      aria-label="Fit form to screen"
+                    >
+                      <i className="fa-solid fa-expand"></i>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="pfw-fit-btn"
+                      onClick={handleResetZoom}
+                      title="Reset zoom"
+                      aria-label="Reset zoom"
+                    >
+                      <i className="isax isax-refresh" />
+                    </button>
                   </div>
 
                   {isLoading ? (
@@ -1036,21 +1364,29 @@ const DoctorSidebar = () => {
                       <span>Please wait…</span>
                     </div>
                   ) : (
-                    <div className="pfw-frame-area">
+                    <div className="pfw-frame-area" ref={frameAreaRef}>
                       <div
-                        className="pfw-page-wrap"
-                        style={{ transform: `scale(${zoom / 100})` }}
+                        className="pfw-page-stage"
+                        style={{
+                          width: `${FORM_FRAME_WIDTH * (zoom / 100)}px`,
+                          height: `${FORM_FRAME_HEIGHT * (zoom / 100)}px`,
+                        }}
                       >
-                        <iframe
-                          key={activeTab}
-                          ref={iframeRef}
-                          srcDoc={testprintHtml}
-                          title={
-                            FORM_TABS.find((t) => t.id === activeTab)?.label ??
-                            "Form"
-                          }
-                          sandbox="allow-same-origin allow-scripts allow-modals allow-popups"
-                        />
+                        <div
+                          className="pfw-page-wrap"
+                          style={{ transform: `scale(${zoom / 100})` }}
+                        >
+                          <iframe
+                            key={activeTab}
+                            ref={iframeRef}
+                            srcDoc={testprintHtml}
+                            title={
+                              FORM_TABS.find((t) => t.id === activeTab)
+                                ?.label ?? "Form"
+                            }
+                            sandbox="allow-same-origin allow-scripts allow-modals allow-popups"
+                          />
+                        </div>
                       </div>
                     </div>
                   )}

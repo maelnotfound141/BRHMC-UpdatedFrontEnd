@@ -1,5 +1,12 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import PatientHistoryAndPhysicalExamination from "./patientHistoryForms";
 import PatientHistoryFormPage2 from "./patientHistoryFormsPage2";
 import DischargeSummary from "./dischargeSummary";
@@ -58,7 +65,12 @@ const printableForms: PrintableForm[] = [
   },
 ];
 
-const clampZoom = (value: number) => Math.min(160, Math.max(50, value));
+const PREVIEW_BASE_WIDTH = 860;
+const MIN_ZOOM = 50;
+const MAX_ZOOM = 160;
+
+const clampZoom = (value: number) =>
+  Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 
 const BlankPreview = ({ title }: { title: string }) => (
   <div className="doctor-print-blank-preview">
@@ -71,10 +83,14 @@ const BlankPreview = ({ title }: { title: string }) => (
 );
 
 const PrintableForms = () => {
+  const previewScrollRef = useRef<HTMLDivElement | null>(null);
   const previewContentRef = useRef<HTMLDivElement | null>(null);
   const [activeFormKey, setActiveFormKey] =
     useState<PrintableFormKey>("patient-history");
   const [zoom, setZoom] = useState(100);
+  const [zoomMode, setZoomMode] = useState<"fit-width" | "manual">(
+    "fit-width"
+  );
   const [previewHeight, setPreviewHeight] = useState(
     printableForms[0].defaultHeight
   );
@@ -84,7 +100,6 @@ const PrintableForms = () => {
     lastName: "DO",
     firstName: "REA",
     middleName: "MON",
-    address: "111 Legazpi City, Albay 4500",
   });
 
   const activeForm =
@@ -131,8 +146,45 @@ const PrintableForms = () => {
 
     if (Number.isNaN(numericValue)) return;
 
+    setZoomMode("manual");
     setZoom(clampZoom(numericValue));
   };
+
+  const handleFitWidth = useCallback(() => {
+    const previewScroll = previewScrollRef.current;
+
+    if (!previewScroll) return;
+
+    const styles = window.getComputedStyle(previewScroll);
+    const horizontalPadding =
+      parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight);
+    const availableWidth = previewScroll.clientWidth - horizontalPadding;
+
+    if (availableWidth <= 0) return;
+
+    setZoom(clampZoom(Math.floor((availableWidth / PREVIEW_BASE_WIDTH) * 100)));
+  }, []);
+
+  useEffect(() => {
+    if (zoomMode !== "fit-width") return;
+
+    const frame = window.requestAnimationFrame(handleFitWidth);
+
+    window.addEventListener("resize", handleFitWidth);
+
+    let observer: ResizeObserver | undefined;
+
+    if (typeof ResizeObserver !== "undefined" && previewScrollRef.current) {
+      observer = new ResizeObserver(handleFitWidth);
+      observer.observe(previewScrollRef.current);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", handleFitWidth);
+      observer?.disconnect();
+    };
+  }, [activeFormKey, handleFitWidth, zoomMode]);
 
   const handlePrintCurrent = () => {
     window.print();
@@ -143,25 +195,46 @@ const PrintableForms = () => {
       <style>{`
         .doctor-print-card {
           border-top: 4px solid var(--primary, #0f763f);
-        }
-
-        .doctor-print-avatar {
-          width: 90px;
-          height: 90px;
-          border: 2px solid var(--primary, #0f763f);
-          color: var(--primary, #0f763f);
+          display: flex;
+          flex-direction: column;
+          height: calc(100dvh - 104px);
+          min-height: 680px;
         }
 
         .doctor-print-toolbar {
           background: #fff;
           border-bottom: 1px solid #e9ecef;
+          flex-shrink: 0;
         }
 
         .doctor-print-toolbar-main {
           display: grid;
-          grid-template-columns: minmax(190px, auto) minmax(0, 1fr) auto;
+          grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1.4fr) auto;
           align-items: center;
           gap: 14px;
+        }
+
+        .doctor-print-patient-strip {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+          color: #6c757d;
+          font-size: 0.78rem;
+          font-weight: 700;
+          line-height: 1.3;
+        }
+
+        .doctor-print-patient-strip strong {
+          color: #172033;
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .doctor-print-patient-strip span {
+          min-width: 0;
         }
 
         .doctor-print-toolbar-controls {
@@ -270,15 +343,18 @@ const PrintableForms = () => {
         }
 
         .doctor-print-preview-section {
-          min-height: 620px;
+          flex: 1;
+          min-height: 0;
+          display: flex;
           background: #eef2f4;
         }
 
         .doctor-print-preview-scroll {
-          min-height: 620px;
-          max-height: calc(100dvh - 320px);
+          flex: 1;
+          min-height: 0;
+          max-height: none;
           overflow: auto;
-          padding: 24px;
+          padding: 16px 20px;
         }
 
         .doctor-print-preview-stage {
@@ -332,6 +408,11 @@ const PrintableForms = () => {
         }
 
         @media (max-width: 991.98px) {
+          .doctor-print-card {
+            height: auto;
+            min-height: calc(100dvh - 96px);
+          }
+
           .doctor-print-toolbar-main {
             grid-template-columns: 1fr;
             align-items: stretch;
@@ -342,8 +423,7 @@ const PrintableForms = () => {
           }
 
           .doctor-print-preview-scroll {
-            max-height: calc(100dvh - 360px);
-            padding: 18px;
+            padding: 14px;
           }
         }
 
@@ -355,15 +435,6 @@ const PrintableForms = () => {
           .container-fluid {
             padding-left: 10px !important;
             padding-right: 10px !important;
-          }
-
-          .doctor-print-avatar {
-            width: 74px !important;
-            height: 74px !important;
-          }
-
-          .doctor-print-patient-name {
-            font-size: 1.25rem !important;
           }
 
           .doctor-print-toolbar {
@@ -390,12 +461,10 @@ const PrintableForms = () => {
           }
 
           .doctor-print-preview-section {
-            min-height: 520px;
+            min-height: calc(100dvh - 330px);
           }
 
           .doctor-print-preview-scroll {
-            min-height: 520px;
-            max-height: calc(100dvh - 420px);
             padding: 12px;
           }
         }
@@ -453,49 +522,26 @@ const PrintableForms = () => {
         className="content doctor-content bg-light mt-n4"
         style={{ minHeight: "100vh" }}
       >
-        <div className="container-fluid px-3 px-lg-5 pt-0">
+        <div className="container-fluid px-2 px-lg-3 pt-0">
           <div className="doctor-dashboard-layout">
             <DoctorSidebar />
 
             <div className="doctor-dashboard-main mt-4 mt-lg-0">
-              <div className="card border-0 shadow-sm rounded-3 overflow-hidden mb-4 doctor-print-card">
-                <div className="bg-white px-3 px-md-4 pt-4">
-                  <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-3 gap-md-4 pb-4 border-bottom text-center text-md-start">
-                    <div className="doctor-print-avatar rounded-circle d-flex align-items-center justify-content-center bg-light shadow-sm flex-shrink-0">
-                      <i
-                        className="isax isax-user fs-1"
-                        style={{ color: "var(--primary, #0f763f)" }}
-                      />
-                    </div>
-
-                    <div className="w-100">
-                      <div className="badge bg-light text-secondary border mb-2 px-2 py-1">
-                        ID: {mockPatientProfile.hospitalNumber}
-                      </div>
-
-                      <h3 className="doctor-print-patient-name fw-bold mb-1 text-dark fs-3 fs-md-2">
-                        {mockPatientProfile.lastName},{" "}
-                        {mockPatientProfile.firstName}{" "}
-                        {mockPatientProfile.middleName}
-                      </h3>
-
-                      <div className="text-muted small d-flex align-items-center justify-content-center justify-content-md-start gap-2 flex-wrap">
-                        <i className="isax isax-location text-danger" />
-                        <span>{mockPatientProfile.address}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
+              <div className="card border-0 shadow-sm rounded-3 overflow-hidden mb-0 doctor-print-card">
                 <div className="doctor-print-toolbar px-3 px-md-4 py-3">
                   <div className="doctor-print-toolbar-main">
                     <div className="min-width-0">
                       <h5 className="fw-bold text-dark mb-1 text-uppercase">
                         Forms Print Preview
                       </h5>
-                      <p className="text-muted small mb-0">
-                        Preview and print the selected patient form.
-                      </p>
+                      <div className="doctor-print-patient-strip">
+                        <span>ID: {mockPatientProfile.hospitalNumber}</span>
+                        <strong>
+                          {mockPatientProfile.lastName},{" "}
+                          {mockPatientProfile.firstName}{" "}
+                          {mockPatientProfile.middleName}
+                        </strong>
+                      </div>
                     </div>
 
                     <div className="doctor-print-tabs" role="tablist">
@@ -508,7 +554,10 @@ const PrintableForms = () => {
                           }`}
                           role="tab"
                           aria-selected={activeFormKey === form.key}
-                          onClick={() => setActiveFormKey(form.key)}
+                          onClick={() => {
+                            setActiveFormKey(form.key);
+                            setZoomMode("fit-width");
+                          }}
                         >
                           <i className={form.icon} />
                           <span>{form.label}</span>
@@ -522,8 +571,8 @@ const PrintableForms = () => {
                           type="number"
                           className="doctor-print-zoom-input"
                           value={zoom}
-                          min={50}
-                          max={160}
+                          min={MIN_ZOOM}
+                          max={MAX_ZOOM}
                           step={10}
                           aria-label="Preview zoom percentage"
                           onChange={(event) => handleZoomChange(event.target.value)}
@@ -536,7 +585,22 @@ const PrintableForms = () => {
                       <button
                         type="button"
                         className="doctor-print-action-btn"
-                        onClick={() => setZoom(100)}
+                        onClick={() => {
+                          setZoomMode("fit-width");
+                          window.requestAnimationFrame(handleFitWidth);
+                        }}
+                      >
+                        <i className="isax isax-maximize-4" />
+                        Fit Width
+                      </button>
+
+                      <button
+                        type="button"
+                        className="doctor-print-action-btn"
+                        onClick={() => {
+                          setZoomMode("manual");
+                          setZoom(100);
+                        }}
                       >
                         <i className="isax isax-refresh" />
                         Reset
@@ -555,11 +619,14 @@ const PrintableForms = () => {
                 </div>
 
                 <div className="doctor-print-preview-section doctor-print-preview-print-area">
-                  <div className="doctor-print-preview-scroll">
+                  <div
+                    className="doctor-print-preview-scroll"
+                    ref={previewScrollRef}
+                  >
                     <div
                       className="doctor-print-preview-stage"
                       style={{
-                        width: `${860 * (zoom / 100)}px`,
+                        width: `${PREVIEW_BASE_WIDTH * (zoom / 100)}px`,
                         height: `${previewHeight * (zoom / 100)}px`,
                       }}
                     >
