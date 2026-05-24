@@ -67,7 +67,7 @@ const ReviewOfSystem = () => {
   // state management
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [activeCategory, setActiveCategory] = useState(ROS_CATEGORIES[0]);
-  const [unlockedCategories, setUnlockedCategories] = useState<string[]>([]);
+  const [unlockedCategories, setUnlockedCategories] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState<any>(JSON.parse(JSON.stringify(INITIAL_FORM_STATE)));
   const [savedState, setSavedState] = useState<any>(null);
 
@@ -106,8 +106,8 @@ const ReviewOfSystem = () => {
     return false;
   };
 
-  const toggleSelection = (category: string, option: string) => {
-    if (!unlockedCategories.includes(category)) return;
+const toggleSelection = (category: string, option: string) => {
+  if (!unlockedCategories[category]) return;
     setFormData((prev: any) => {
       const selected = prev[category].selected;
       const newSelected = selected.includes(option) 
@@ -117,8 +117,8 @@ const ReviewOfSystem = () => {
     });
   };
 
-  const updateField = (category: string, field: string, value: any) => {
-    if (!unlockedCategories.includes(category)) return;
+const updateField = (category: string, field: string, value: any) => {
+  if (!unlockedCategories[category]) return;
     setFormData((prev: any) => ({
       ...prev,
       [category]: { ...prev[category], [field]: value }
@@ -126,39 +126,72 @@ const ReviewOfSystem = () => {
   };
 
   // sa toolbars
-  const handleAdd = () => setUnlockedCategories((prev) => [...new Set([...prev, activeCategory])]);
-  const handleEdit = () => setUnlockedCategories((prev) => [...new Set([...prev, activeCategory])]);
-  const handleSave = () => {
-    setSavedState(JSON.parse(JSON.stringify(formData)));
-    setUnlockedCategories([]); 
-  };
-  const handleCancel = () => {
-    setFormData(JSON.parse(JSON.stringify(savedState || INITIAL_FORM_STATE)));
-    setUnlockedCategories([]);
-  };
+const handleAdd = () =>
+  setUnlockedCategories((prev) => ({ ...prev, [activeCategory]: true }));
+
+const handleEdit = () =>
+  setUnlockedCategories((prev) => ({ ...prev, [activeCategory]: true }));
+
+// const handleSave = () => {
+//   setSavedState(JSON.parse(JSON.stringify(formData)));
+//   setUnlockedCategories({});
+// };
+
+// const handleCancel = () => {
+//   setFormData(JSON.parse(JSON.stringify(savedState || INITIAL_FORM_STATE)));
+//   setUnlockedCategories({});
+// };
+
+const handleSave = () => {
+  setSavedState(JSON.parse(JSON.stringify(formData)));
+  // Only lock the active category, not all of them
+  setUnlockedCategories((prev) => {
+    const next = { ...prev };
+    delete next[activeCategory];
+    return next;
+  });
+};
+
+const handleCancel = () => {
+  // Only revert the active category
+  setFormData((prev: any) => ({
+    ...prev,
+    [activeCategory]: JSON.parse(
+      JSON.stringify((savedState || INITIAL_FORM_STATE)[activeCategory])
+    ),
+  }));
+  setUnlockedCategories((prev) => {
+    const next = { ...prev };
+    delete next[activeCategory];
+    return next;
+  });
+};
   const handleDeleteClick = () => setShowDeleteModal(true);
   const confirmDelete = () => {
-    setFormData((prev: any) => ({
+  setFormData((prev: any) => ({
+    ...prev,
+    [activeCategory]: JSON.parse(JSON.stringify(INITIAL_FORM_STATE[activeCategory])),
+  }));
+  setSavedState((prev: any) => {
+    if (!prev) return prev;
+    return {
       ...prev,
-      [activeCategory]: JSON.parse(JSON.stringify(INITIAL_FORM_STATE[activeCategory]))
-    }));
-    setSavedState((prev: any) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        [activeCategory]: JSON.parse(JSON.stringify(INITIAL_FORM_STATE[activeCategory]))
-      };
-    });
-    setUnlockedCategories((prev) => prev.filter(c => c !== activeCategory));
-    setShowDeleteModal(false);
-  };
+      [activeCategory]: JSON.parse(JSON.stringify(INITIAL_FORM_STATE[activeCategory])),
+    };
+  });
+  setUnlockedCategories((prev) => {
+    const next = { ...prev };
+    delete next[activeCategory];
+    return next;
+  });
+  setShowDeleteModal(false);
+};
 
   const catHasData = categoryHasData(activeCategory, savedState); 
-  const isUnlocked = unlockedCategories.includes(activeCategory);
-  const isAnyUnlocked = unlockedCategories.length > 0;
+  const isUnlocked = !!unlockedCategories[activeCategory];
+  const isAnyUnlocked = Object.values(unlockedCategories).some(Boolean);
   const showForm = catHasData || isUnlocked;
 
-  // pag render UI
   const renderCheckboxesAndOther = (category: string) => {
     const options = ROS_OPTIONS[category] || [];
     const currentText = formData[category].otherValue || "";
@@ -169,17 +202,34 @@ const ReviewOfSystem = () => {
         <div className="row g-3">
           {options.map((opt, idx) => (
             <div className="col-12 col-sm-6 col-md-4 col-xl-3" key={idx}>
-              <div className="form-check d-flex align-items-center gap-1">
+              <div className="form-check d-flex align-items-start gap-2">
                 <input
-                  className="form-check-input mt-0 shadow-none"
+                  className="form-check-input shadow-none flex-shrink-0"
                   type="checkbox"
                   id={`${category.replace(/[^a-zA-Z0-9]/g, '')}-${idx}`}
                   checked={formData[category].selected.includes(opt)}
                   onChange={() => toggleSelection(category, opt)}
-                  disabled={!isUnlocked}
-                  style={{ border: '1px solid var(--primary, #0f763f)', cursor: isUnlocked ? 'pointer' : 'not-allowed', width: '16px', height: '16px' }}
+                  style={{ 
+                    border: '1px solid var(--primary, #0f763f)', 
+                    cursor: isUnlocked ? 'pointer' : 'not-allowed', 
+                    width: '16px', 
+                    height: '16px',
+                    marginTop: '2px',
+                    flexShrink: 0,
+                    pointerEvents: isUnlocked ? 'auto' : 'none',
+                    opacity: 1
+                  }}
                 />
-                <label className="form-check-label text-dark pt-1" htmlFor={`${category.replace(/[^a-zA-Z0-9]/g, '')}-${idx}`} style={{ fontSize: "0.85rem", cursor: isUnlocked ? 'pointer' : 'not-allowed' }}>
+                <label 
+                  className="form-check-label text-dark" 
+                  htmlFor={`${category.replace(/[^a-zA-Z0-9]/g, '')}-${idx}`} 
+                  style={{ 
+                    fontSize: "0.85rem", 
+                    cursor: isUnlocked ? 'pointer' : 'default',
+                    lineHeight: '1.4',
+                    wordBreak: 'break-word'
+                  }}
+                >
                   {opt}
                 </label>
               </div>
@@ -188,9 +238,9 @@ const ReviewOfSystem = () => {
         </div>
 
         <div className="col-12 mt-4">
-          <div className="form-check d-flex align-items-center gap-1 mb-3">
+          <div className="form-check d-flex align-items-start gap-2 mb-3">
             <input
-              className="form-check-input mt-0 shadow-none"
+              className="form-check-input shadow-none flex-shrink-0"
               type="checkbox"
               id={`check-other-${category}`}
               checked={formData[category].otherChecked}
@@ -198,10 +248,26 @@ const ReviewOfSystem = () => {
                 updateField(category, "otherChecked", e.target.checked);
                 if (!e.target.checked) updateField(category, "otherValue", "");
               }}
-              disabled={!isUnlocked}
-              style={{ border: '1px solid var(--primary, #0f763f)', cursor: isUnlocked ? 'pointer' : 'not-allowed', width: '16px', height: '16px' }}
+              style={{ 
+                border: '1px solid var(--primary, #0f763f)', 
+                cursor: isUnlocked ? 'pointer' : 'not-allowed', 
+                width: '16px', 
+                height: '16px',
+                marginTop: '2px',
+                flexShrink: 0,
+                pointerEvents: isUnlocked ? 'auto' : 'none',
+                opacity: 1
+              }}
             />
-            <label className="form-check-label text-dark pt-1" htmlFor={`check-other-${category}`} style={{ fontSize: "0.85rem", cursor: isUnlocked ? 'pointer' : 'not-allowed' }}>
+            <label 
+              className="form-check-label text-dark" 
+              htmlFor={`check-other-${category}`} 
+              style={{ 
+                fontSize: "0.85rem", 
+                cursor: isUnlocked ? 'pointer' : 'default',
+                lineHeight: '1.4'
+              }}
+            >
               Other
             </label>
           </div>
@@ -211,14 +277,16 @@ const ReviewOfSystem = () => {
             className="form-control rounded-1 shadow-none"
             value={currentText}
             onChange={(e) => updateField(category, "otherValue", e.target.value.toUpperCase())}
-            disabled={!formData[category].otherChecked || !isUnlocked}
+            readOnly={!formData[category].otherChecked || !isUnlocked}
             maxLength={255}
             rows={3}
             style={{ 
               borderColor: "var(--primary, #0f763f)", 
-              backgroundColor: (!formData[category].otherChecked || !isUnlocked) ? "#f8f9fa" : "#ffffff",
+              backgroundColor: "#ffffff",
               fontSize: "0.9rem",
-              resize: "none"
+              resize: "none",
+              cursor: (!formData[category].otherChecked || !isUnlocked) ? 'default' : 'text',
+              opacity: 1
             }}
           ></textarea>
           
@@ -385,15 +453,15 @@ const ReviewOfSystem = () => {
                       
                       <button 
                         onClick={handleSave} 
-                        disabled={!isAnyUnlocked}
+                        disabled={!isUnlocked}
                         className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-                          !isAnyUnlocked ? 'bg-light text-muted opacity-50' : 'text-white fw-bold'
+                          !isUnlocked ? 'bg-light text-muted opacity-50' : 'text-white fw-bold'
                         }`}
                         style={{ 
                           borderRadius: "3px", 
-                          cursor: !isAnyUnlocked ? "not-allowed" : "pointer",
-                          backgroundColor: isAnyUnlocked ? "var(--primary, #0f763f)" : undefined,
-                          borderColor: isAnyUnlocked ? "var(--primary, #0f763f)" : undefined
+                          cursor: !isUnlocked ? "not-allowed" : "pointer",
+                          backgroundColor: isUnlocked ? "var(--primary, #0f763f)" : undefined,
+                          borderColor: isUnlocked ? "var(--primary, #0f763f)" : undefined
                         }}
                       >
                         <i className="isax isax-save-2"></i> <span className="d-none d-md-inline">Save</span>
@@ -401,11 +469,11 @@ const ReviewOfSystem = () => {
                       
                       <button 
                         onClick={handleCancel} 
-                        disabled={!isAnyUnlocked}
+                        disabled={!isUnlocked}
                         className={`btn btn-sm border border-secondary-subtle shadow-sm d-flex align-items-center justify-content-center gap-2 px-3 py-2 text-nowrap ${
-                          !isAnyUnlocked ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold'
+                          !isUnlocked ? 'bg-light text-muted opacity-50' : 'bg-white text-dark fw-bold'
                         }`}
-                        style={{ borderRadius: "3px", cursor: !isAnyUnlocked ? "not-allowed" : "pointer" }}
+                        style={{ borderRadius: "3px", cursor: !isUnlocked ? "not-allowed" : "pointer" }}
                       >
                         <i className="isax isax-undo"></i> <span className="d-none d-md-inline">Cancel</span>
                       </button>
