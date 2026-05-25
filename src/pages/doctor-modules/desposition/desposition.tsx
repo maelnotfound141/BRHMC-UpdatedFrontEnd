@@ -225,10 +225,11 @@ const DispositionModule = () => {
                   {!dispositionData ? (
   <div className="text-center text-muted py-4 px-3 d-flex flex-column align-items-center justify-content-center disposition-empty-state">
 
-    {/* DESKTOP EMPTY ICON */}
+    {/* DESKTOP DOCUMENT ICON */}
     <i
-      className="isax isax-folder-open mb-3 opacity-50 d-none d-lg-block disposition-empty-icon"
+      className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
       style={{
+        fontSize: "3rem",
         color: "var(--primary, #0f763f)",
       }}
     ></i>
@@ -258,13 +259,12 @@ const DispositionModule = () => {
       className="mt-2 fw-semibold text-muted d-lg-none"
       style={{ fontSize: "14px" }}
     >
-     
     </span>
 
     {/* EMPTY TEXT */}
-    <h5 className="fw-bold mb-0 text-dark mt-3">
-      No disposition set.
-    </h5>
+    <p className="mb-0 fw-bold text-dark">
+      No disposition set
+    </p>
 
   </div>
 ) : (

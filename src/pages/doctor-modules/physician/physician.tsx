@@ -465,9 +465,14 @@ const PhysicianModule = () => {
                   </div>
 
                   {/* TOTAL */}
-                  <div className="mt-3 small text-muted fw-semibold">
+                  <div
+                    className="mt-2 text-muted fw-bold"
+                    style={{ fontSize: "0.85rem" }}
+                  >
                     Total Number of Record/s:{" "}
-                    {physicians.length}
+                    <span className="text-dark fw-bold">
+                      {physicians.length}
+                    </span>
                   </div>
                 </div>
               </div>

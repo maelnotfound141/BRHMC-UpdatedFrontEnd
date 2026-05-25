@@ -530,67 +530,54 @@ const PatientHistory = () => {
 
                       <tbody>
                         {isTableEmpty && (
-  <tr>
-    <td colSpan={5} className="py-5 text-center">
+                          <tr>
+                            <td colSpan={5} className="text-center border-0" style={{ height: "350px", verticalAlign: "middle" }}>                              <div className="d-flex flex-column align-items-center justify-content-center text-center">
 
-      {/* Tablet: md to lg */}
-      <div className="history-empty-tablet-box d-none d-md-flex d-lg-none flex-column align-items-center justify-content-center gap-3">
-        <button
-          onClick={handleOpenAddHistory}
-          className={`btn border-0 d-flex align-items-center justify-content-center shadow ${
-            availableHistoryTypes.length === 0 && !isEditing ? "opacity-50" : ""
-          }`}
-          style={{
-            backgroundColor: "var(--primary, #0f763f)",
-            width: "64px",
-            height: "64px",
-            minWidth: "64px",
-            minHeight: "64px",
-            borderRadius: "50%",
-            padding: 0,
-            cursor: availableHistoryTypes.length === 0 && !isEditing ? "not-allowed" : "pointer",
-          }}
-        >
-          <span style={{ fontSize: "1.8rem", lineHeight: 1, fontWeight: 300, color: "#fff" }}>+</span>
-        </button>
-        <div className="text-muted fw-semibold">
-          No history records added yet.
-        </div>
-      </div>
+                                {/* Desktop Document Icon */}
+                                <i
+                                  className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+                                  style={{
+                                    fontSize: "3rem",
+                                    color: "var(--primary, #0f763f)",
+                                  }}
+                                ></i>
 
-      {/* Mobile: below md */}
-      <div className="d-flex d-md-none flex-column align-items-center justify-content-center gap-3 py-3">
-        <button
-          onClick={handleOpenAddHistory}
-          className={`btn border-0 d-flex align-items-center justify-content-center shadow ${
-            availableHistoryTypes.length === 0 && !isEditing ? "opacity-50" : ""
-          }`}
-          style={{
-            backgroundColor: "var(--primary, #0f763f)",
-            width: "64px",
-            height: "64px",
-            minWidth: "64px",
-            minHeight: "64px",
-            borderRadius: "50%",
-            padding: 0,
-            cursor: availableHistoryTypes.length === 0 && !isEditing ? "not-allowed" : "pointer",
-          }}
-        >
-          <span style={{ fontSize: "1.8rem", lineHeight: 1, fontWeight: 300, color: "#fff" }}>+</span>
-        </button>
-        <div className="text-muted fw-semibold">
-          No history records added yet.
-        </div>
-      </div>
+                                {/* Mobile Add Button */}
+                                <button
+                                  onClick={handleOpenAddHistory}
+                                  className={`btn border-0 d-flex d-lg-none align-items-center justify-content-center shadow ${
+                                    availableHistoryTypes.length === 0 && !isEditing ? "opacity-50" : ""
+                                  }`}
+                                  style={{
+                                    backgroundColor: "var(--primary, #0f763f)",
+                                    width: "64px",
+                                    height: "64px",
+                                    minWidth: "64px",
+                                    minHeight: "64px",
+                                    borderRadius: "50%",
+                                    padding: 0,
+                                    cursor: availableHistoryTypes.length === 0 && !isEditing ? "not-allowed" : "pointer",
+                                  }}
+                                >
+                                  <i className="isax isax-add" style={{ fontSize: "1.8rem", color: "#fff" }} />
+                                </button>
 
-      {/* Desktop: lg and up */}
-      <div className="d-none d-lg-block text-muted fw-semibold">
-        No history records added yet.
-      </div>
+                                {/* Mobile Label */}
+                                <span
+                                  className="mt-2 fw-semibold text-muted d-lg-none"
+                                  style={{ fontSize: "14px" }}
+                                >
+                                </span>
 
-    </td>
-  </tr>
-)}
+                                {/* Empty Text */}
+                                <p className="mb-0 fw-bold text-dark">
+                                  No history records added yet.
+                                </p>
+
+                              </div>
+                            </td>
+                          </tr>
+                        )}
 
                         {historyRecords.map((record) => (
                           <tr

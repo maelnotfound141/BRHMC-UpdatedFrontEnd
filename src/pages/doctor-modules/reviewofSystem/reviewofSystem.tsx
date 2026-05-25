@@ -290,44 +290,55 @@ const handleCancel = () => {
 
   const renderFormContent = () => {
   if (!showForm) {
-    return (
-      <div
-        className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
-        style={{ flex: 1, minHeight: "350px" }}
+  return (
+    <div
+      className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+      style={{ flex: 1, minHeight: "350px" }}
+    >
+      {/* Desktop Document Icon */}
+      <i
+        className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+        style={{
+          fontSize: "3rem",
+          color: "var(--primary, #0f763f)",
+        }}
+      ></i>
+
+      {/* Mobile FAB */}
+      <button
+        onClick={handleAdd}
+        className="d-lg-none"
+        style={{
+          width: "64px",
+          height: "64px",
+          borderRadius: "50%",
+          backgroundColor: "var(--primary, #0f763f)",
+          color: "#fff",
+          border: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
+          cursor: "pointer",
+        }}
       >
-        {/* Desktop icon only */}
-        <i
-          className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
-          style={{ fontSize: "3rem" }}
-        ></i>
+        <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+      </button>
 
-        {/* Mobile FAB */}
-        <button
-          onClick={handleAdd}
-          className="d-lg-none"
-          style={{
-            width: "64px",
-            height: "64px",
-            borderRadius: "50%",
-            backgroundColor: "var(--primary, #0f763f)",
-            color: "#fff",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
-            cursor: "pointer",
-          }}
-        >
-          <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
-        </button>
+      {/* Mobile Label */}
+      <span
+        className="mt-2 fw-semibold text-muted d-lg-none"
+        style={{ fontSize: "14px" }}
+      >
+      </span>
 
-        <h5 className="text-dark fw-bold mb-0 mt-3">
-          No system review data recorded.
-        </h5>
-      </div>
-    );
-  }
+      {/* Empty Text */}
+      <p className="mb-0 fw-bold text-dark">
+        No system review data recorded.
+      </p>
+    </div>
+  );
+}
 
   return renderCheckboxesAndOther(activeCategory);
 };

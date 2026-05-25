@@ -1131,8 +1131,16 @@ const PhysicalExamination = () => {
           className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
           style={{ flex: 1, minHeight: "350px" }}
         >
-          <i className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block" style={{ fontSize: "3rem" }} />
+          {/* Desktop Document Icon */}
+          <i
+            className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+            style={{
+              fontSize: "3rem",
+              color: "var(--primary, #0f763f)",
+            }}
+          />
 
+          {/* Mobile FAB */}
           <button
             onClick={handleAdd}
             className="d-lg-none"
@@ -1153,7 +1161,17 @@ const PhysicalExamination = () => {
             <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
           </button>
 
-          <h5 className="text-dark fw-bold mb-0 mt-3">No physical exam data recorded.</h5>
+          {/* Mobile Label */}
+          <span
+            className="mt-2 fw-semibold text-muted d-lg-none"
+            style={{ fontSize: "14px" }}
+          >
+          </span>
+
+          {/* Empty Text */}
+          <p className="mb-0 fw-bold text-dark">
+            No physical exam data recorded.
+          </p>
         </div>
       );
     }

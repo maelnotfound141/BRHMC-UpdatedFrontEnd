@@ -925,19 +925,46 @@ const PertinentLabDiagnostic = () => {
                   style={{ minHeight: "460px", border: "1px solid #e5e7eb" }}
                 >
                   {!hasRecords ? (
-                    <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted py-5 custom-empty-state physician-mobile-empty h-100">
+                    <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted custom-empty-state physician-mobile-empty h-100">
+
+                      {/* Desktop Document Icon */}
                       <i
                         className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
-                        style={{ fontSize: "3rem", color: "var(--primary, #0f763f)" }}
+                        style={{
+                          fontSize: "3rem",
+                          color: "var(--primary, #0f763f)",
+                        }}
                       />
-                      <button
-                        type="button"
+
+                      {/* Mobile Add Button */}
+                      <div
+                        className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
                         onClick={handleAdd}
-                        className="empty-state-add-btn d-lg-none"
+                        style={{
+                          width: "64px",
+                          height: "64px",
+                          backgroundColor: "var(--primary, #0f763f)",
+                          cursor: "pointer",
+                        }}
                       >
-                        <i className="isax isax-add"></i>
-                      </button>
-                      <p className="mb-0 fw-bold text-dark">No lab/diagnostic findings found</p>
+                        <i
+                          className="isax isax-add"
+                          style={{ fontSize: "2rem", color: "#fff" }}
+                        />
+                      </div>
+
+                      {/* Mobile Label */}
+                      <span
+                        className="mt-2 fw-semibold text-muted d-lg-none"
+                        style={{ fontSize: "14px" }}
+                      >
+                      </span>
+
+                      {/* Empty Text */}
+                      <p className="mb-0 fw-bold text-dark">
+                        No lab/diagnostic findings found.
+                      </p>
+
                     </div>
                   ) : (
                     <>

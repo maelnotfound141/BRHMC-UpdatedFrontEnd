@@ -404,40 +404,37 @@ const DispositionModule = () => {
                         gap: "0",
                       }}
                     >
-                      {/* DESKTOP ICON — shown only on lg+ */}
-                      <i
-                        className="isax isax-folder-open opacity-50 d-none d-lg-block"
-                        style={{ fontSize: "3rem", marginBottom: "12px" }}
-                      ></i>
+                      
+                     {/* DESKTOP DOCUMENT ICON — desktop only, shown first */}
+                        <i
+                          className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+                          style={{
+                            fontSize: "3rem",
+                            color: "var(--primary, #0f763f)",
+                          }}
+                        ></i>
 
-                      {/* ADD BUTTON — shown on mobile only, sits inline with the text below */}
-                      <button
-  type="button"
-  onClick={handleOpenAddInstruction}
-  className="empty-state-fab d-lg-none"
->
-  <i className="isax isax-add"></i>
-</button>
-                      {/* "Add New" label — mobile only */}
-                      <span
-                        className="d-lg-none fw-semibold text-muted"
-                        style={{ fontSize: "14px", marginTop: "12px" }}
-                      >
-                        
-                      </span>
+                        {/* MOBILE ADD BUTTON */}
+                        <button
+                          type="button"
+                          onClick={handleOpenAddInstruction}
+                          className="empty-state-fab d-lg-none"
+                        >
+                          <i className="isax isax-add"></i>
+                        </button>
 
-                      {/* EMPTY TEXT — always shown, tight below the button */}
-                      <p
-                        className="fw-bold text-dark mb-0"
-                        style={{
-                          marginTop: "14px",
-                          fontSize: "15px",
-                          lineHeight: "1.4",
-                          maxWidth: "240px",
-                        }}
-                      >
-                        No discharge instructions recorded.
-                      </p>
+                        {/* MOBILE LABEL */}
+                        <span
+                          className="mt-2 fw-semibold text-muted d-lg-none"
+                          style={{ fontSize: "14px" }}
+                        >
+                        </span>
+
+                        {/* EMPTY TEXT */}
+                        <p className="mb-0 fw-bold text-dark">
+                          No discharge instructions recorded.
+                        </p>
+                      
                     </div>
 
                   ) : (

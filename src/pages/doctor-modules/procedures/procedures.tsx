@@ -296,29 +296,41 @@ const isEmpty = !hasData;
       style={{ backgroundColor: "#ffffff" }}
     >
       {!isEditing && !hasData ? (
-        <div
-          className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
-          style={{ flex: 1, minHeight: "350px" }}
-        >
-          {/* Desktop Icon */}
-          <i
-            className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
-            style={{ fontSize: "3rem" }}
-          ></i>
-
-          {/* Mobile Add Button */}
-          <button
-            type="button"
-            onClick={handleAdd}
-            className="empty-state-fab d-lg-none"
+        
+          <div
+            className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+            style={{ flex: 1, minHeight: "350px" }}
           >
-            <i className="isax isax-add"></i>
-          </button>
+            {/* Desktop Document Icon */}
+            <i
+              className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+              style={{
+                fontSize: "3rem",
+                color: "var(--primary, #0f763f)",
+              }}
+            ></i>
 
-          <h6 className="fw-bold mb-0 mt-3">
-            No {activeTab} data recorded.
-          </h6>
-        </div>
+            {/* Mobile Add Button */}
+            <button
+              type="button"
+              onClick={handleAdd}
+              className="empty-state-fab d-lg-none"
+            >
+              <i className="isax isax-add"></i>
+            </button>
+
+            {/* Mobile Label */}
+            <span
+              className="mt-2 fw-semibold text-muted d-lg-none"
+              style={{ fontSize: "14px" }}
+            >
+            </span>
+
+            {/* Empty Text */}
+            <p className="mb-0 fw-bold text-dark">
+              No {activeTab} data recorded.
+            </p>
+          </div>
       ) : (
         <div className="d-flex flex-column flex-grow-1 fade-in">
           <label

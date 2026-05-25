@@ -1200,47 +1200,55 @@ const DiagnosisModule = () => {
 
                 {/* Table */}
                 {/* Main Content */}
-<div
-  className="border rounded bg-white flex-grow-1 d-flex flex-column"
-  style={{
-    minHeight: "460px",
-    border: "1px solid #e5e7eb",
-  }}
->
- {!hasRecords ? (
-  <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted py-5 custom-empty-state physician-mobile-empty h-100">
+                  <div
+                    className="border rounded bg-white flex-grow-1 d-flex flex-column"
+                    style={{
+                      minHeight: "460px",
+                      border: "1px solid #e5e7eb",
+                    }}
+                  >
+                    {!hasRecords ? (
+                      <div className="d-flex flex-column align-items-center justify-content-center text-center text-muted custom-empty-state physician-mobile-empty h-100">
 
-    {/* DESKTOP EMPTY ICON */}
-    <i
-      className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
-      style={{
-        fontSize: "3rem",
-        color: "var(--primary, #0f763f)",
-      }}
-    ></i>
+                        {/* Desktop Document Icon */}
+                        <i
+                          className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+                          style={{
+                            fontSize: "3rem",
+                            color: "var(--primary, #0f763f)",
+                          }}
+                        ></i>
 
-    {/* MOBILE ADD BUTTON */}
-    <button
-  type="button"
-  onClick={handleAdd}
-  className="empty-state-fab d-lg-none"
->
-  <i className="isax isax-add"></i>
-</button>
+                        {/* Mobile Add Button */}
+                        <div
+                          className="rounded-circle d-flex align-items-center justify-content-center shadow-sm d-lg-none"
+                          onClick={handleAdd}
+                          style={{
+                            width: "64px",
+                            height: "64px",
+                            backgroundColor: "var(--primary, #0f763f)",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <i
+                            className="isax isax-add"
+                            style={{ fontSize: "2rem", color: "#fff" }}
+                          />
+                        </div>
 
-    {/* MOBILE LABEL */}
-    <span
-      className="mt-2 fw-semibold text-muted d-lg-none"
-      style={{ fontSize: "14px" }}
-    >
-      
-    </span>
+                        {/* Mobile Label */}
+                        <span
+                          className="mt-2 fw-semibold text-muted d-lg-none"
+                          style={{ fontSize: "14px" }}
+                        >
+                        </span>
 
-    {/* EMPTY TEXT */}
-    <p className="mb-0 fw-bold text-dark">
-      No diagnosis records found
-    </p>
-  </div>
+                        {/* Empty Text */}
+                        <p className="mb-0 fw-bold text-dark">
+                          No diagnosis records found.
+                        </p>
+
+                      </div>
 ) : (
     <>
       <div className="table-responsive flex-grow-1">

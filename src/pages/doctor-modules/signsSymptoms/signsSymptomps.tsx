@@ -364,7 +364,17 @@ const PatientSignsAndSymptoms = () => {
                           <td className="p-3 p-md-4 border-bottom-0">
                             {!isEditing && !hasSavedData ? (
                               <div className="d-flex flex-column align-items-center justify-content-center py-5 text-center">
-                                {/* Mobile circle add button */}
+
+                                {/* Desktop Document Icon */}
+                                <i
+                                  className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+                                  style={{
+                                    fontSize: "3rem",
+                                    color: "var(--primary, #0f763f)",
+                                  }}
+                                ></i>
+
+                                {/* Mobile Add Button */}
                                 <button
                                   onClick={handleAdd}
                                   disabled={isEditing}
@@ -380,21 +390,21 @@ const PatientSignsAndSymptoms = () => {
                                     cursor: isEditing ? "not-allowed" : "pointer",
                                   }}
                                 >
-                                  <span
-                                    style={{
-                                      fontSize: "1.8rem",
-                                      lineHeight: 1,
-                                      fontWeight: 300,
-                                      color: "#fff",
-                                    }}
-                                  >
-                                    +
-                                  </span>
+                                  <i className="isax isax-add" style={{ fontSize: "1.8rem", color: "#fff" }} />
                                 </button>
 
-                                <div className="mt-3 fw-semibold text-muted">
-                                  No signatory records found
-                                </div>
+                                {/* Mobile Label */}
+                                <span
+                                  className="mt-2 fw-semibold text-muted d-lg-none"
+                                  style={{ fontSize: "14px" }}
+                                >
+                                </span>
+
+                                {/* Empty Text */}
+                                <p className="mb-0 fw-bold text-dark">
+                                  No signs and symptoms recorded.
+                                </p>
+
                               </div>
                             ) : (
                               <div className="row g-2">

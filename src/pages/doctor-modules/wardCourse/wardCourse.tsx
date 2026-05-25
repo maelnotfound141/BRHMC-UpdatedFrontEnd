@@ -326,34 +326,51 @@ const CourseInTheWard = () => {
                             <tr>
                               <td colSpan={4} className="border-0 p-0">
                                 <div
-                                  className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
-                                  style={{ minHeight: "350px" }}
-                                >
-                                  <i
-                                    className="isax isax-document-text mb-3 opacity-50 d-none d-lg-block"
-                                    style={{ fontSize: "3rem" }}
-                                  />
-                                  <button
-                                    onClick={handleAdd}
-                                    className="d-lg-none"
-                                    style={{
-                                      width: "64px",
-                                      height: "64px",
-                                      borderRadius: "50%",
-                                      backgroundColor: "var(--primary, #0f763f)",
-                                      color: "#fff",
-                                      border: "none",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
-                                      cursor: "pointer",
-                                    }}
-                                  >
-                                    <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
-                                  </button>
-                                  <h6 className="fw-bold mb-0 mt-3">No course records found.</h6>
-                                </div>
+  className="d-flex flex-column align-items-center justify-content-center text-muted text-center"
+  style={{ minHeight: "350px" }}
+>
+  {/* Desktop Document Icon */}
+  <i
+    className="isax isax-document-text fs-1 mb-3 opacity-50 d-none d-lg-block"
+    style={{
+      fontSize: "3rem",
+      color: "var(--primary, #0f763f)",
+    }}
+  />
+
+  {/* Mobile Add Button */}
+  <button
+    onClick={handleAdd}
+    className="d-lg-none"
+    style={{
+      width: "64px",
+      height: "64px",
+      borderRadius: "50%",
+      backgroundColor: "var(--primary, #0f763f)",
+      color: "#fff",
+      border: "none",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      boxShadow: "0 6px 18px rgba(15,118,63,0.25)",
+      cursor: "pointer",
+    }}
+  >
+    <i className="isax isax-add" style={{ fontSize: "1.6rem" }} />
+  </button>
+
+  {/* Mobile Label */}
+  <span
+    className="mt-2 fw-semibold text-muted d-lg-none"
+    style={{ fontSize: "14px" }}
+  >
+  </span>
+
+  {/* Empty Text */}
+  <p className="mb-0 fw-bold text-dark">
+    No course records found.
+  </p>
+</div>
                               </td>
                             </tr>
                           ) : (

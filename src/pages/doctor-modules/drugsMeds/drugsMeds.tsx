@@ -414,36 +414,37 @@ useEffect(() => {
                         </thead>
                         <tbody>
                           {paginatedRecords.length === 0 ? (
-  <tr>
-<td
-  colSpan={3}
-  className="text-center text-muted border-0 p-0"
-  style={{ height: "280px", verticalAlign: "middle" }}
->
-      <div
-  className="d-flex flex-column align-items-center justify-content-center w-100 bg-white"
-  style={{
-    height: "280px",
-    margin: 0,
-    
-  }}
->
+                              <tr>
+                              <td
+                                colSpan={3}
+                                className="text-center text-muted border-0 p-0"
+                                style={{ height: "350px", verticalAlign: "middle" }}
+                              >
+                                <div
+                                  className="d-flex flex-column align-items-center justify-content-center w-100 bg-white"
+                                  style={{
+                                    height: "350px",
+                                    margin: 0,
+                                  }}
+                                >
 
-        {/* DESKTOP / TABLET ONLY CONTENT */}
+        
+        {/* DESKTOP ONLY CONTENT */}
         {!isMobile && (
           <>
-            {/* ICON */}
+            {/* DESKTOP DOCUMENT ICON */}
             <i
-              className="isax isax-folder-open fs-1 mb-3 opacity-50 d-block"
-              style={{ fontSize: "3rem" }}
+              className="isax isax-document-text fs-1 mb-3 opacity-50 d-block"
+              style={{
+                fontSize: "3rem",
+                color: "var(--primary, #0f763f)",
+              }}
             ></i>
 
-            {/* TEXT */}
-            <h6 className="fw-bold mb-1">
+            {/* EMPTY TEXT */}
+            <p className="mb-0 fw-bold text-dark">
               No drugs and medicine recorded yet.
-            </h6>
-
-           
+            </p>
           </>
         )}
 
