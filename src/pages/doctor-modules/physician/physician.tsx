@@ -236,22 +236,27 @@ const PhysicianModule = () => {
                     "4px solid var(--primary, #0f763f)",
                 }}
               >
-{/* close button */}
-<button
-  type="button"
-  onClick={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigate("/doctor-dashboard", { replace: true });
-  }}
-  className="card-close-btn d-flex align-items-center justify-content-center"
->
-  <span className="desktop-close text-white fw-bold">×</span>
 
-  <span className="mobile-back">
-  <i className="isax isax-arrow-left"></i>
-</span>
-</button>                
+                    {/* close button */}
+                      
+                        <button
+                          type="button"
+                          className="btn-close"
+                          aria-label="Close"
+                          style={{
+                            position: "absolute",
+                            top: "12px",
+                            right: "12px",
+                            padding: "4px",
+                            zIndex: 10,
+                          }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate("/doctor-dashboard", { replace: true });
+                          }}
+                        >
+                        </button>                
                 
 {/* PROFILE HEADER */}
 {/* Patient Profile Header */}

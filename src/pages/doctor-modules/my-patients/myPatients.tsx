@@ -1,11 +1,13 @@
 import DoctorSidebar from "@/components/custom-sidebar/doctorSidebar";
 import ImageWithBasePath from "@/components/image-with-base-path";
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
+import "./myPatients.css";
 
 const MyPatients = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   const [activeTab, setActiveTab] = useState("ADMISSION_DETAILS");
 
@@ -132,6 +134,26 @@ const MyPatients = () => {
                       {mockPatientProfile.address}
                     </div>
                   </div>
+                      {/* close button */}
+                          
+                            <button
+                              type="button"
+                              className="btn-close"
+                              aria-label="Close"
+                              style={{
+                                position: "absolute",
+                                top: "12px",
+                                right: "12px",
+                                padding: "4px",
+                                zIndex: 10,
+                              }}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navigate("/doctor-dashboard", { replace: true });
+                              }}
+                            >
+                            </button>
                 </div>
 
                 {/* Demographics Grid */}
