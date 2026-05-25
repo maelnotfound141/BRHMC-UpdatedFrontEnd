@@ -1418,7 +1418,7 @@ const RegDetails = () => {
                 className="charges-toast-close"
                 onClick={() => dismissToast(toast.id)}
               >
-                <i className="isax isax-close-circle" />
+                
               </button>
             </div>
           ))}
