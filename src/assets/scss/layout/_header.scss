@@ -87,49 +87,115 @@
       }
 
       .logo {
+        --header-logo-offset-x: -8px;
+        --header-logo-mark-width: 210px;
+        --header-logo-mark-height: 85px;
+        --header-logo-mark-size: 210px;
+        --header-logo-mark-left: 0;
         display: inline-flex;
         align-items: center;
-        gap: 12px;
+        gap: 18px;
         margin-right: 0;
         width: auto;
-        max-width: 250px;
+        max-width: 430px;
         min-width: 0;
+        position: relative;
+        transform: translateX(var(--header-logo-offset-x));
 
         @include mixins.respond-below(lg) {
-          max-width: 210px;
-          overflow: hidden;
+          --header-logo-mark-width: 150px;
+          --header-logo-mark-height: 60px;
+          --header-logo-mark-size: 150px;
+          gap: 12px;
+          max-width: min(350px, calc(100vw - 175px));
+          overflow: visible;
         }
 
         @include mixins.respond-below(sm) {
-          max-width: 170px;
+          --header-logo-offset-x: -4px;
+          --header-logo-mark-width: 110px;
+          --header-logo-mark-height: 60px;
+          --header-logo-mark-size: 110px;
+          max-width: calc(100vw - 135px);
           justify-content: flex-start;
           gap: 8px;
         }
 
-        img {
+        .logo-mark {
           order: 1;
-          height: 50px;
-          width: auto;
-          flex-shrink: 0;
+          display: block;
+          flex: 0 0 var(--header-logo-mark-width);
+          height: var(--header-logo-mark-height);
+          overflow: hidden;
+          position: relative;
+          width: var(--header-logo-mark-width);
 
-          @include mixins.respond-below(sm) {
-            height: 35px;
+          img {
+            height: var(--header-logo-mark-size);
+            left: var(--header-logo-mark-left);
+            max-width: none;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: auto;
           }
+        }
+
+        img {
+          flex-shrink: 0;
         }
 
         .logo-name {
           order: 2;
-          font-size: 1.8rem;
-          font-weight: bold;
-          color: variables.$primary;
+          font-size: 1.65rem;
+          font-weight: 800;
+          color: variables.$black;
           margin: 0;
           line-height: 1;
           white-space: nowrap;
+          letter-spacing: 0;
+
+          @include mixins.respond-below(lg) {
+            font-size: 2rem;
+          }
 
           @include mixins.respond-below(sm) {
-            font-size: 1.5rem;
+            font-size: 1.45rem;
           }
         }
+      }
+    }
+
+    .navbar-header .logo .logo-name.ihomis-wordmark,
+    .main-menu-wrapper .menu-header .menu-logo .logo-name.ihomis-wordmark {
+      align-items: baseline;
+      color: variables.$black;
+      display: inline-flex;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-style: normal;
+      font-weight: 800;
+      gap: 2px;
+      letter-spacing: 0;
+      position: relative;
+      text-transform: none;
+      text-decoration: none;
+
+      .ihomis-i,
+      .ihomis-main {
+        color: variables.$black;
+        display: inline-block;
+        line-height: 1;
+      }
+
+      .ihomis-i {
+        font-size: 0.92em;
+        font-style: italic;
+        font-weight: 700;
+        transform: skewX(-8deg);
+      }
+
+      .ihomis-main {
+        font-weight: 800;
       }
     }
 
@@ -173,8 +239,43 @@
         }
 
         .menu-logo {
-          img {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          text-decoration: none;
+
+          .logo-mark {
+            order: 1;
+            display: block;
+            flex: 0 0 84px;
             height: 40px;
+            overflow: hidden;
+            position: relative;
+            width: 84px;
+
+            img {
+              height: 92px;
+              left: 0;
+              max-width: none;
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+              width: auto;
+            }
+          }
+
+          img {
+            flex-shrink: 0;
+          }
+
+          .logo-name {
+            order: 2;
+            color: variables.$black;
+            font-size: 1.45rem;
+            font-weight: 800;
+            line-height: 1;
+            margin: 0;
+            white-space: nowrap;
           }
         }
 

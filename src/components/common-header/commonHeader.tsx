@@ -65,6 +65,9 @@ const Header = () => {
     : isNurseRoute
       ? nurseMobileSidebar
       : false;
+  const showSidebarToggle =
+    (isDoctorRoute || isNurseRoute) &&
+    location.pathname !== all_routes.doctorDashboard;
 
   // scroll detection
   useEffect(() => {
@@ -108,12 +111,17 @@ const Header = () => {
           {/* logo */}
           <div className="navbar-header d-flex align-items-center">
             <Link to={all_routes.doctorDashboard} className="navbar-brand logo">
-              <h2 className="logo-name">BRHMC</h2>
-              <ImageWithBasePath
-                src="assets/img/brhmclogo.png"
-                className="img-fluid"
-                alt="Logo"
-              />
+              <h2 className="logo-name ihomis-wordmark">
+                <span className="ihomis-i">i</span>
+                <span className="ihomis-main">HOMIS</span>
+              </h2>
+              <span className="logo-mark">
+                <ImageWithBasePath
+                  src="assets/img/brhmclogo.png"
+                  className="img-fluid"
+                  alt="Logo"
+                />
+              </span>
             </Link>
           </div>
 
@@ -122,12 +130,17 @@ const Header = () => {
             <div className="main-menu-wrapper">
               <div className="menu-header">
                 <Link to={all_routes.doctorDashboard} className="menu-logo">
-                  <h2 className="logo-name">BRHMC</h2>
-                  <ImageWithBasePath
-                    src="assets/img/brhmclogo.png"
-                    className="img-fluid"
-                    alt="Logo"
-                  />
+                  <h2 className="logo-name ihomis-wordmark">
+                    <span className="ihomis-i">i</span>
+                    <span className="ihomis-main">HOMIS</span>
+                  </h2>
+                  <span className="logo-mark">
+                    <ImageWithBasePath
+                      src="assets/img/brhmclogo.png"
+                      className="img-fluid"
+                      alt="Logo"
+                    />
+                  </span>
                 </Link>
               </div>
 
@@ -160,7 +173,7 @@ const Header = () => {
 
             <ProfileModal />
 
-            {(isDoctorRoute || isNurseRoute) && (
+            {showSidebarToggle && (
               <li className="nav-item module-sidebar-toggle-item d-lg-none">
                 <Link
                   to="#"
